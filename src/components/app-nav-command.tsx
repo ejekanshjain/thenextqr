@@ -6,6 +6,7 @@ import { useTheme } from 'next-themes'
 import { useRouter } from 'next/navigation'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 
+import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import {
   Command,
@@ -17,7 +18,6 @@ import {
   CommandList,
   CommandSeparator
 } from '@/components/ui/command'
-import { Icons } from '@/components/ui/icons'
 import { doSearch, type SearchResult } from '../app/(app)/actions/doSearch'
 
 export const AppNavCommand: FC = () => {

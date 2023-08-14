@@ -1,9 +1,9 @@
 import { ReactNode } from 'react'
 
+import { Icons } from '@/components/icons'
 import { MainNav } from '@/components/main-nav'
 import { SiteFooter } from '@/components/site-footer'
 import { Button } from '@/components/ui/button'
-import { Icons } from '@/components/ui/icons'
 import Link from 'next/link'
 
 const Layout = async ({ children }: { children: ReactNode }) => {

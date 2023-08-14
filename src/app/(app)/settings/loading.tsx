@@ -1,6 +1,6 @@
+import { CardSkeleton } from '@/components/card-skeleton'
 import { Heading } from '@/components/heading'
 import { Shell } from '@/components/shell'
-import { CardSkeleton } from '@/components/ui/card-skeleton'
 
 const Loading = () => {
   return (

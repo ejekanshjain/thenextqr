@@ -1,10 +1,10 @@
 import Link from 'next/link'
 
+import { EmptyPlaceholder } from '@/components/empty-placeholder'
 import { Heading } from '@/components/heading'
+import { Icons } from '@/components/icons'
 import { Shell } from '@/components/shell'
 import { Button } from '@/components/ui/button'
-import { EmptyPlaceholder } from '@/components/ui/empty-placeholder'
-import { Icons } from '@/components/ui/icons'
 import { getQRCodes } from './actions'
 
 const QRCodesPage = async () => {

@@ -3,8 +3,8 @@
 import Link from 'next/link'
 import { FC, useState } from 'react'
 
+import { Icons } from '@/components/icons'
 import { MobileNav } from '@/components/mobile-nav'
-import { Icons } from '@/components/ui/icons'
 
 interface MainNavProps {
   logoLink?: string
