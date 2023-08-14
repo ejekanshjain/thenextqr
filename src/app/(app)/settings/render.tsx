@@ -5,7 +5,6 @@ import { FC, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -22,6 +21,7 @@ import {
   FormItem,
   FormMessage
 } from '@/components/ui/form'
+import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { toast } from '@/components/ui/use-toast'
 import { updateName } from './actions'

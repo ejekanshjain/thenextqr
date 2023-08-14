@@ -1,9 +1,9 @@
 import Link from 'next/link'
 
 import { Heading } from '@/components/heading'
-import { Icons } from '@/components/icons'
 import { Shell } from '@/components/shell'
 import { Button } from '@/components/ui/button'
+import { Icons } from '@/components/ui/icons'
 import { Skeleton } from '@/components/ui/skeleton'
 
 const Loading = () => {

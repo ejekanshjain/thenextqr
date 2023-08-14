@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 
-import { Icons } from '@/components/icons'
+import { Icons } from '@/components/ui/icons'
 import { useLockBody } from '@/hooks/use-lock-body'
 import { cn } from '@/lib/cn'
 import { FC } from 'react'

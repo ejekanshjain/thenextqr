@@ -6,7 +6,7 @@ import { SideNav } from '@/components/side-nav'
 import { SiteFooter } from '@/components/site-footer'
 import { UserAccountNav } from '@/components/user-account-nav'
 import { getAuthSession } from '@/lib/auth'
-import { AppNavCommand } from './app-nav-command'
+import { AppNavCommand } from '../../components/app-nav-command'
 
 const AdminLayout = async ({ children }: { children: ReactNode }) => {
   const session = await getAuthSession()

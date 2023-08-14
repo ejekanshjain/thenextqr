@@ -1,7 +1,7 @@
 import { FC, HTMLAttributes } from 'react'
 
 import { DarkModeToggle } from '@/components/dark-mode-toggle'
-import { Icons } from '@/components/icons'
+import { Icons } from '@/components/ui/icons'
 import { cn } from '@/lib/cn'
 
 export const SiteFooter: FC<HTMLAttributes<HTMLElement>> = ({ className }) => {
