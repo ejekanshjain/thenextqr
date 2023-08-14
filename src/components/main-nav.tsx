@@ -6,14 +6,16 @@ import { FC, useState } from 'react'
 import { Icons } from '@/components/icons'
 import { MobileNav } from '@/components/mobile-nav'
 
-interface MainNavProps {}
+interface MainNavProps {
+  logoLink?: string
+}
 
-export const MainNav: FC<MainNavProps> = () => {
+export const MainNav: FC<MainNavProps> = ({ logoLink = '/' }) => {
   const [showMobileMenu, setShowMobileMenu] = useState(false)
 
   return (
     <div className="flex">
-      <Link href="/dashboard" className="hidden items-center space-x-2 md:flex">
+      <Link href={logoLink} className="hidden items-center space-x-2 md:flex">
         <Icons.logo />
         <span className="hidden font-bold sm:inline-block">The Next QR</span>
       </Link>

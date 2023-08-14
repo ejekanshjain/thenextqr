@@ -70,3 +70,9 @@ export const authOptions: NextAuthOptions = {
  * @see https://next-auth.js.org/configuration/nextjs
  */
 export const getAuthSession = () => getServerSession(authOptions)
+
+export const authGuard = async () => {
+  const session = await getAuthSession()
+  if (!session) throw new Error('Unauthorized')
+  return session
+}

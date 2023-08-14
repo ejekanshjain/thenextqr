@@ -2,9 +2,11 @@ import { notFound } from 'next/navigation'
 import { ReactNode } from 'react'
 
 import { MainNav } from '@/components/main-nav'
+import { SideNav } from '@/components/side-nav'
 import { SiteFooter } from '@/components/site-footer'
 import { UserAccountNav } from '@/components/user-account-nav'
 import { getAuthSession } from '@/lib/auth'
+import { AppNavCommand } from './app-nav-command'
 
 const AdminLayout = async ({ children }: { children: ReactNode }) => {
   const session = await getAuthSession()
@@ -15,8 +17,9 @@ const AdminLayout = async ({ children }: { children: ReactNode }) => {
     <div className="flex min-h-screen flex-col space-y-4">
       <header className="sticky top-0 z-40 border-b bg-background">
         <div className="container flex h-16 items-center justify-between py-4">
-          <MainNav />
+          <MainNav logoLink="/dashboard" />
           <div className="flex items-center justify-center space-x-4">
+            <AppNavCommand />
             <UserAccountNav
               user={{
                 name: session.user.name,
@@ -27,7 +30,22 @@ const AdminLayout = async ({ children }: { children: ReactNode }) => {
           </div>
         </div>
       </header>
-      <div className="flex-1">{children}</div>
+      <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
+        <aside className="hidden w-[200px] flex-col md:flex">
+          <SideNav
+            items={[
+              {
+                title: 'Dashboard',
+                href: '/dashboard',
+                icon: 'home'
+              }
+            ]}
+          />
+        </aside>
+        <main className="flex w-full flex-1 flex-col overflow-hidden">
+          {children}
+        </main>
+      </div>
       <SiteFooter className="border-t" />
     </div>
   )
