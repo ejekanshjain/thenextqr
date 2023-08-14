@@ -26,5 +26,7 @@ export async function doSearch(search: string): Promise<SearchResult[]> {
 
   const searchResults: SearchResult[] = []
 
+  console.log(idToSearch)
+
   return searchResults
 }
