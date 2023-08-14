@@ -33,7 +33,7 @@ export const SideNav: FC<SideNavProps> = ({ items }) => {
                   'group flex items-center rounded-md px-3 py-2 text-sm font-medium',
                   path.includes(item.href)
                     ? 'bg-accent'
-                    : 'transparent hover:underline',
+                    : 'transparent underline-offset-4 hover:underline',
                   item.disabled && 'cursor-not-allowed opacity-80'
                 )}
               >

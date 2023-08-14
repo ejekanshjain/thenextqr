@@ -40,7 +40,13 @@ export const UserAccountNav: FC<UserAccountNavProps> = ({ user }) => {
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/profile">Profile</Link>
+          <Link href="/qr-codes">QR Codes</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/billing">Billing</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/settings">Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem

@@ -44,7 +44,7 @@ export const UserAuthForm: FC = ({
     const signInResult = await signIn('email', {
       email: data.email.toLowerCase(),
       redirect: false,
-      callbackUrl: searchParams?.get('from') || '/dashboard'
+      callbackUrl: searchParams?.get('from') || '/qr-codes'
     })
 
     setIsLoading(false)
@@ -110,7 +110,7 @@ export const UserAuthForm: FC = ({
         onClick={async () => {
           setIsGithubLoading(true)
           await signIn('github', {
-            callbackUrl: searchParams?.get('from') || '/dashboard'
+            callbackUrl: searchParams?.get('from') || '/qr-codes'
           })
           setIsGithubLoading(false)
         }}

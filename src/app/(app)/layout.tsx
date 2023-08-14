@@ -14,10 +14,10 @@ const AdminLayout = async ({ children }: { children: ReactNode }) => {
   if (!session?.user) return notFound()
 
   return (
-    <div className="flex min-h-screen flex-col space-y-4">
+    <div className="flex min-h-screen flex-col space-y-6">
       <header className="sticky top-0 z-40 border-b bg-background">
         <div className="container flex h-16 items-center justify-between py-4">
-          <MainNav logoLink="/dashboard" />
+          <MainNav logoLink="/qr-codes" />
           <div className="flex items-center justify-center space-x-4">
             <AppNavCommand />
             <UserAccountNav
@@ -35,9 +35,19 @@ const AdminLayout = async ({ children }: { children: ReactNode }) => {
           <SideNav
             items={[
               {
-                title: 'Dashboard',
-                href: '/dashboard',
-                icon: 'home'
+                title: 'QR Codes',
+                href: '/qr-codes',
+                icon: 'qrCode'
+              },
+              {
+                title: 'Billing',
+                href: '/billing',
+                icon: 'card'
+              },
+              {
+                title: 'Settings',
+                href: '/settings',
+                icon: 'settings'
               }
             ]}
           />

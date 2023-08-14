@@ -7,7 +7,7 @@ import { getAuthSession } from '@/lib/auth'
 const AuthLayout = async ({ children }: { children: ReactNode }) => {
   const session = await getAuthSession()
 
-  if (session?.user) return redirect('/dashboard')
+  if (session?.user) return redirect('/qr-codes')
 
   return (
     <div className="flex min-h-screen flex-col justify-between">

@@ -64,7 +64,7 @@ export const AppNavCommand: FC = () => {
     <>
       <Button
         variant="outline"
-        className="relative w-32 justify-start text-sm text-muted-foreground sm:w-40 lg:w-64"
+        className="relative w-36 justify-start text-sm text-muted-foreground lg:w-64"
         onClick={() => setOpen(true)}
       >
         <span className="truncate">Command Menu</span>
@@ -84,18 +84,24 @@ export const AppNavCommand: FC = () => {
             <CommandEmpty>No search results found.</CommandEmpty>
             <CommandGroup heading="Suggestions">
               <CommandItem
-                onSelect={() => runCommand(() => router.push('/dashboard'))}
+                onSelect={() => runCommand(() => router.push('/qr-codes'))}
               >
-                <Icons.home className="mr-2 h-4 w-4" />
-                Dashboard
+                <Icons.qrCode className="mr-2 h-4 w-4" />
+                QR Codes
               </CommandItem>
             </CommandGroup>
             <CommandGroup heading="Account">
               <CommandItem
-                onSelect={() => runCommand(() => router.push('/profile'))}
+                onSelect={() => runCommand(() => router.push('/billing'))}
               >
-                <Icons.user className="mr-2 h-4 w-4" />
-                Profile
+                <Icons.card className="mr-2 h-4 w-4" />
+                Billing
+              </CommandItem>
+              <CommandItem
+                onSelect={() => runCommand(() => router.push('/settings'))}
+              >
+                <Icons.settings className="mr-2 h-4 w-4" />
+                Settings
               </CommandItem>
               <CommandItem
                 onSelect={() =>

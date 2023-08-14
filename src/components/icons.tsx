@@ -1,16 +1,8 @@
 import {
-  ArrowDown,
-  ArrowRight,
-  ArrowUp,
-  ArrowUpDown,
   Biohazard,
-  Check,
   ChevronLeft,
   ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  EyeOff,
-  Home,
+  CreditCard,
   Laptop,
   Loader2,
   LogIn,
@@ -19,12 +11,11 @@ import {
   LucideProps,
   Moon,
   Plus,
-  PlusCircle,
+  QrCode,
   Save,
-  Settings2,
+  Settings,
   Sun,
   User,
-  Users,
   X
 } from 'lucide-react'
 
@@ -39,8 +30,6 @@ export const Icons = {
   logout: LogOut,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,
-  chevronsLeft: ChevronsLeft,
-  chevronsRight: ChevronsRight,
   spinner: Loader2,
   github: ({ ...props }: LucideProps) => (
     <svg
@@ -61,16 +50,9 @@ export const Icons = {
   ),
   user: User,
   close: X,
-  plusCircle: PlusCircle,
-  home: Home,
-  users: Users,
   add: Plus,
-  arrowDown: ArrowDown,
-  arrowUp: ArrowUp,
-  arrowUpDown: ArrowUpDown,
-  arrowRight: ArrowRight,
-  eyeOff: EyeOff,
-  check: Check,
-  mixer: Settings2,
-  save: Save
+  settings: Settings,
+  save: Save,
+  qrCode: QrCode,
+  card: CreditCard
 }

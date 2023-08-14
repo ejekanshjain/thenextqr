@@ -62,8 +62,33 @@ model User {
     createdAt DateTime @default(now()) @db.Timestamptz()
     updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
 
-    accounts Account[]
-    sessions Session[]
+    accounts       Account[]
+    sessions       Session[]
+    createdQRCodes QRCode[]  @relation("createdQRCodes")
+    updatedQRCodes QRCode[]  @relation("updatedQRCodes")
 
     @@map("Users")
+}
+
+enum QRCodeType {
+    Static
+    Dynamic
+}
+
+model QRCode {
+    id      String     @id @default(cuid())
+    name    String
+    type    QRCodeType
+    slug    String?    @unique
+    website String
+    active  Boolean    @default(true)
+
+    createdAt   DateTime @default(now()) @db.Timestamptz()
+    updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
+    createdById String
+    createdBy   User     @relation("createdQRCodes", fields: [createdById], references: [id], onDelete: Cascade)
+    updatedById String
+    updatedBy   User     @relation("updatedQRCodes", fields: [updatedById], references: [id], onDelete: Cascade)
+
+    @@map("QRCodes")
 }
