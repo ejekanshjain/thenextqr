@@ -91,7 +91,7 @@ export const UserAuthForm: FC = ({
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Sign In with Email
+            Sign in with Email
           </Button>
         </div>
       </form>
