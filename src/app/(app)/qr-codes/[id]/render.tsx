@@ -7,8 +7,19 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Icons } from '@/components/icons'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import {
   Form,
   FormControl,
@@ -21,7 +32,12 @@ import {
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { toast } from '@/components/ui/use-toast'
-import { GetQRCodeFnDataType, createQRCode, updateQRCode } from './actions'
+import {
+  GetQRCodeFnDataType,
+  createQRCode,
+  deleteQRCode,
+  updateQRCode
+} from './actions'
 
 const QRCodeSchema = z.object({
   dynamic: z.boolean(),
@@ -78,28 +94,86 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Card>
           <CardHeader>
-            <FormField
-              control={form.control}
-              name="dynamic"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">Dynamic QR Code</FormLabel>
-                    <FormDescription>Track number of scans.</FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                onClick={() => router.back()}
+                variant="ghost"
+              >
+                <Icons.chevronLeft className="mr-2 h-4 w-4" />
+                Back
+              </Button>
+              <Button type="submit" disabled={isSaving}>
+                {isSaving ? (
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Icons.save className="mr-2 h-4 w-4" />
+                )}
+                <span>Save</span>
+              </Button>
+              {qrCode ? (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button type="button" variant="destructive">
+                      <Icons.delete className="mr-2 h-4 w-4" />
+                      Delete
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete your qr code and remove all its analytics data.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={async () => {
+                          setIsSaving(true)
+                          await deleteQRCode(qrCode.id)
+                          toast({
+                            title: 'QR Code deleted'
+                          })
+                          router.replace('/qr-codes')
+                        }}
+                      >
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              ) : null}
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="col-span-1 grid gap-3">
+                <FormField
+                  control={form.control}
+                  name="dynamic"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">
+                          Dynamic QR Code
+                        </FormLabel>
+                        <FormDescription>
+                          Track number of scans.
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="name"
@@ -159,40 +233,9 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
                   )}
                 />
               </div>
-              <div></div>
+              <div className="col-span-1"></div>
             </div>
           </CardContent>
-          <CardFooter className="flex gap-2">
-            <Button type="submit" disabled={isSaving}>
-              {isSaving ? (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Icons.save className="mr-2 h-4 w-4" />
-              )}
-              <span>Save</span>
-            </Button>
-            {qrCode ? (
-              <Button
-                type="button"
-                onClick={async () => {
-                  setIsSaving(true)
-                  router.replace('/qr-codes')
-                }}
-                variant="destructive"
-              >
-                <Icons.delete className="mr-2 h-4 w-4" />
-                Delete
-              </Button>
-            ) : null}
-            <Button
-              type="button"
-              onClick={() => router.back()}
-              variant="outline"
-            >
-              <Icons.chevronLeft className="mr-2 h-4 w-4" />
-              Back
-            </Button>
-          </CardFooter>
         </Card>
       </form>
     </Form>

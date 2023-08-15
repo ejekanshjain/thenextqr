@@ -35,10 +35,12 @@ const QRCodesPage = async () => {
             <EmptyPlaceholder.Description>
               You don&apos;t have any qr codes yet. Start creating.
             </EmptyPlaceholder.Description>
-            <Button variant="outline">
-              <Icons.add className="mr-2 h-4 w-4" />
-              New QR Code
-            </Button>
+            <Link href="/qr-codes/new">
+              <Button variant="outline">
+                <Icons.add className="mr-2 h-4 w-4" />
+                New QR Code
+              </Button>
+            </Link>
           </EmptyPlaceholder>
         )}
       </div>
