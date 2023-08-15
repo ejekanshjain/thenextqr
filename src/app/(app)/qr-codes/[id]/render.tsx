@@ -59,7 +59,6 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
           id: qrCode.id,
           ...data
         })
-        router.refresh()
       }
       toast({
         title: 'QR Code saved'
@@ -163,7 +162,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
               <div></div>
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex gap-2">
             <Button type="submit" disabled={isSaving}>
               {isSaving ? (
                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
@@ -171,6 +170,27 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
                 <Icons.save className="mr-2 h-4 w-4" />
               )}
               <span>Save</span>
+            </Button>
+            {qrCode ? (
+              <Button
+                type="button"
+                onClick={async () => {
+                  setIsSaving(true)
+                  router.replace('/qr-codes')
+                }}
+                variant="destructive"
+              >
+                <Icons.delete className="mr-2 h-4 w-4" />
+                Delete
+              </Button>
+            ) : null}
+            <Button
+              type="button"
+              onClick={() => router.back()}
+              variant="outline"
+            >
+              <Icons.chevronLeft className="mr-2 h-4 w-4" />
+              Back
             </Button>
           </CardFooter>
         </Card>

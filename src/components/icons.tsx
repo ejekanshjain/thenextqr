@@ -16,6 +16,7 @@ import {
   Settings,
   Star,
   Sun,
+  Trash,
   User,
   Wrench,
   X
@@ -55,6 +56,7 @@ export const Icons = {
   add: Plus,
   settings: Settings,
   save: Save,
+  delete: Trash,
   qrCode: QrCode,
   card: CreditCard,
   star: Star,

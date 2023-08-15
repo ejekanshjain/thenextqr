@@ -4,6 +4,7 @@ import { getAuthSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { UnwrapPromise } from '@/types/UnwrapPromise'
 import { nanoid } from 'nanoid'
+import { revalidatePath } from 'next/cache'
 
 export const getQRCode = async (id: string) => {
   const session = await getAuthSession()
@@ -66,6 +67,7 @@ export const createQRCode = async ({
       updatedById: session.user.id
     }
   })
+  revalidatePath(`/qr-codes/${id}`)
   return id
 }
 
@@ -122,4 +124,6 @@ export const updateQRCode = async ({
       website
     }
   })
+
+  revalidatePath(`/qr-codes/${id}`)
 }

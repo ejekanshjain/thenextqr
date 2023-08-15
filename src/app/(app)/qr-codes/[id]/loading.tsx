@@ -5,7 +5,7 @@ import { Shell } from '@/components/shell'
 const Loading = () => {
   return (
     <Shell>
-      <Heading heading="Loading" />
+      <Heading heading="Loading" text="Loading" />
       <div className="grid gap-10">
         <CardSkeleton />
       </div>

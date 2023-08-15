@@ -23,7 +23,9 @@ const QRCodesPage = async () => {
         {data.qrCodes?.length ? (
           <div className="divide-y divide-border rounded-md border">
             {data.qrCodes.map(qrCode => (
-              <div key={qrCode.id} />
+              <div key={qrCode.id}>
+                <Link href={`/qr-codes/${qrCode.id}`}>{qrCode.name}</Link>
+              </div>
             ))}
           </div>
         ) : (
