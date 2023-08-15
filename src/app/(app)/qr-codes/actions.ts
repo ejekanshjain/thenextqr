@@ -13,7 +13,7 @@ export const getQRCodes = async () => {
         createdById: session.user.id
       },
       orderBy: {
-        updatedAt: 'desc'
+        createdAt: 'desc'
       }
     }),
     prisma.qRCode.count({})

@@ -41,26 +41,31 @@ export const UserAuthForm: FC = ({
   async function onSubmit(data: FormData) {
     setIsLoading(true)
 
-    const signInResult = await signIn('email', {
-      email: data.email.toLowerCase(),
-      redirect: false,
-      callbackUrl: searchParams?.get('from') || '/qr-codes'
+    toast({
+      title: 'Coming Soon!',
+      description: JSON.stringify(data)
     })
+
+    // const signInResult = await signIn('email', {
+    //   email: data.email.toLowerCase(),
+    //   redirect: false,
+    //   callbackUrl: searchParams?.get('from') || '/qr-codes'
+    // })
 
     setIsLoading(false)
 
-    if (!signInResult?.ok) {
-      return toast({
-        title: 'Something went wrong.',
-        description: 'Your sign in request failed. Please try again.',
-        variant: 'destructive'
-      })
-    }
+    // if (!signInResult?.ok) {
+    //   return toast({
+    //     title: 'Something went wrong.',
+    //     description: 'Your sign in request failed. Please try again.',
+    //     variant: 'destructive'
+    //   })
+    // }
 
-    return toast({
-      title: 'Check your email',
-      description: 'We sent you a login link. Be sure to check your spam too.'
-    })
+    // return toast({
+    //   title: 'Check your email',
+    //   description: 'We sent you a login link. Be sure to check your spam too.'
+    // })
   }
 
   return (

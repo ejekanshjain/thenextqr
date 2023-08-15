@@ -75,18 +75,12 @@ model User {
     @@map("Users")
 }
 
-enum QRCodeType {
-    Static
-    Dynamic
-}
-
 model QRCode {
-    id      String     @id @default(cuid())
+    id      String  @id @default(cuid())
+    dynamic Boolean
     name    String
-    type    QRCodeType
-    slug    String?    @unique
+    slug    String? @unique
     website String
-    active  Boolean    @default(true)
 
     createdAt   DateTime @default(now()) @db.Timestamptz()
     updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
