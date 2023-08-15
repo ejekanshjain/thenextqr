@@ -23,9 +23,11 @@ const QRCodePage = async ({
             ? qrCode?.name || qrCode?.slug || qrCode?.website || qrCode.id
             : 'New QR Code'
         }
-        text={qrCode ? formatDate(qrCode.createdAt) : undefined}
+        text={
+          qrCode ? 'Created on: ' + formatDate(qrCode.createdAt) : undefined
+        }
       />
-      <div className="grid gap-10">
+      <div className="grid gap-10 p-1">
         <Render qrCode={qrCode} />
       </div>
     </Shell>
