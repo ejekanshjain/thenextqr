@@ -1,8 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { FC, useState } from 'react'
+import QRCode from 'qrcode'
+import { FC, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -19,6 +21,7 @@ import {
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import {
   Form,
   FormControl,
@@ -31,6 +34,8 @@ import {
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { toast } from '@/components/ui/use-toast'
+import { env } from '@/env.mjs'
+import Link from 'next/link'
 import {
   GetQRCodeFnDataType,
   createQRCode,
@@ -59,6 +64,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
   })
   const router = useRouter()
   const [isSaving, setIsSaving] = useState(false)
+  const [qr, setQr] = useState('')
 
   async function onSubmit(data: FormData) {
     setIsSaving(true)
@@ -87,6 +93,29 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
     }
     setIsSaving(false)
   }
+
+  const dynamic = form.watch('dynamic')
+  const slug = form.watch('slug')
+  const website = form.watch('website')
+
+  const url = useMemo(() => {
+    if (dynamic) return slug ? `${env.NEXT_PUBLIC_APP_URL}/${slug}` : undefined
+    else return website ? website : undefined
+  }, [dynamic, slug, website])
+
+  useEffect(() => {
+    if (!url) return setQr('')
+    QRCode.toDataURL(
+      url,
+      {
+        width: 640
+      },
+      (err, dataUrl) => {
+        if (err) return console.error(err)
+        setQr(dataUrl)
+      }
+    )
+  }, [url])
 
   return (
     <Form {...form}>
@@ -142,7 +171,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
             </AlertDialog>
           ) : null}
         </div>
-        <div className="col-span-1 grid gap-3">
+        <div className="col-span-1 flex flex-col gap-3">
           <FormField
             control={form.control}
             name="dynamic"
@@ -179,7 +208,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
               </FormItem>
             )}
           />
-          {form.getValues('dynamic') ? (
+          {dynamic ? (
             <FormField
               control={form.control}
               name="slug"
@@ -220,7 +249,22 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
             )}
           />
         </div>
-        <div className="col-span-1"></div>
+        <div className="col-span-1 flex items-center justify-center">
+          {url && qr ? (
+            <Card>
+              <CardContent>
+                <img src={qr} alt="QR Code" />
+                <Link
+                  href={url}
+                  className="text-sm text-muted-foreground underline underline-offset-4"
+                >
+                  {url}
+                </Link>
+              </CardContent>
+              <CardFooter></CardFooter>
+            </Card>
+          ) : undefined}
+        </div>
       </form>
     </Form>
   )
