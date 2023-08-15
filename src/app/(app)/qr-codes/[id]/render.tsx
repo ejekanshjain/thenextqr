@@ -21,7 +21,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { toast } from '@/components/ui/use-toast'
-import { GetQRCodeFnDataType, createQRCode } from './actions'
+import { GetQRCodeFnDataType, createQRCode, updateQRCode } from './actions'
 
 const QRCodeSchema = z.object({
   dynamic: z.boolean(),
@@ -47,7 +47,6 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
 
   async function onSubmit(data: FormData) {
     setIsSaving(true)
-    console.log(data)
 
     try {
       if (!qrCode) {
@@ -56,10 +55,10 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
         })
         router.replace(`/qr-codes/${newQRCodeId}`)
       } else {
-        // await updateQRCode({
-        //   id: qrCode.id,
-        //   ...data
-        // })
+        await updateQRCode({
+          id: qrCode.id,
+          ...data
+        })
         router.refresh()
       }
       toast({
