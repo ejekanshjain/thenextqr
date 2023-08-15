@@ -14,8 +14,10 @@ import {
   QrCode,
   Save,
   Settings,
+  Star,
   Sun,
   User,
+  Wrench,
   X
 } from 'lucide-react'
 
@@ -54,5 +56,7 @@ export const Icons = {
   settings: Settings,
   save: Save,
   qrCode: QrCode,
-  card: CreditCard
+  card: CreditCard,
+  star: Star,
+  wrench: Wrench
 }

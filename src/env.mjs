@@ -26,7 +26,10 @@ export const env = createEnv({
     EMAIL_SERVER_PASSWORD: z.string().min(1),
     EMAIL_FROM: z.string().email(),
     GITHUB_ID: z.string().min(1),
-    GITHUB_SECRET: z.string().min(1)
+    GITHUB_SECRET: z.string().min(1),
+    STRIPE_API_KEY: z.string().min(1),
+    STRIPE_WEBHOOK_SECRET: z.string().min(1),
+    STRIPE_PRO_MONTHLY_PLAN_ID: z.string().min(1)
   },
 
   /**
@@ -35,7 +38,7 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
+    NEXT_PUBLIC_APP_URL: z.string().url()
   },
 
   /**
@@ -53,7 +56,11 @@ export const env = createEnv({
     EMAIL_SERVER_PASSWORD: process.env.EMAIL_SERVER_PASSWORD,
     EMAIL_FROM: process.env.EMAIL_FROM,
     GITHUB_ID: process.env.GITHUB_ID,
-    GITHUB_SECRET: process.env.GITHUB_SECRET
+    GITHUB_SECRET: process.env.GITHUB_SECRET,
+    STRIPE_API_KEY: process.env.STRIPE_API_KEY,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+    STRIPE_PRO_MONTHLY_PLAN_ID: process.env.STRIPE_PRO_MONTHLY_PLAN_ID,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

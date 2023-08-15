@@ -14,9 +14,9 @@ const Layout = async ({ children }: { children: ReactNode }) => {
           <MainNav />
           <div className="flex items-center justify-center space-x-4">
             <Link href="/login">
-              <Button size="sm">
+              <Button size="sm" variant="secondary">
                 <Icons.login className="mr-2 h-4 w-4" />
-                Sign in to Continue
+                Sign In
               </Button>
             </Link>
           </div>

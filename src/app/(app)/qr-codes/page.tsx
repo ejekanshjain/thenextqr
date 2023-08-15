@@ -31,7 +31,7 @@ const QRCodesPage = async () => {
             <EmptyPlaceholder.Icon name="qrCode" />
             <EmptyPlaceholder.Title>No qr codes created</EmptyPlaceholder.Title>
             <EmptyPlaceholder.Description>
-              You don&apos;t have any qr codes yet. Start creating some.
+              You don&apos;t have any qr codes yet. Start creating.
             </EmptyPlaceholder.Description>
             <Button variant="outline">
               <Icons.add className="mr-2 h-4 w-4" />
