@@ -68,8 +68,8 @@ export const createQRCode = async ({
     }
   })
 
+  if (slug) revalidatePath(`/qr/${slug}`)
   revalidatePath(`/qr-codes/${id}`)
-  if (slug) revalidatePath(`/${slug}`)
   return id
 }
 
@@ -127,8 +127,8 @@ export const updateQRCode = async ({
     }
   })
 
-  if (qr.slug) revalidatePath(`/${qr.slug}`)
-  if (slug && qr.slug !== slug) revalidatePath(`/${slug}`)
+  if (qr.slug) revalidatePath(`/qr/${qr.slug}`)
+  if (slug && qr.slug !== slug) revalidatePath(`/qr/${slug}`)
   revalidatePath(`/qr-codes/${id}`)
 }
 
@@ -143,6 +143,6 @@ export const deleteQRCode = async (id: string) => {
     }
   })
 
-  if (deleted.slug) revalidatePath(`/${deleted.slug}`)
+  if (deleted.slug) revalidatePath(`/qr/${deleted.slug}`)
   revalidatePath(`/qr-codes/${id}`)
 }
