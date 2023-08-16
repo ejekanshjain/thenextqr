@@ -61,15 +61,23 @@ export async function POST(req: Request) {
       const priceId = subscription.items.data[0]?.price.id
 
       if (priceId) {
-        await prisma.user.update({
+        const expires = new Date(subscription.current_period_end * 1000)
+        const u = await prisma.user.update({
           where: {
             stripeSubscriptionId: subscription.id
           },
           data: {
             stripePriceId: priceId,
-            stripeCurrentPeriodEnd: new Date(
-              subscription.current_period_end * 1000
-            )
+            stripeCurrentPeriodEnd: expires
+          }
+        })
+        await prisma.qRCode.updateMany({
+          where: {
+            createdById: u.id,
+            dynamic: true
+          },
+          data: {
+            expires
           }
         })
         return new Response('Done', { status: 200 })

@@ -2,6 +2,7 @@
 
 import { getAuthSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { getUserSubscriptionPlan } from '@/lib/subscription'
 import { UnwrapPromise } from '@/types/UnwrapPromise'
 import { nanoid } from 'nanoid'
 import { revalidatePath } from 'next/cache'
@@ -47,6 +48,35 @@ export const createQRCode = async ({
   if (!dynamic) slug = undefined
   else if (dynamic && !slug) slug = nanoid(8).toLowerCase()
 
+  const plan = await getUserSubscriptionPlan(session.user.id)
+
+  if (plan.isPro) {
+    if (dynamic) {
+      const dynamicCount = await prisma.qRCode.count({
+        where: {
+          dynamic: true,
+          createdById: session.user.id
+        }
+      })
+
+      if (dynamicCount >= 5)
+        throw new Error('You can only create 5 dynamic QR Codes with PRO plan')
+    }
+  } else {
+    if (dynamic)
+      throw new Error('Dynamic QR Codes are only available for PRO plan')
+    else {
+      const staticCount = await prisma.qRCode.count({
+        where: {
+          dynamic: false,
+          createdById: session.user.id
+        }
+      })
+      if (staticCount >= 5)
+        throw new Error('You can only create 5 static QR Codes with FREE plan')
+    }
+  }
+
   if (
     dynamic &&
     (await prisma.qRCode.count({
@@ -63,6 +93,10 @@ export const createQRCode = async ({
       dynamic,
       slug,
       website,
+      expires:
+        dynamic && plan.stripeCurrentPeriodEnd
+          ? new Date(plan.stripeCurrentPeriodEnd)
+          : null,
       createdById: session.user.id,
       updatedById: session.user.id
     }
@@ -104,6 +138,24 @@ export const updateQRCode = async ({
     slug = nanoid(8).toLowerCase()
   }
 
+  const plan = await getUserSubscriptionPlan(session.user.id)
+  if (plan.isPro) {
+    if (dynamic && !qr.dynamic) {
+      const dynamicCount = await prisma.qRCode.count({
+        where: {
+          dynamic: true,
+          createdById: session.user.id
+        }
+      })
+
+      if (dynamicCount >= 5)
+        throw new Error('You can only create 5 dynamic QR Codes with PRO plan')
+    }
+  } else {
+    if (dynamic)
+      throw new Error('Dynamic QR Codes are only available for PRO plan')
+  }
+
   if (
     dynamic &&
     qr.slug !== slug &&
@@ -123,7 +175,11 @@ export const updateQRCode = async ({
       name,
       dynamic,
       slug,
-      website
+      website,
+      expires:
+        dynamic && plan.stripeCurrentPeriodEnd
+          ? new Date(plan.stripeCurrentPeriodEnd)
+          : null
     }
   })
 

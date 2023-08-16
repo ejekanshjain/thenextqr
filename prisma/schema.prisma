@@ -76,11 +76,12 @@ model User {
 }
 
 model QRCode {
-    id      String  @id @default(cuid())
+    id      String    @id @default(cuid())
     dynamic Boolean
     name    String
-    slug    String? @unique
+    slug    String?   @unique
     website String
+    expires DateTime? @db.Timestamptz()
 
     scanLogs QRCodeScanLog[]
 
@@ -91,6 +92,7 @@ model QRCode {
     updatedById String
     updatedBy   User     @relation("updatedQRCodes", fields: [updatedById], references: [id], onDelete: Cascade)
 
+    @@index([createdById], name: "createdById")
     @@map("QRCodes")
 }
 

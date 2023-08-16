@@ -15,9 +15,9 @@ export type UserSubscriptionPlan = SubscriptionPlan &
   }
 
 export const freePlan: SubscriptionPlan = {
-  name: 'Free',
+  name: 'FREE',
   description:
-    'The free plan is limited to 5 static QR codes only. Upgrade to the PRO plan for unlimited static QR codes and 5 dynamic QR codes.',
+    'The FREE plan is limited to 5 static QR codes only. Upgrade to the PRO plan for unlimited static QR codes and 5 dynamic QR codes.',
   stripePriceId: ''
 }
 
@@ -47,7 +47,7 @@ export const getUserSubscriptionPlan = async (
 
   const isPro = !!(
     user.stripePriceId &&
-    (user.stripeCurrentPeriodEnd?.getTime() || 0) + 86_400_000 > Date.now()
+    (user.stripeCurrentPeriodEnd?.getTime() || 0) > Date.now()
   )
 
   const plan = isPro ? proPlan : freePlan

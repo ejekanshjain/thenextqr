@@ -12,7 +12,10 @@ const Page = async ({
   const qrCode = await prisma.qRCode.findUnique({
     where: {
       slug,
-      dynamic: true
+      dynamic: true,
+      expires: {
+        gt: new Date()
+      }
     },
     select: {
       id: true,
