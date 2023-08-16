@@ -67,7 +67,9 @@ export const createQRCode = async ({
       updatedById: session.user.id
     }
   })
+
   revalidatePath(`/qr-codes/${id}`)
+  if (slug) revalidatePath(`/${slug}`)
   return id
 }
 
@@ -125,6 +127,8 @@ export const updateQRCode = async ({
     }
   })
 
+  if (qr.slug) revalidatePath(`/${qr.slug}`)
+  if (slug && qr.slug !== slug) revalidatePath(`/${slug}`)
   revalidatePath(`/qr-codes/${id}`)
 }
 
@@ -132,12 +136,13 @@ export const deleteQRCode = async (id: string) => {
   const session = await getAuthSession()
   if (!session?.user) throw new Error('Unauthorized')
 
-  await prisma.qRCode.delete({
+  const deleted = await prisma.qRCode.delete({
     where: {
       id,
       createdById: session.user.id
     }
   })
 
+  if (deleted.slug) revalidatePath(`/${deleted.slug}`)
   revalidatePath(`/qr-codes/${id}`)
 }
