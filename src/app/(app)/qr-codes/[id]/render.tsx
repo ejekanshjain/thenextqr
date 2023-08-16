@@ -45,7 +45,7 @@ import {
 
 const QRCodeSchema = z.object({
   dynamic: z.boolean(),
-  name: z.string(),
+  name: z.string().nonempty(),
   slug: z.string().optional(),
   website: z.string().url()
 })
