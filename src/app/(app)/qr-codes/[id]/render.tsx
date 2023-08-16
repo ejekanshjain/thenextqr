@@ -64,6 +64,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
   })
   const router = useRouter()
   const [isSaving, setIsSaving] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const [qr, setQr] = useState('')
 
   async function onSubmit(data: FormData) {
@@ -129,7 +130,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
             <Icons.chevronLeft className="mr-2 h-4 w-4" />
             Back
           </Button>
-          <Button type="submit" disabled={isSaving}>
+          <Button type="submit" disabled={isSaving || isDeleting}>
             {isSaving ? (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             ) : (
@@ -140,8 +141,16 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
           {qrCode ? (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button type="button" variant="destructive">
-                  <Icons.delete className="mr-2 h-4 w-4" />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  disabled={isSaving || isDeleting}
+                >
+                  {isDeleting ? (
+                    <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Icons.delete className="mr-2 h-4 w-4" />
+                  )}
                   Delete
                 </Button>
               </AlertDialogTrigger>
@@ -157,12 +166,12 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={async () => {
-                      setIsSaving(true)
+                      setIsDeleting(true)
                       await deleteQRCode(qrCode.id)
                       toast({
                         title: 'QR Code deleted'
                       })
-                      router.replace('/qr-codes')
+                      router.push('/qr-codes')
                     }}
                   >
                     Continue
