@@ -82,6 +82,8 @@ model QRCode {
     slug    String? @unique
     website String
 
+    scanLogs QRCodeScanLog[]
+
     createdAt   DateTime @default(now()) @db.Timestamptz()
     updatedAt   DateTime @default(now()) @updatedAt @db.Timestamptz()
     createdById String
@@ -90,4 +92,15 @@ model QRCode {
     updatedBy   User     @relation("updatedQRCodes", fields: [updatedById], references: [id], onDelete: Cascade)
 
     @@map("QRCodes")
+}
+
+model QRCodeScanLog {
+    id       String @id @default(cuid())
+    qrCodeId String
+
+    qrCode QRCode @relation(fields: [qrCodeId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now()) @db.Timestamptz()
+
+    @@map("QRCodeScanLogs")
 }
