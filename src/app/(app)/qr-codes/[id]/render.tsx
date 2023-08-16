@@ -21,7 +21,7 @@ import {
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import {
   Form,
   FormControl,
@@ -195,6 +195,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
             name="name"
             render={({ field }) => (
               <FormItem>
+                <FormLabel>Name</FormLabel>
                 <FormControl>
                   <Input
                     type="text"
@@ -214,6 +215,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
               name="slug"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Custom url</FormLabel>
                   <FormControl>
                     <Input
                       type="text"
@@ -234,6 +236,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
             name="website"
             render={({ field }) => (
               <FormItem>
+                <FormLabel>Website</FormLabel>
                 <FormControl>
                   <Input
                     type="url"
@@ -252,16 +255,18 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
         <div className="col-span-1 flex items-center justify-center">
           {url && qr ? (
             <Card>
+              <CardHeader>QR</CardHeader>
               <CardContent>
                 <img src={qr} alt="QR Code" />
+              </CardContent>
+              <CardFooter>
                 <Link
                   href={url}
-                  className="text-sm text-muted-foreground underline underline-offset-4"
+                  className="text-sm text-muted-foreground underline underline-offset-4 hover:text-primary"
                 >
                   {url}
                 </Link>
-              </CardContent>
-              <CardFooter></CardFooter>
+              </CardFooter>
             </Card>
           ) : undefined}
         </div>

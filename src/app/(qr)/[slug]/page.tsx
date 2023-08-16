@@ -2,7 +2,7 @@ import { notFound, redirect } from 'next/navigation'
 
 import { prisma } from '@/lib/db'
 
-export const Page = async ({
+const Page = async ({
   params: { slug }
 }: {
   params: {
@@ -31,3 +31,5 @@ export const Page = async ({
 
   return notFound()
 }
+
+export default Page
