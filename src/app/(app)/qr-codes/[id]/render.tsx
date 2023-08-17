@@ -2,6 +2,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import debounce from 'lodash/debounce'
 import { useRouter } from 'next/navigation'
 import QRCode from 'qrcode'
 import { FC, useEffect, useMemo, useState } from 'react'
@@ -70,34 +71,64 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
   async function onSubmit(data: FormData) {
     setIsSaving(true)
 
-    try {
-      if (!qrCode) {
-        const newQRCodeId = await createQRCode({
-          ...data
+    if (!qrCode) {
+      const result = await createQRCode({
+        ...data
+      })
+
+      if (result.error) {
+        toast({
+          title: 'Error saving qr code',
+          description: result.error,
+          variant: 'destructive'
         })
-        router.replace(`/qr-codes/${newQRCodeId}`)
+      } else if (result.id) {
+        toast({
+          title: 'QR Code saved'
+        })
+        router.replace(`/qr-codes/${result.id}`)
+      }
+    } else {
+      const result = await updateQRCode({
+        id: qrCode.id,
+        ...data
+      })
+      if (result.error) {
+        toast({
+          title: 'Error saving qr code',
+          description: result.error,
+          variant: 'destructive'
+        })
       } else {
-        await updateQRCode({
-          id: qrCode.id,
-          ...data
+        toast({
+          title: 'QR Code saved'
         })
       }
-      toast({
-        title: 'QR Code saved'
-      })
-    } catch (err) {
-      toast({
-        title: 'Error saving qr code',
-        description: (err as any).message || undefined,
-        variant: 'destructive'
-      })
     }
+
     setIsSaving(false)
   }
 
   const dynamic = form.watch('dynamic')
   const slug = form.watch('slug')
   const website = form.watch('website')
+
+  const debouncedSetQr = useMemo(
+    () =>
+      debounce((url: string) => {
+        QRCode.toDataURL(
+          url,
+          {
+            width: 640
+          },
+          (err, dataUrl) => {
+            if (err) return console.error(err)
+            setQr(dataUrl)
+          }
+        )
+      }, 2000),
+    []
+  )
 
   const url = useMemo(() => {
     if (dynamic)
@@ -107,17 +138,8 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
 
   useEffect(() => {
     if (!url) return setQr('')
-    QRCode.toDataURL(
-      url,
-      {
-        width: 640
-      },
-      (err, dataUrl) => {
-        if (err) return console.error(err)
-        setQr(dataUrl)
-      }
-    )
-  }, [url])
+    debouncedSetQr(url)
+  }, [debouncedSetQr, url])
 
   return (
     <Form {...form}>
@@ -270,12 +292,29 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
                 <img src={qr} alt="QR Code" />
               </CardContent>
               <CardFooter>
-                <Link
-                  href={url}
-                  className="text-sm text-muted-foreground underline underline-offset-4 hover:text-primary"
-                >
-                  {url}
-                </Link>
+                <div className="flex w-full items-center justify-between">
+                  <Button
+                    type="button"
+                    onClick={async () => {
+                      const a = document.createElement('a')
+                      a.href = qr
+                      a.download = `${
+                        form.getValues('name').toString() ||
+                        Math.random().toString().replace('.', '')
+                      }.png`
+                      a.click()
+                    }}
+                  >
+                    <Icons.download className="mr-2 h-4 w-4" />
+                    Download png
+                  </Button>
+                  <Link
+                    href={url}
+                    className="text-sm text-muted-foreground underline underline-offset-4 hover:text-primary"
+                  >
+                    {url}
+                  </Link>
+                </div>
               </CardFooter>
             </Card>
           ) : undefined}

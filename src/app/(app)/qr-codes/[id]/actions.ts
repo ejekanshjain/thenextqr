@@ -60,11 +60,11 @@ export const createQRCode = async ({
       })
 
       if (dynamicCount >= 5)
-        throw new Error('You can only create 5 dynamic QR Codes with PRO plan')
+        return { error: 'You can only create 5 dynamic QR Codes with PRO plan' }
     }
   } else {
     if (dynamic)
-      throw new Error('Dynamic QR Codes are only available for PRO plan')
+      return { error: 'Dynamic QR Codes are only available for PRO plan' }
     else {
       const staticCount = await prisma.qRCode.count({
         where: {
@@ -73,7 +73,7 @@ export const createQRCode = async ({
         }
       })
       if (staticCount >= 5)
-        throw new Error('You can only create 5 static QR Codes with FREE plan')
+        return { error: 'You can only create 5 static QR Codes with FREE plan' }
     }
   }
 
@@ -85,7 +85,7 @@ export const createQRCode = async ({
       }
     }))
   )
-    throw new Error('Slug already taken')
+    return { error: 'Slug already taken' }
 
   const { id } = await prisma.qRCode.create({
     data: {
@@ -104,7 +104,7 @@ export const createQRCode = async ({
 
   if (slug) revalidatePath(`/qr/${slug}`)
   revalidatePath(`/qr-codes/${id}`)
-  return id
+  return { id }
 }
 
 export const updateQRCode = async ({
@@ -149,11 +149,11 @@ export const updateQRCode = async ({
       })
 
       if (dynamicCount >= 5)
-        throw new Error('You can only create 5 dynamic QR Codes with PRO plan')
+        return { error: 'You can only create 5 dynamic QR Codes with PRO plan' }
     }
   } else {
     if (dynamic)
-      throw new Error('Dynamic QR Codes are only available for PRO plan')
+      return { error: 'Dynamic QR Codes are only available for PRO plan' }
   }
 
   if (
@@ -165,7 +165,7 @@ export const updateQRCode = async ({
       }
     }))
   )
-    throw new Error('Slug already taken')
+    return { error: 'Slug already taken' }
 
   await prisma.qRCode.update({
     where: {
@@ -186,6 +186,7 @@ export const updateQRCode = async ({
   if (qr.slug) revalidatePath(`/qr/${qr.slug}`)
   if (slug && qr.slug !== slug) revalidatePath(`/qr/${slug}`)
   revalidatePath(`/qr-codes/${id}`)
+  return { id }
 }
 
 export const deleteQRCode = async (id: string) => {
@@ -201,4 +202,5 @@ export const deleteQRCode = async (id: string) => {
 
   if (deleted.slug) revalidatePath(`/qr/${deleted.slug}`)
   revalidatePath(`/qr-codes/${id}`)
+  return
 }

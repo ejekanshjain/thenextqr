@@ -3,6 +3,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CreditCard,
+  Download,
   Laptop,
   Loader2,
   LogIn,
@@ -60,5 +61,6 @@ export const Icons = {
   qrCode: QrCode,
   card: CreditCard,
   star: Star,
-  wrench: Wrench
+  wrench: Wrench,
+  download: Download
 }

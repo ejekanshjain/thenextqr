@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
+import { toast } from '@/components/ui/use-toast'
 import { formatDate } from '@/lib/formatDate'
 import { UserSubscriptionPlan } from '@/lib/subscription'
 import { getStripeBillingUrl } from './actions'
@@ -41,8 +42,17 @@ export const Render: FC<Props> = ({ subscriptionPlan }) => {
           disabled={isLoading}
           onClick={async () => {
             setIsLoading(true)
-            const url = await getStripeBillingUrl()
-            window.location.href = url
+            const result = await getStripeBillingUrl()
+            if (result.error) {
+              console.error(result.error)
+              toast({
+                title: 'Internal Server Error',
+                variant: 'destructive',
+                description: 'Please try again later.'
+              })
+            } else if (result.url) {
+              window.location.href = result.url
+            }
           }}
         >
           {isLoading ? (

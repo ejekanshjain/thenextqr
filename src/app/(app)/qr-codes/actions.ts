@@ -5,7 +5,7 @@ import { UnwrapPromise } from '@/types/UnwrapPromise'
 export const getQRCodes = async () => {
   const session = await getAuthSession()
 
-  if (!session?.user) throw new Error('Unathorized')
+  if (!session?.user) throw new Error('Unauthorized')
 
   const [qrCodes, total] = await Promise.all([
     prisma.qRCode.findMany({

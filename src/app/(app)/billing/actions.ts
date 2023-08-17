@@ -19,7 +19,7 @@ export const getStripeBillingUrl = async () => {
       return_url: billingUrl
     })
 
-    return stripeSession.url
+    return { url: stripeSession.url }
   }
 
   const stripeSession = await stripe.checkout.sessions.create({
@@ -40,7 +40,7 @@ export const getStripeBillingUrl = async () => {
     }
   })
 
-  if (!stripeSession.url) throw new Error('Stripe session url not found')
+  if (!stripeSession.url) return { error: 'Stripe session url not found' }
 
-  return stripeSession.url
+  return { url: stripeSession.url }
 }
