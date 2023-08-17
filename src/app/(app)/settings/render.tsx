@@ -46,20 +46,20 @@ export const Render: FC<{ name: string }> = ({ name }) => {
   async function onSubmit(data: FormData) {
     setIsSaving(true)
 
-    const result = await updateName({
-      ...data
-    })
-    if (result?.error) {
-      toast({
-        title: 'Error updating your name.',
-        variant: 'destructive',
-        description: result.error
+    try {
+      await updateName({
+        ...data
       })
-    } else {
       toast({
         title: 'Your name has been updated.'
       })
       router.refresh()
+    } catch (err) {
+      toast({
+        title: 'Internal Server Error',
+        variant: 'destructive',
+        description: 'Please try again later.'
+      })
     }
 
     setIsSaving(false)
