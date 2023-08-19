@@ -119,7 +119,8 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
         QRCode.toDataURL(
           url,
           {
-            width: 640
+            width: 640,
+            margin: 3
           },
           (err, dataUrl) => {
             if (err) return console.error(err)
@@ -295,7 +296,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
                 <div className="flex w-full items-center justify-between">
                   <Button
                     type="button"
-                    onClick={async () => {
+                    onClick={() => {
                       const a = document.createElement('a')
                       a.href = qr
                       a.download = `${

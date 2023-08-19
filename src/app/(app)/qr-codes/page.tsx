@@ -6,6 +6,7 @@ import { Icons } from '@/components/icons'
 import { Shell } from '@/components/shell'
 import { Button } from '@/components/ui/button'
 import { getQRCodes } from './actions'
+import { QRListItem } from './qr'
 
 const QRCodesPage = async () => {
   const data = await getQRCodes()
@@ -23,9 +24,7 @@ const QRCodesPage = async () => {
         {data.qrCodes?.length ? (
           <div className="divide-y divide-border rounded-md border">
             {data.qrCodes.map(qrCode => (
-              <div key={qrCode.id}>
-                <Link href={`/qr-codes/${qrCode.id}`}>{qrCode.name}</Link>
-              </div>
+              <QRListItem key={qrCode.id} qr={qrCode} />
             ))}
           </div>
         ) : (

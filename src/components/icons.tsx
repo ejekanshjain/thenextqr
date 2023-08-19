@@ -1,10 +1,14 @@
 import {
+  ArrowRight,
   Biohazard,
   ChevronLeft,
   ChevronRight,
+  Clock,
   CreditCard,
   Download,
+  Edit,
   Laptop,
+  Link,
   Loader2,
   LogIn,
   LogOut,
@@ -14,6 +18,7 @@ import {
   Plus,
   QrCode,
   Save,
+  ScrollText,
   Settings,
   Star,
   Sun,
@@ -62,5 +67,10 @@ export const Icons = {
   card: CreditCard,
   star: Star,
   wrench: Wrench,
-  download: Download
+  download: Download,
+  edit: Edit,
+  clock: Clock,
+  note: ScrollText,
+  link: Link,
+  arrowRight: ArrowRight
 }

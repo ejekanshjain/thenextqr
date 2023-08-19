@@ -14,6 +14,13 @@ export const getQRCodes = async () => {
       },
       orderBy: {
         createdAt: 'desc'
+      },
+      include: {
+        _count: {
+          select: {
+            scanLogs: true
+          }
+        }
       }
     }),
     prisma.qRCode.count({})
