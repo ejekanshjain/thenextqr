@@ -73,6 +73,6 @@ export const getAuthSession = () => getServerSession(authOptions)
 
 export const authGuard = async () => {
   const session = await getAuthSession()
-  if (!session) throw new Error('Unauthorized')
+  if (!session) return false
   return session
 }
