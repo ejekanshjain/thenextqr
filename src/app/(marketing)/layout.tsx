@@ -17,7 +17,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
           <MainNav />
           <div className="flex items-center justify-center space-x-4">
             {session?.user ? (
-              <Link href="/dashboard">
+              <Link href="/qr-codes">
                 <Button size="sm" variant="secondary">
                   Dashboard
                 </Button>
