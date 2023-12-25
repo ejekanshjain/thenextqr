@@ -67,6 +67,27 @@ model User {
     @@map("Users")
 }
 
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime @db.Timestamptz()
+
+    @@unique([identifier, token])
+    @@map("VerificationTokens")
+}
+
+model Resource {
+    id               String @id @default(cuid())
+    originalFilename String
+    newFilename      String @unique
+    url              String @unique
+
+    createdAt DateTime @default(now()) @db.Timestamptz()
+    updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+    @@map("Resources")
+}
+
 model QRCode {
     id      String    @id @default(cuid())
     dynamic Boolean
