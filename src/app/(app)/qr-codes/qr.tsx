@@ -86,7 +86,9 @@ export const QRListItem: FC<{
       </div>
       <div className="flex items-center justify-around gap-2">
         <div className="flex text-muted-foreground">
-          {`${(qr as any)._count?.scanLogs || 0} Scans`}
+          {qr.dynamic
+            ? `${(qr as any)._count?.scanLogs || 0} Scans`
+            : 'No analytics available'}
         </div>
         <div className="flex h-36 w-36 items-center justify-center">
           {generatedQRCode ? (
