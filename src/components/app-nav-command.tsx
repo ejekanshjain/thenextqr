@@ -145,7 +145,7 @@ export const AppNavCommand: FC = () => {
                   <CommandItem
                     key={i}
                     onSelect={() => runCommand(() => router.push(sr.link))}
-                    value={sr.id}
+                    value={sr.title}
                   >
                     {sr.title}
                   </CommandItem>

@@ -1,6 +1,7 @@
 'use server'
 
 import { authGuard } from '@/lib/auth'
+import { prisma } from '@/lib/db'
 
 export type SearchResult = {
   id: string
@@ -9,11 +10,30 @@ export type SearchResult = {
 }
 
 export async function doSearch(search: string): Promise<SearchResult[]> {
-  await authGuard()
+  const session = await authGuard()
 
   const searchResults: SearchResult[] = []
 
-  console.log(search)
+  if (!session) return searchResults
+
+  const results = await prisma.qRCode.findMany({
+    where: {
+      createdById: session.user.id,
+      name: {
+        contains: search,
+        mode: 'insensitive'
+      }
+    },
+    take: 5
+  })
+
+  results.forEach(result => {
+    searchResults.push({
+      id: result.id,
+      title: result.name,
+      link: `/qr-codes/${result.id}`
+    })
+  })
 
   return searchResults
 }

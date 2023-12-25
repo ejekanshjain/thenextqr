@@ -105,7 +105,7 @@ model QRCode {
     updatedById String
     updatedBy   User     @relation("updatedQRCodes", fields: [updatedById], references: [id], onDelete: Cascade)
 
-    @@index([createdById], name: "createdById")
+    @@index([createdById])
     @@map("QRCodes")
 }
 
