@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 const Loading = () => {
   return (
     <Shell>
-      <Heading heading="QR Codes" text="Create and manage qr codes.">
+      <Heading heading="QR Codes" text="Create and manage QR codes.">
         <Link href="/qr-codes/new">
           <Button>
             <Icons.add className="mr-2 h-4 w-4" />

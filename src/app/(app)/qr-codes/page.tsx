@@ -12,7 +12,7 @@ const QRCodesPage = async () => {
   const data = await getQRCodes()
   return (
     <Shell>
-      <Heading heading="QR Codes" text="Create and manage qr codes.">
+      <Heading heading="QR Codes" text="Create and manage QR codes.">
         <Link href="/qr-codes/new">
           <Button>
             <Icons.add className="mr-2 h-4 w-4" />
@@ -30,9 +30,9 @@ const QRCodesPage = async () => {
         ) : (
           <EmptyPlaceholder>
             <EmptyPlaceholder.Icon name="qrCode" />
-            <EmptyPlaceholder.Title>No qr codes created</EmptyPlaceholder.Title>
+            <EmptyPlaceholder.Title>No QR codes created</EmptyPlaceholder.Title>
             <EmptyPlaceholder.Description>
-              You don&apos;t have any qr codes yet. Start creating.
+              You don&apos;t have any QR codes yet. Start creating.
             </EmptyPlaceholder.Description>
             <Link href="/qr-codes/new">
               <Button variant="outline">
