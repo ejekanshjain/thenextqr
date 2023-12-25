@@ -17,14 +17,13 @@ export type UserSubscriptionPlan = SubscriptionPlan &
 export const freePlan: SubscriptionPlan = {
   name: 'FREE',
   description:
-    'The FREE plan is limited to 5 static QR codes only. Upgrade to the PRO plan for unlimited static QR codes and 5 dynamic QR codes.',
+    'The FREE plan is limited to 5 static QR codes only. Upgrade to the PRO plan for 100 static QR codes and 5 dynamic QR codes.',
   stripePriceId: ''
 }
 
 export const proPlan: SubscriptionPlan = {
   name: 'PRO',
-  description:
-    'The PRO plan has unlimited static QR codes and 5 dynamic QR codes.',
+  description: 'The PRO plan has 100 static QR codes and 5 dynamic QR codes.',
   stripePriceId: env.STRIPE_PRO_MONTHLY_PLAN_ID
 }
 

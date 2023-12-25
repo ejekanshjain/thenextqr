@@ -61,6 +61,17 @@ export const createQRCode = async ({
 
       if (dynamicCount >= 5)
         return { error: 'You can only create 5 dynamic QR Codes with PRO plan' }
+    } else {
+      const staticCount = await prisma.qRCode.count({
+        where: {
+          dynamic: false,
+          createdById: session.user.id
+        }
+      })
+      if (staticCount >= 100)
+        return {
+          error: 'You can only create 100 static QR Codes with PRO plan'
+        }
     }
   } else {
     if (dynamic)
