@@ -77,13 +77,16 @@ model VerificationToken {
 }
 
 model Resource {
-    id               String @id @default(cuid())
+    id               String  @id @default(cuid())
     originalFilename String
-    newFilename      String @unique
-    url              String @unique
+    newFilename      String  @unique
+    url              String  @unique
+    qrCodeId         String? @unique
 
     createdAt DateTime @default(now()) @db.Timestamptz()
     updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+    qrCode QRCode? @relation("qrCodeLogo", fields: [qrCodeId], references: [id], onDelete: Cascade)
 
     @@map("Resources")
 }
@@ -96,6 +99,7 @@ model QRCode {
     website String
     expires DateTime? @db.Timestamptz()
 
+    logo     Resource?       @relation("qrCodeLogo")
     scanLogs QRCodeScanLog[]
 
     createdAt   DateTime @default(now()) @db.Timestamptz()

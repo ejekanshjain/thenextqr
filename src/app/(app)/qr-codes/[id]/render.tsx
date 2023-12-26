@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/navigation'
 import QRCode from 'qrcode'
-import { FC, useEffect, useMemo, useState } from 'react'
+import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -68,6 +68,9 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
   const [isDeleting, setIsDeleting] = useState(false)
   const [qr, setQr] = useState('')
 
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const logoImageRef = useRef<HTMLImageElement>(null)
+
   async function onSubmit(data: FormData) {
     setIsSaving(true)
 
@@ -116,17 +119,64 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
   const debouncedSetQr = useMemo(
     () =>
       debounce((url: string) => {
-        QRCode.toDataURL(
-          url,
-          {
-            width: 640,
-            margin: 3
-          },
-          (err, dataUrl) => {
-            if (err) return console.error(err)
-            setQr(dataUrl)
+        QRCode.toCanvas(canvasRef.current, url, {
+          width: 640,
+          margin: 2,
+          errorCorrectionLevel: 'H'
+        }).then(() => {
+          const canvas = canvasRef.current
+          if (!canvas) return
+          const image = logoImageRef.current
+
+          if (!image || !image.src) {
+            setQr(canvas.toDataURL('image/png'))
+            return
           }
-        )
+
+          const ctx = canvasRef.current.getContext('2d')!
+          const canvasWidth = canvas.width
+          const logoSize = 0.29
+          const borderSize = 0.024
+          const borderRadius = 1
+          const bgColor = '#ffffff'
+
+          const logoWidth = canvasWidth * logoSize
+          const logoXY = (canvasWidth * (1 - logoSize)) / 2
+          const logoBgWidth = canvasWidth * (logoSize + borderSize)
+          const logoBgXY = (canvasWidth * (1 - logoSize - borderSize)) / 2
+
+          const canvasRoundRect =
+            (ctx: CanvasRenderingContext2D) =>
+            (x: number, y: number, w: number, h: number, r: number) => {
+              const minSize = Math.min(w, h)
+              if (r > minSize / 2) {
+                r = minSize / 2
+              }
+              ctx.beginPath()
+              ctx.moveTo(x + r, y)
+              ctx.arcTo(x + w, y, x + w, y + h, r)
+              ctx.arcTo(x + w, y + h, x, y + h, r)
+              ctx.arcTo(x, y + h, x, y, r)
+              ctx.arcTo(x, y, x + w, y, r)
+              ctx.closePath()
+              return ctx
+            }
+
+          canvasRoundRect(ctx)(
+            logoBgXY,
+            logoBgXY,
+            logoBgWidth,
+            logoBgWidth,
+            borderRadius
+          )
+          ctx.fillStyle = bgColor
+          ctx.fill()
+
+          ctx.drawImage(image, logoXY, logoXY, logoWidth, logoWidth)
+
+          const dataUrl = canvasRef.current?.toDataURL('image/png')
+          setQr(dataUrl || '')
+        })
       }, 2000),
     []
   )
@@ -285,6 +335,14 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
           />
         </div>
         <div className="col-span-1 flex items-center justify-center">
+          <canvas ref={canvasRef} className="hidden" />
+          <img
+            ref={logoImageRef}
+            className="hidden"
+            crossOrigin="anonymous"
+            src="https://avatars.githubusercontent.com/u/33418543?v=4"
+            alt="Logo"
+          />
           {url && qr ? (
             <Card>
               <CardHeader>QR</CardHeader>
