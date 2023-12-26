@@ -1,12 +1,13 @@
+import { headers } from 'next/headers'
 import { notFound, redirect } from 'next/navigation'
 import { UAParser } from 'ua-parser-js'
 
 import { prisma } from '@/lib/db'
 
-const Page = async (ctx: any) => {
+const Page = async ({ params: { qrslug } }: { params: { qrslug: string } }) => {
   const qrCode = await prisma.qRCode.findUnique({
     where: {
-      slug: ctx.params.qrslug,
+      slug: qrslug,
       dynamic: true,
       expires: {
         gt: new Date()
@@ -19,16 +20,19 @@ const Page = async (ctx: any) => {
   })
 
   if (qrCode) {
-    const uaParser = new UAParser(ctx.req.headers['user-agent'])
+    const headersList = headers()
+
+    const ua = headersList.get('user-agent') || ''
+    const uaParser = new UAParser(ua)
     const uaParsed = uaParser.getResult()
+
+    const ip = headersList.get('x-forwarded-for') || ''
 
     await prisma.qRCodeScanLog.create({
       data: {
         qrCodeId: qrCode.id,
-        ipAdress:
-          ctx.req.headers['x-forwarded-for'] ||
-          ctx.req.connection.remoteAddress,
-        userAgent: ctx.req.headers['user-agent'],
+        ipAdress: ip,
+        userAgent: ua,
         browserName: uaParsed.browser.name,
         browserVersion: uaParsed.browser.version,
         osName: uaParsed.os.name,
