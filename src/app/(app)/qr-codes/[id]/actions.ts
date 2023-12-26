@@ -39,12 +39,14 @@ export const createQRCode = async ({
   dynamic,
   name,
   slug,
-  website
+  website,
+  logoId
 }: {
   dynamic: boolean
   name: string
   slug?: string
   website: string
+  logoId?: string | null
 }) => {
   const session = await getAuthSession()
   if (!session?.user) throw new Error('Unauthorized')
@@ -119,6 +121,16 @@ export const createQRCode = async ({
     }
   })
 
+  if (logoId)
+    await prisma.resource.update({
+      where: {
+        id: logoId
+      },
+      data: {
+        qrCodeId: id
+      }
+    })
+
   if (slug) revalidatePath(`/${slug}`)
   revalidatePath(`/qr-codes/${id}`)
   return { id }
@@ -129,13 +141,15 @@ export const updateQRCode = async ({
   dynamic,
   name,
   slug,
-  website
+  website,
+  logoId
 }: {
   id: string
   dynamic: boolean
   name: string
   slug?: string
   website: string
+  logoId?: string | null
 }) => {
   const session = await getAuthSession()
   if (!session?.user) throw new Error('Unauthorized')
@@ -184,21 +198,41 @@ export const updateQRCode = async ({
   )
     return { error: 'Slug already taken' }
 
-  await prisma.qRCode.update({
-    where: {
-      id
-    },
-    data: {
-      name,
-      dynamic,
-      slug,
-      website,
-      expires:
-        dynamic && plan.stripeCurrentPeriodEnd
-          ? new Date(plan.stripeCurrentPeriodEnd)
-          : null
-    }
-  })
+  await Promise.all([
+    prisma.qRCode.update({
+      where: {
+        id
+      },
+      data: {
+        name,
+        dynamic,
+        slug,
+        website,
+        expires:
+          dynamic && plan.stripeCurrentPeriodEnd
+            ? new Date(plan.stripeCurrentPeriodEnd)
+            : null
+      }
+    }),
+    prisma.resource.update({
+      where: {
+        qrCodeId: id
+      },
+      data: {
+        qrCodeId: null
+      }
+    })
+  ])
+
+  if (logoId)
+    await prisma.resource.update({
+      where: {
+        id: logoId
+      },
+      data: {
+        qrCodeId: id
+      }
+    })
 
   if (qr.slug) revalidatePath(`/${qr.slug}`)
   if (slug && qr.slug !== slug) revalidatePath(`/${slug}`)

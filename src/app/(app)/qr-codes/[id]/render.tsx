@@ -47,7 +47,8 @@ const QRCodeSchema = z.object({
   dynamic: z.boolean(),
   name: z.string().nonempty(),
   slug: z.string().optional(),
-  website: z.string().url()
+  website: z.string().url(),
+  logoId: z.string().optional().nullable()
 })
 
 type FormData = z.infer<typeof QRCodeSchema>
@@ -59,7 +60,8 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
       dynamic: qrCode?.dynamic || false,
       name: qrCode?.name || '',
       slug: qrCode?.slug || '',
-      website: qrCode?.website || ''
+      website: qrCode?.website || '',
+      logoId: qrCode?.logo?.id
     }
   })
   const router = useRouter()
