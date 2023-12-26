@@ -22,7 +22,7 @@ import {
   AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import {
   Form,
   FormControl,
@@ -36,7 +36,6 @@ import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { toast } from '@/components/ui/use-toast'
 import { env } from '@/env.mjs'
-import Link from 'next/link'
 import {
   GetQRCodeFnDataType,
   createQRCode,
@@ -120,7 +119,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
     () =>
       debounce((url: string) => {
         QRCode.toCanvas(canvasRef.current, url, {
-          width: 640,
+          width: 1024,
           margin: 2,
           errorCorrectionLevel: 'H'
         }).then(() => {
@@ -195,9 +194,9 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="grid grid-cols-1 gap-4 md:grid-cols-2"
+        className="grid grid-cols-1 gap-4 lg:grid-cols-2"
       >
-        <div className="col-span-1 flex gap-2 md:col-span-2">
+        <div className="col-span-1 flex gap-2 lg:col-span-2">
           <Button type="button" onClick={() => router.back()} variant="ghost">
             <Icons.chevronLeft className="mr-2 h-4 w-4" />
             Back
@@ -336,43 +335,36 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
         </div>
         <div className="col-span-1 flex items-center justify-center">
           <canvas ref={canvasRef} className="hidden" />
-          <img
-            ref={logoImageRef}
-            className="hidden"
-            crossOrigin="anonymous"
-            src="https://avatars.githubusercontent.com/u/33418543?v=4"
-            alt="Logo"
-          />
+          {qrCode?.logo?.url ? (
+            <img
+              ref={logoImageRef}
+              className="hidden"
+              crossOrigin="anonymous"
+              src={qrCode.logo.url}
+              alt="Logo"
+            />
+          ) : null}
           {url && qr ? (
             <Card>
-              <CardHeader>QR</CardHeader>
               <CardContent>
                 <img src={qr} alt="QR Code" />
               </CardContent>
               <CardFooter>
-                <div className="flex w-full items-center justify-between">
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      const a = document.createElement('a')
-                      a.href = qr
-                      a.download = `${
-                        form.getValues('name').toString() ||
-                        Math.random().toString().replace('.', '')
-                      }.png`
-                      a.click()
-                    }}
-                  >
-                    <Icons.download className="mr-2 h-4 w-4" />
-                    Download png
-                  </Button>
-                  <Link
-                    href={url}
-                    className="text-sm text-muted-foreground underline underline-offset-4 hover:text-primary"
-                  >
-                    {url}
-                  </Link>
-                </div>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    const a = document.createElement('a')
+                    a.href = qr
+                    a.download = `${
+                      form.getValues('name').toString() ||
+                      Math.random().toString().replace('.', '')
+                    }.png`
+                    a.click()
+                  }}
+                >
+                  <Icons.download className="mr-2 h-4 w-4" />
+                  Download png
+                </Button>
               </CardFooter>
             </Card>
           ) : undefined}

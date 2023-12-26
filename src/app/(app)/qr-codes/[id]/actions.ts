@@ -21,6 +21,12 @@ export const getQRCode = async (id: string) => {
       name: true,
       slug: true,
       website: true,
+      logo: {
+        select: {
+          id: true,
+          url: true
+        }
+      },
       createdAt: true,
       updatedAt: true
     }
