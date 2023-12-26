@@ -22,7 +22,7 @@ export const QRListItem: FC<{
   useEffect(() => {
     let url = ''
     if (qr.dynamic) {
-      url = qr.slug ? `${env.NEXT_PUBLIC_APP_URL}/qr/${qr.slug}` : ''
+      url = qr.slug ? `${env.NEXT_PUBLIC_APP_URL}/${qr.slug}` : ''
     } else {
       url = qr.website ? qr.website : ''
     }
@@ -58,10 +58,10 @@ export const QRListItem: FC<{
             <p className="flex items-center justify-start">
               <Icons.link className="mr-2 h-4 w-4" />
               <Link
-                href={env.NEXT_PUBLIC_APP_URL + '/qr/' + qr.slug}
+                href={env.NEXT_PUBLIC_APP_URL + '/' + qr.slug}
                 className="text-muted-foreground underline underline-offset-4 hover:text-primary"
               >
-                {env.NEXT_PUBLIC_APP_URL + '/qr/' + qr.slug}
+                {env.NEXT_PUBLIC_APP_URL + '/' + qr.slug}
               </Link>
             </p>
             <Icons.arrowRight className="mx-2 h-4 w-4" />

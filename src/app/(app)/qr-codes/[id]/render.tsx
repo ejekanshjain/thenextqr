@@ -132,8 +132,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
   )
 
   const url = useMemo(() => {
-    if (dynamic)
-      return slug ? `${env.NEXT_PUBLIC_APP_URL}/qr/${slug}` : undefined
+    if (dynamic) return slug ? `${env.NEXT_PUBLIC_APP_URL}/${slug}` : undefined
     else return website ? website : undefined
   }, [dynamic, slug, website])
 

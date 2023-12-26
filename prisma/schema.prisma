@@ -110,8 +110,17 @@ model QRCode {
 }
 
 model QRCodeScanLog {
-    id       String @id @default(cuid())
-    qrCodeId String
+    id             String  @id @default(cuid())
+    qrCodeId       String
+    ipAdress       String
+    userAgent      String
+    browserName    String?
+    browserVersion String?
+    osName         String?
+    osVersion      String?
+    deviceVendor   String?
+    deviceModel    String?
+    deviceType     String?
 
     qrCode QRCode @relation(fields: [qrCodeId], references: [id], onDelete: Cascade)
 
