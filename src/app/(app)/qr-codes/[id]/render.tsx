@@ -33,6 +33,7 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { toast } from '@/components/ui/use-toast'
 import { env } from '@/env.mjs'
@@ -67,10 +68,10 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
   const router = useRouter()
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const [qr, setQr] = useState('')
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const logoImageRef = useRef<HTMLImageElement>(null)
 
   async function onSubmit(data: FormData) {
     setIsSaving(true)
@@ -127,12 +128,15 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
         }).then(() => {
           const canvas = canvasRef.current
           if (!canvas) return
-          const image = logoImageRef.current
+          const imageUrl = qrCode?.logo?.url
 
-          if (!image || !image.src) {
+          if (!imageUrl) {
             setQr(canvas.toDataURL('image/png'))
             return
           }
+          const image = new Image()
+          image.src = imageUrl
+          image.crossOrigin = 'anonymous'
 
           const ctx = canvasRef.current.getContext('2d')!
           const canvasWidth = canvas.width
@@ -173,13 +177,19 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
           ctx.fillStyle = bgColor
           ctx.fill()
 
-          ctx.drawImage(image, logoXY, logoXY, logoWidth, logoWidth)
+          image.onload = () => {
+            ctx.drawImage(image, logoXY, logoXY, logoWidth, logoWidth)
+            const dataUrl = canvasRef.current?.toDataURL('image/png')
+            setQr(dataUrl || '')
+          }
 
-          const dataUrl = canvasRef.current?.toDataURL('image/png')
-          setQr(dataUrl || '')
+          image.onerror = () => {
+            const dataUrl = canvasRef.current?.toDataURL('image/png')
+            setQr(dataUrl || '')
+          }
         })
       }, 2000),
-    []
+    [qrCode?.logo?.url]
   )
 
   const url = useMemo(() => {
@@ -203,7 +213,10 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
             <Icons.chevronLeft className="mr-2 h-4 w-4" />
             Back
           </Button>
-          <Button type="submit" disabled={isSaving || isDeleting}>
+          <Button
+            type="submit"
+            disabled={isSaving || isDeleting || isUploading}
+          >
             {isSaving ? (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             ) : (
@@ -217,7 +230,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
                 <Button
                   type="button"
                   variant="destructive"
-                  disabled={isSaving || isDeleting}
+                  disabled={isSaving || isDeleting || isUploading}
                 >
                   {isDeleting ? (
                     <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
@@ -334,18 +347,48 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
               </FormItem>
             )}
           />
+          <div className={`grid w-full gap-3 ${!qrCode ? 'hidden' : ''}`}>
+            <Label htmlFor="logoFileInput">Logo</Label>
+            <Input
+              id="logoFileInput"
+              type="file"
+              accept="image/png,image/jpeg"
+              disabled={isUploading}
+              onChange={async e => {
+                const file = e.target.files?.[0]
+                if (!file) return
+                setIsUploading(true)
+                try {
+                  const formData = new FormData()
+                  formData.append('file', file)
+                  const res = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                  })
+                  const json = await res.json()
+                  if (json.success && json.id && json.url) {
+                    form.setValue('logoId', json.id)
+                    onSubmit(form.getValues())
+                  } else {
+                    toast({
+                      title: 'Failed to upload logo',
+                      variant: 'destructive'
+                    })
+                  }
+                } catch (err) {
+                  console.error(err)
+                  toast({
+                    title: 'Failed to upload logo',
+                    variant: 'destructive'
+                  })
+                }
+                setIsUploading(false)
+              }}
+            />
+          </div>
         </div>
         <div className="col-span-1 flex items-center justify-center">
           <canvas ref={canvasRef} className="hidden" />
-          {qrCode?.logo?.url ? (
-            <img
-              ref={logoImageRef}
-              className="hidden"
-              crossOrigin="anonymous"
-              src={qrCode.logo.url}
-              alt="Logo"
-            />
-          ) : null}
           {url && qr ? (
             <Card>
               <CardContent>

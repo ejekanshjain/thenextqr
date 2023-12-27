@@ -214,7 +214,7 @@ export const updateQRCode = async ({
             : null
       }
     }),
-    prisma.resource.update({
+    prisma.resource.updateMany({
       where: {
         qrCodeId: id
       },

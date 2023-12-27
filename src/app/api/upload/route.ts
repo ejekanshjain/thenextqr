@@ -4,6 +4,10 @@ import { getAuthSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { storageClient } from '@/lib/storageClient'
 
+const MAX_FILE_SIZE = 512 * 1024 // 512kb
+
+const allowedFileTypes = ['image/png', 'image/jpeg']
+
 export async function POST(request: NextRequest) {
   const session = await getAuthSession()
   if (!session)
@@ -15,6 +19,18 @@ export async function POST(request: NextRequest) {
   const file: File | null = data.get('file') as unknown as File
 
   if (!file) return NextResponse.json({ success: false })
+
+  if (file.size > MAX_FILE_SIZE)
+    return NextResponse.json({
+      success: false,
+      message: 'File size is too big'
+    })
+
+  if (!allowedFileTypes.includes(file.type))
+    return NextResponse.json({
+      success: false,
+      message: 'File type is not allowed'
+    })
 
   const bytes = await file.arrayBuffer()
   const buffer = Buffer.from(bytes)
