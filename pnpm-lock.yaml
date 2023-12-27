@@ -107,6 +107,9 @@ dependencies:
   '@types/react-dom':
     specifier: ^18.2.18
     version: 18.2.18
+  '@types/ua-parser-js':
+    specifier: ^0.7.39
+    version: 0.7.39
   '@typescript-eslint/eslint-plugin':
     specifier: ^6.15.0
     version: 6.15.0(@typescript-eslint/parser@6.15.0)(eslint@8.56.0)(typescript@5.3.3)
@@ -209,11 +212,6 @@ dependencies:
   zod:
     specifier: ^3.22.4
     version: 3.22.4
-
-devDependencies:
-  '@types/ua-parser-js':
-    specifier: ^0.7.39
-    version: 0.7.39
 
 packages:
 
@@ -2956,7 +2954,7 @@ packages:
 
   /@types/ua-parser-js@0.7.39:
     resolution: {integrity: sha512-P/oDfpofrdtF5xw433SPALpdSchtJmY7nsJItf8h3KXqOslkbySh8zq4dSWXH2oTjRvJ5PczVEoCZPow6GicLg==}
-    dev: true
+    dev: false
 
   /@typescript-eslint/eslint-plugin@6.15.0(@typescript-eslint/parser@6.15.0)(eslint@8.56.0)(typescript@5.3.3):
     resolution: {integrity: sha512-j5qoikQqPccq9QoBAupOP+CBu8BaJ8BLjaXSioDISeTZkVO3ig7oSIKh3H+rEpee7xCXtWwSB4KIL5l6hWZzpg==}
