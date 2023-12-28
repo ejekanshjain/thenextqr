@@ -76,9 +76,9 @@ export const createQRCode = async ({
           createdById: session.user.id
         }
       })
-      if (staticCount >= 100)
+      if (staticCount >= 50)
         return {
-          error: 'You can only create 100 static QR Codes with PRO plan'
+          error: 'You can only create 50 static QR Codes with PRO plan'
         }
     }
   } else {
