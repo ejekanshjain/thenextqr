@@ -17,7 +17,11 @@ export const QRList: FC<{
 
   const filteredData = useMemo(() => {
     const s = search.trim().toLowerCase()
-    return data.qrCodes.filter(qr => qr.name.toLowerCase().includes(s))
+    return data.qrCodes.filter(
+      qr =>
+        qr.name.toLowerCase().includes(s) ||
+        qr.website.toLowerCase().includes(s)
+    )
   }, [search, data.qrCodes])
 
   return (
