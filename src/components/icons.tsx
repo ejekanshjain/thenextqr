@@ -18,6 +18,7 @@ import {
   Github,
   Laptop,
   LayoutDashboard,
+  LineChart,
   Link,
   Loader2,
   LogIn,
@@ -93,5 +94,6 @@ export const Icons = {
   star: Star,
   link: Link,
   clock: Clock,
-  note: ScrollText
+  note: ScrollText,
+  analytics: LineChart
 }
