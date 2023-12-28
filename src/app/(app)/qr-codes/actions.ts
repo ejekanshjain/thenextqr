@@ -16,6 +16,12 @@ export const getQRCodes = async () => {
         createdAt: 'desc'
       },
       include: {
+        logo: {
+          select: {
+            id: true,
+            url: true
+          }
+        },
         _count: {
           select: {
             scanLogs: true

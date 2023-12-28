@@ -1,23 +1,25 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
 
-import { QRCode } from '@prisma/client'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import QRCodeGen from 'qrcode'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { env } from '@/env.mjs'
 import { formatDate } from '@/lib/formatDate'
-import Link from 'next/link'
+import { GetQRCodesFnDataType } from './actions'
 
 export const QRListItem: FC<{
-  qr: QRCode
+  qr: GetQRCodesFnDataType['qrCodes'][0]
 }> = ({ qr }) => {
   const router = useRouter()
   const [generatedQRCode, setGeneratedQRCode] = useState('')
+
+  const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
     let url = ''
@@ -29,17 +31,75 @@ export const QRListItem: FC<{
 
     if (!url) return
 
-    QRCodeGen.toDataURL(
-      url,
-      {
-        width: 640,
-        margin: 3
-      },
-      (err, dataUrl) => {
-        if (err) return console.error(err)
-        setGeneratedQRCode(dataUrl)
+    QRCodeGen.toCanvas(canvasRef.current, url, {
+      width: 1024,
+      margin: 2,
+      errorCorrectionLevel: 'H'
+    }).then(() => {
+      const canvas = canvasRef.current
+      if (!canvas) return
+
+      const imageUrl = qr.logo?.url
+
+      if (!imageUrl) {
+        setGeneratedQRCode(canvas.toDataURL('image/png'))
+        return
       }
-    )
+
+      const image = new Image()
+      image.src = imageUrl
+      image.crossOrigin = 'anonymous'
+
+      const ctx = canvasRef.current.getContext('2d')!
+      const canvasWidth = canvas.width
+      const logoSize = 0.29
+      const borderSize = 0.024
+      const borderRadius = 1
+      const bgColor = '#ffffff'
+
+      const logoWidth = canvasWidth * logoSize
+      const logoXY = (canvasWidth * (1 - logoSize)) / 2
+      const logoBgWidth = canvasWidth * (logoSize + borderSize)
+      const logoBgXY = (canvasWidth * (1 - logoSize - borderSize)) / 2
+
+      const canvasRoundRect =
+        (ctx: CanvasRenderingContext2D) =>
+        (x: number, y: number, w: number, h: number, r: number) => {
+          const minSize = Math.min(w, h)
+          if (r > minSize / 2) {
+            r = minSize / 2
+          }
+          ctx.beginPath()
+          ctx.moveTo(x + r, y)
+          ctx.arcTo(x + w, y, x + w, y + h, r)
+          ctx.arcTo(x + w, y + h, x, y + h, r)
+          ctx.arcTo(x, y + h, x, y, r)
+          ctx.arcTo(x, y, x + w, y, r)
+          ctx.closePath()
+          return ctx
+        }
+
+      canvasRoundRect(ctx)(
+        logoBgXY,
+        logoBgXY,
+        logoBgWidth,
+        logoBgWidth,
+        borderRadius
+      )
+      ctx.fillStyle = bgColor
+      ctx.fill()
+
+      image.onload = () => {
+        ctx.drawImage(image, logoXY, logoXY, logoWidth, logoWidth)
+        const dataUrl = canvasRef.current?.toDataURL('image/png')
+        setGeneratedQRCode(dataUrl || '')
+      }
+
+      image.onerror = () => {
+        const dataUrl = canvasRef.current?.toDataURL('image/png')
+        setGeneratedQRCode(dataUrl || '')
+      }
+    })
   }, [qr])
 
   return (
@@ -86,9 +146,10 @@ export const QRListItem: FC<{
       </div>
       <div className="flex items-center justify-around gap-2">
         <div className="flex text-muted-foreground">
-          {`${(qr as any)._count?.scanLogs || 0} Scans`}
+          {`${qr._count?.scanLogs || 0} Scans`}
         </div>
         <div className="flex h-36 w-36 items-center justify-center">
+          <canvas ref={canvasRef} className="hidden" />
           {generatedQRCode ? (
             <img
               className="rounded"

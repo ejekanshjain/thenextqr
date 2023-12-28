@@ -1,18 +1,17 @@
 import Link from 'next/link'
 
-import { EmptyPlaceholder } from '@/components/empty-placeholder'
 import { Heading } from '@/components/heading'
 import { Icons } from '@/components/icons'
 import { Shell } from '@/components/shell'
 import { Button } from '@/components/ui/button'
 import { getQRCodes } from './actions'
-import { QRListItem } from './qr'
+import { QRList } from './qr-list'
 
 const QRCodesPage = async () => {
   const data = await getQRCodes()
   return (
     <Shell>
-      <Heading heading="QR Codes" text="Create and manage QR codes.">
+      <Heading heading="QR Codes" text="Create and manage your QR codes.">
         <Link href="/qr-codes/new">
           <Button>
             <Icons.add className="mr-2 h-4 w-4" />
@@ -20,29 +19,7 @@ const QRCodesPage = async () => {
           </Button>
         </Link>
       </Heading>
-      <div>
-        {data.qrCodes?.length ? (
-          <div className="divide-y divide-border rounded-md border">
-            {data.qrCodes.map(qrCode => (
-              <QRListItem key={qrCode.id} qr={qrCode} />
-            ))}
-          </div>
-        ) : (
-          <EmptyPlaceholder>
-            <EmptyPlaceholder.Icon name="qrCode" />
-            <EmptyPlaceholder.Title>No QR codes created</EmptyPlaceholder.Title>
-            <EmptyPlaceholder.Description>
-              You don&apos;t have any QR codes yet. Start creating.
-            </EmptyPlaceholder.Description>
-            <Link href="/qr-codes/new">
-              <Button variant="outline">
-                <Icons.add className="mr-2 h-4 w-4" />
-                New QR Code
-              </Button>
-            </Link>
-          </EmptyPlaceholder>
-        )}
-      </div>
+      <QRList data={data} />
     </Shell>
   )
 }

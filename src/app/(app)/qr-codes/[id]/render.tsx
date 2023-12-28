@@ -4,7 +4,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/navigation'
-import QRCode from 'qrcode'
+import QRCodeGen from 'qrcode'
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -69,7 +69,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
-  const [qr, setQr] = useState('')
+  const [generatedQRCode, setGeneratedQRCode] = useState('')
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -121,7 +121,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
   const debouncedSetQr = useMemo(
     () =>
       debounce((url: string) => {
-        QRCode.toCanvas(canvasRef.current, url, {
+        QRCodeGen.toCanvas(canvasRef.current, url, {
           width: 1024,
           margin: 2,
           errorCorrectionLevel: 'H'
@@ -131,9 +131,10 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
           const imageUrl = qrCode?.logo?.url
 
           if (!imageUrl) {
-            setQr(canvas.toDataURL('image/png'))
+            setGeneratedQRCode(canvas.toDataURL('image/png'))
             return
           }
+
           const image = new Image()
           image.src = imageUrl
           image.crossOrigin = 'anonymous'
@@ -180,15 +181,15 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
           image.onload = () => {
             ctx.drawImage(image, logoXY, logoXY, logoWidth, logoWidth)
             const dataUrl = canvasRef.current?.toDataURL('image/png')
-            setQr(dataUrl || '')
+            setGeneratedQRCode(dataUrl || '')
           }
 
           image.onerror = () => {
             const dataUrl = canvasRef.current?.toDataURL('image/png')
-            setQr(dataUrl || '')
+            setGeneratedQRCode(dataUrl || '')
           }
         })
-      }, 2000),
+      }, 1000),
     [qrCode?.logo?.url]
   )
 
@@ -198,7 +199,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
   }, [dynamic, slug, website])
 
   useEffect(() => {
-    if (!url) return setQr('')
+    if (!url) return setGeneratedQRCode('')
     debouncedSetQr(url)
   }, [debouncedSetQr, url])
 
@@ -389,17 +390,17 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
         </div>
         <div className="col-span-1 flex items-center justify-center">
           <canvas ref={canvasRef} className="hidden" />
-          {url && qr ? (
+          {url && generatedQRCode ? (
             <Card>
               <CardContent>
-                <img src={qr} alt="QR Code" />
+                <img src={generatedQRCode} alt="QR Code" />
               </CardContent>
               <CardFooter>
                 <Button
                   type="button"
                   onClick={() => {
                     const a = document.createElement('a')
-                    a.href = qr
+                    a.href = generatedQRCode
                     a.download = `${
                       form.getValues('name').toString() ||
                       Math.random().toString().replace('.', '')
