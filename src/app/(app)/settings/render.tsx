@@ -28,7 +28,7 @@ import { toast } from '@/components/ui/use-toast'
 import { updateName } from './actions'
 
 const userSchema = z.object({
-  name: z.string().nonempty()
+  name: z.string().min(1)
 })
 
 type FormData = z.infer<typeof userSchema>

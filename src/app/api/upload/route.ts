@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { getAuthSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
-import { storageClient } from '@/lib/storageClient'
+import { getCdnUrl, storageClient } from '@/lib/storageClient'
 
 const MAX_FILE_SIZE = 512 * 1024 // 512kb
 
@@ -44,7 +44,8 @@ export async function POST(request: NextRequest) {
     data: {
       newFilename: filename,
       originalFilename: file.name,
-      url
+      url,
+      cdnUrl: getCdnUrl(filename)
     }
   })
 

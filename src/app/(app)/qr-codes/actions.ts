@@ -19,7 +19,8 @@ export const getQRCodes = async () => {
         logo: {
           select: {
             id: true,
-            url: true
+            url: true,
+            cdnUrl: true
           }
         },
         _count: {

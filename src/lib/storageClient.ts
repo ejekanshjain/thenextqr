@@ -1,11 +1,13 @@
-import { GCPStorageClient } from '@ejekanshjain/cloud-storage'
+import { S3Client } from '@ejekanshjain/cloud-storage'
 
 import { env } from '@/env.mjs'
 
-export const storageClient = GCPStorageClient({
-  projectId: env.FIREBASE_PROJECT_ID!,
-  privateKey: env.FIREBASE_PRIVATE_KEY!,
-  clientEmail: env.FIREBASE_CLIENT_EMAIL!,
-  bucket: env.FIREBASE_STORAGE_BUCKET!,
-  defaultMediaPublic: true
+export const storageClient = S3Client({
+  region: env.S3_REGION,
+  bucket: env.S3_BUCKET,
+  accessKey: env.S3_ACCESS_KEY,
+  accessSecret: env.S3_ACCESS_SECRET
 })
+
+export const getCdnUrl = (filename: string) =>
+  env.S3_CDN ? `${env.S3_CDN}/${filename}` : null

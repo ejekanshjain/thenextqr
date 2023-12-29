@@ -24,7 +24,8 @@ export const getQRCode = async (id: string) => {
       logo: {
         select: {
           id: true,
-          url: true
+          url: true,
+          cdnUrl: true
         }
       },
       createdAt: true,

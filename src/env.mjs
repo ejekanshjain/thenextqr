@@ -29,10 +29,11 @@ export const env = createEnv({
     GOOGLE_SECRET: z.string().min(1),
     GITHUB_ID: z.string().min(1),
     GITHUB_SECRET: z.string().min(1),
-    FIREBASE_PROJECT_ID: z.string().min(1),
-    FIREBASE_PRIVATE_KEY: z.string().min(1),
-    FIREBASE_CLIENT_EMAIL: z.string().min(1),
-    FIREBASE_STORAGE_BUCKET: z.string().min(1),
+    S3_REGION: z.string().min(1),
+    S3_BUCKET: z.string().min(1),
+    S3_ACCESS_KEY: z.string().min(1),
+    S3_ACCESS_SECRET: z.string().min(1),
+    S3_CDN: z.string().optional().nullable(),
     STRIPE_API_KEY: z.string().min(1),
     STRIPE_WEBHOOK_SECRET: z.string().min(1),
     STRIPE_PRO_MONTHLY_PLAN_ID: z.string().min(1)
@@ -65,10 +66,11 @@ export const env = createEnv({
     GOOGLE_SECRET: process.env.GOOGLE_SECRET,
     GITHUB_ID: process.env.GITHUB_ID,
     GITHUB_SECRET: process.env.GITHUB_SECRET,
-    FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
-    FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY,
-    FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL,
-    FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET,
+    S3_REGION: process.env.S3_REGION,
+    S3_BUCKET: process.env.S3_BUCKET,
+    S3_ACCESS_KEY: process.env.S3_ACCESS_KEY,
+    S3_ACCESS_SECRET: process.env.S3_ACCESS_SECRET,
+    S3_CDN: process.env.S3_CDN,
     STRIPE_API_KEY: process.env.STRIPE_API_KEY,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     STRIPE_PRO_MONTHLY_PLAN_ID: process.env.STRIPE_PRO_MONTHLY_PLAN_ID,
@@ -78,5 +80,8 @@ export const env = createEnv({
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
    * This is especially useful for Docker builds.
    */
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+
+  // This makes empty strings be treated as undefined
+  emptyStringAsUndefined: true
 })

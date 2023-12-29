@@ -81,6 +81,7 @@ model Resource {
     originalFilename String
     newFilename      String  @unique
     url              String  @unique
+    cdnUrl           String? @unique
     qrCodeId         String? @unique
 
     createdAt DateTime @default(now()) @db.Timestamptz()

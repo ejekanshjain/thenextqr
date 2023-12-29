@@ -47,7 +47,7 @@ import {
 
 const QRCodeSchema = z.object({
   dynamic: z.boolean(),
-  name: z.string().nonempty(),
+  name: z.string().min(1),
   slug: z.string().optional(),
   website: z.string().url(),
   logoId: z.string().optional().nullable()
@@ -129,7 +129,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
         }).then(() => {
           const canvas = canvasRef.current
           if (!canvas) return
-          const imageUrl = qrCode?.logo?.url
+          const imageUrl = qrCode?.logo?.cdnUrl || qrCode?.logo?.url
 
           if (!imageUrl) {
             setGeneratedQRCode(canvas.toDataURL('image/png'))
@@ -174,7 +174,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
           }
         })
       }, 1000),
-    [qrCode?.logo?.url]
+    [qrCode?.logo?.cdnUrl, qrCode?.logo?.url]
   )
 
   const url = useMemo(() => {
@@ -351,7 +351,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
                     body: formData
                   })
                   const json = await res.json()
-                  if (json.success && json.id && json.url) {
+                  if (json.success && json.id) {
                     form.setValue('logoId', json.id)
                     onSubmit(form.getValues())
                   } else {

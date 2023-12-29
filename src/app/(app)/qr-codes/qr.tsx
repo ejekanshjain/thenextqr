@@ -40,7 +40,7 @@ export const QRListItem: FC<{
       const canvas = canvasRef.current
       if (!canvas) return
 
-      const imageUrl = qr.logo?.url
+      const imageUrl = qr.logo?.cdnUrl || qr.logo?.url
 
       if (!imageUrl) {
         setGeneratedQRCode(canvas.toDataURL('image/png'))
