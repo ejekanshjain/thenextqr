@@ -2,6 +2,7 @@
 
 import { env } from '@/env.mjs'
 import { getAuthSession } from '@/lib/auth'
+import { prisma } from '@/lib/db'
 import { stripe } from '@/lib/stripe'
 import { getUserSubscriptionPlan, proPlan } from '@/lib/subscription'
 
@@ -11,11 +12,45 @@ export const getStripeBillingUrl = async () => {
   const session = await getAuthSession()
   if (!session?.user || !session.user.email) throw new Error('Unauthorized')
 
+  let stripeCustomerId: string | undefined
+
+  const u = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: session.user.id
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      stripeCustomerId: true
+    }
+  })
+
+  if (!u.email) throw new Error('No email in user')
+
+  if (u.stripeCustomerId) {
+    stripeCustomerId = u.stripeCustomerId
+  } else {
+    const c = await stripe.customers.create({
+      email: u.email,
+      name: u.name || undefined
+    })
+    await prisma.user.update({
+      where: {
+        id: u.id
+      },
+      data: {
+        stripeCustomerId: c.id
+      }
+    })
+    stripeCustomerId = c.id
+  }
+
   const subscriptionPlan = await getUserSubscriptionPlan(session.user.id)
 
-  if (subscriptionPlan.stripeCustomerId && subscriptionPlan.isPro) {
+  if (subscriptionPlan.isPro) {
     const stripeSession = await stripe.billingPortal.sessions.create({
-      customer: subscriptionPlan.stripeCustomerId,
+      customer: stripeCustomerId,
       return_url: billingUrl
     })
 
@@ -28,7 +63,7 @@ export const getStripeBillingUrl = async () => {
     payment_method_types: ['card'],
     mode: 'subscription',
     billing_address_collection: 'auto',
-    customer_email: session.user.email,
+    customer: stripeCustomerId,
     line_items: [
       {
         price: proPlan.stripePriceId,

@@ -9,7 +9,7 @@ export type SubscriptionPlan = {
 }
 
 export type UserSubscriptionPlan = SubscriptionPlan &
-  Pick<User, 'stripeCustomerId' | 'stripeSubscriptionId'> & {
+  Pick<User, 'stripeSubscriptionId'> & {
     stripeCurrentPeriodEnd: number
     isPro: boolean
   }
@@ -35,7 +35,6 @@ export const getUserSubscriptionPlan = async (
       id: userId
     },
     select: {
-      stripeCustomerId: true,
       stripeSubscriptionId: true,
       stripePriceId: true,
       stripeCurrentPeriodEnd: true
