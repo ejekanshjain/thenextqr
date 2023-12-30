@@ -28,31 +28,54 @@ export async function POST(req: Request) {
     if (event.type === 'invoice.payment_succeeded') {
       const stripeInvoice = event.data.object as Stripe.Invoice
       const subscriptionId = stripeInvoice.subscription?.toString()
+      const stripeCustomerId = stripeInvoice.customer?.toString()
 
-      if (!subscriptionId) {
-        console.error('Invalid parameters "subscriptionId"')
-        return new Response('Invalid parameters "subscriptionId"', {
-          status: 400
-        })
+      if (!subscriptionId || !stripeCustomerId) {
+        console.error(
+          'Invalid parameters "subscriptionId" and "stripeCustomerId"'
+        )
+        return new Response(
+          'Invalid parameters "subscriptionId" and "stripeCustomerId"',
+          {
+            status: 400
+          }
+        )
       }
 
       const subscription = await stripe.subscriptions.retrieve(subscriptionId)
       const priceId = subscription.items.data[0]?.price.id
-      const userId = subscription.metadata?.userId
 
-      if (!userId || !priceId) {
-        console.error('Invalid parameters "userId" and "priceId"')
-        return new Response('Invalid parameters "userId" and "priceId"', {
+      if (!priceId) {
+        console.error('Invalid parameters "priceId"')
+        return new Response('Invalid parameters "priceId"', {
           status: 400
         })
       }
 
       const expires = new Date(subscription.current_period_end * 1000)
 
+      const u = await prisma.user.findUnique({
+        where: {
+          stripeCustomerId
+        }
+      })
+
+      if (!u) {
+        console.error(
+          `User not found with stripeCustomerId: ${stripeCustomerId}`
+        )
+        return new Response(
+          `User not found with stripeCustomerId: ${stripeCustomerId}`,
+          {
+            status: 404
+          }
+        )
+      }
+
       await Promise.all([
         prisma.user.update({
           where: {
-            id: userId
+            id: u.id
           },
           data: {
             stripeSubscriptionId: subscriptionId,
@@ -62,7 +85,7 @@ export async function POST(req: Request) {
         }),
         prisma.qRCode.updateMany({
           where: {
-            createdById: userId,
+            createdById: u.id,
             dynamic: true
           },
           data: {

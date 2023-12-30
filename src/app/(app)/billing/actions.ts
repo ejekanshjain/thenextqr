@@ -6,7 +6,7 @@ import { prisma } from '@/lib/db'
 import { stripe } from '@/lib/stripe'
 import { getUserSubscriptionPlan, proPlan } from '@/lib/subscription'
 
-const billingUrl = `${env.NEXT_PUBLIC_APP_URL}/billing`
+const appUrl = `${env.NEXT_PUBLIC_APP_URL}/billing`
 
 export const getStripeBillingUrl = async () => {
   const session = await getAuthSession()
@@ -51,15 +51,15 @@ export const getStripeBillingUrl = async () => {
   if (subscriptionPlan.isPro) {
     const stripeSession = await stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,
-      return_url: billingUrl
+      return_url: appUrl
     })
 
     return { url: stripeSession.url }
   }
 
   const stripeSession = await stripe.checkout.sessions.create({
-    success_url: billingUrl,
-    cancel_url: billingUrl,
+    success_url: appUrl,
+    cancel_url: appUrl,
     payment_method_types: ['card'],
     mode: 'subscription',
     billing_address_collection: 'auto',
@@ -69,15 +69,7 @@ export const getStripeBillingUrl = async () => {
         price: proPlan.stripePriceId,
         quantity: 1
       }
-    ],
-    metadata: {
-      userId: session.user.id
-    },
-    subscription_data: {
-      metadata: {
-        userId: session.user.id
-      }
-    }
+    ]
   })
 
   if (!stripeSession.url) return { error: 'Stripe session url not found' }
