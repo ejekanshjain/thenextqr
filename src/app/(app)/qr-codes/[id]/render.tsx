@@ -346,7 +346,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
                 try {
                   const formData = new FormData()
                   formData.append('file', file)
-                  const res = await fetch('/api/upload', {
+                  const res = await fetch('/api/upload-qr-logo', {
                     method: 'POST',
                     body: formData
                   })

@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { getAuthSession } from '@/lib/auth'
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
   const bytes = await file.arrayBuffer()
   const buffer = Buffer.from(bytes)
 
-  const filename = `${Date.now()}-${Math.random()}-${file.name}`
+  const filename = `${randomUUID()}-${file.name}`
   const url = await storageClient.addFile({
     filename,
     data: buffer
