@@ -6,84 +6,80 @@ import { prisma } from '@/lib/db'
 import { stripe } from '@/lib/stripe'
 
 export async function POST(req: Request) {
-  const body = await req.text()
-  const signature = headers().get('Stripe-Signature') as string
-
-  let event: Stripe.Event
-
   try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      env.STRIPE_WEBHOOK_SECRET
-    )
-  } catch (error) {
-    return new Response(`Webhook Error: ${(error as any).message}`, {
-      status: 400
-    })
-  }
+    const body = await req.text()
+    const signature = headers().get('Stripe-Signature') as string
 
-  const session = event.data.object as Stripe.Checkout.Session
+    let event: Stripe.Event
 
-  if (event.type === 'checkout.session.completed') {
-    const userId = session.metadata?.userId
-    const subscriptionId = session.subscription?.toString()
+    try {
+      event = stripe.webhooks.constructEvent(
+        body,
+        signature,
+        env.STRIPE_WEBHOOK_SECRET
+      )
+    } catch (err) {
+      console.error(err)
+      return new Response(`Webhook Error: ${(err as any).message}`, {
+        status: 400
+      })
+    }
 
-    if (userId && subscriptionId) {
+    if (event.type === 'invoice.payment_succeeded') {
+      const stripeInvoice = event.data.object as Stripe.Invoice
+      const subscriptionId = stripeInvoice.subscription?.toString()
+
+      if (!subscriptionId) {
+        console.error('Invalid parameters "subscriptionId"')
+        return new Response('Invalid parameters "subscriptionId"', {
+          status: 400
+        })
+      }
+
       const subscription = await stripe.subscriptions.retrieve(subscriptionId)
       const priceId = subscription.items.data[0]?.price.id
+      const userId = subscription.metadata?.userId
 
-      if (priceId) {
-        await prisma.user.update({
+      if (!userId || !priceId) {
+        console.error('Invalid parameters "userId" and "priceId"')
+        return new Response('Invalid parameters "userId" and "priceId"', {
+          status: 400
+        })
+      }
+
+      const expires = new Date(subscription.current_period_end * 1000)
+
+      await Promise.all([
+        prisma.user.update({
           where: {
             id: userId
           },
           data: {
-            stripeSubscriptionId: subscription.id,
-            stripePriceId: priceId,
-            stripeCurrentPeriodEnd: new Date(
-              subscription.current_period_end * 1000
-            )
-          }
-        })
-        return new Response('Done', { status: 200 })
-      }
-    }
-    return new Response('Invalid parameters', { status: 400 })
-  }
-
-  if (event.type === 'invoice.payment_succeeded') {
-    const subscriptionId = session.subscription?.toString()
-
-    if (subscriptionId) {
-      const subscription = await stripe.subscriptions.retrieve(subscriptionId)
-      const priceId = subscription.items.data[0]?.price.id
-
-      if (priceId) {
-        const expires = new Date(subscription.current_period_end * 1000)
-        const u = await prisma.user.update({
-          where: {
-            stripeSubscriptionId: subscription.id
-          },
-          data: {
+            stripeSubscriptionId: subscriptionId,
             stripePriceId: priceId,
             stripeCurrentPeriodEnd: expires
           }
-        })
-        await prisma.qRCode.updateMany({
+        }),
+        prisma.qRCode.updateMany({
           where: {
-            createdById: u.id,
+            createdById: userId,
             dynamic: true
           },
           data: {
             expires
           }
         })
-        return new Response('Done', { status: 200 })
-      }
-    }
-    return new Response('Invalid parameters', { status: 400 })
-  }
+      ])
 
-  return new Response('Not supported', { status: 400 })
+      return new Response('Done', { status: 200 })
+    }
+
+    console.error(`Unhandled Stripe Event: ${event.type}`)
+    return new Response(`Unhandled Stripe Event: ${event.type}`, {
+      status: 400
+    })
+  } catch (err) {
+    console.error(err)
+    return new Response('Internal Server Error', { status: 500 })
+  }
 }

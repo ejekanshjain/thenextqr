@@ -72,6 +72,11 @@ export const getStripeBillingUrl = async () => {
     ],
     metadata: {
       userId: session.user.id
+    },
+    subscription_data: {
+      metadata: {
+        userId: session.user.id
+      }
     }
   })
 
