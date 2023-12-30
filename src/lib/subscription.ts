@@ -30,7 +30,7 @@ export const proPlan: SubscriptionPlan = {
 export const getUserSubscriptionPlan = async (
   userId: string
 ): Promise<UserSubscriptionPlan> => {
-  const user = await prisma.user.findFirst({
+  const user = await prisma.user.findUniqueOrThrow({
     where: {
       id: userId
     },
@@ -40,8 +40,6 @@ export const getUserSubscriptionPlan = async (
       stripeCurrentPeriodEnd: true
     }
   })
-
-  if (!user) throw new Error('User not found')
 
   const isPro = !!(
     user.stripePriceId &&
