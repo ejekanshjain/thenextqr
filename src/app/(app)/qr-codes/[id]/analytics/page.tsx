@@ -4,6 +4,7 @@ import { Heading } from '@/components/heading'
 import { Shell } from '@/components/shell'
 import { formatDate } from '@/lib/formatDate'
 import { getQRCode } from '../actions'
+import { getQRCodeAnalytics } from './actions'
 import { Render } from './render'
 
 const QRCodeAnalyticsPage = async ({
@@ -16,6 +17,7 @@ const QRCodeAnalyticsPage = async ({
   if (id === 'new') return notFound()
 
   const qrCode = await getQRCode(id)
+  const analyticsData = await getQRCodeAnalytics(id)
 
   return (
     <Shell>
@@ -26,7 +28,7 @@ const QRCodeAnalyticsPage = async ({
         } Scans)`}
       />
       <div className="grid gap-10 p-1">
-        <Render />
+        <Render data={analyticsData} />
       </div>
     </Shell>
   )

@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { FC } from 'react'
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts'
+import { GetQRCodeAnalyticsFnDataType } from './actions'
 
-export const Render: FC = () => {
+export const Render: FC<{ data: GetQRCodeAnalyticsFnDataType }> = ({}) => {
   const router = useRouter()
 
   return (
