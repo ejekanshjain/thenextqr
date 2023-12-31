@@ -29,7 +29,12 @@ export const getQRCode = async (id: string) => {
         }
       },
       createdAt: true,
-      updatedAt: true
+      updatedAt: true,
+      _count: {
+        select: {
+          scanLogs: true
+        }
+      }
     }
   })
 }

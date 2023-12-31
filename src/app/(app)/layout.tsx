@@ -24,7 +24,8 @@ const AdminLayout = async ({ children }: { children: ReactNode }) => {
               user={{
                 name: session.user.name,
                 image: session.user.image,
-                email: session.user.email
+                email: session.user.email,
+                plan: session.user.plan
               }}
             />
           </div>

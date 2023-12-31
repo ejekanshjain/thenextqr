@@ -13,9 +13,12 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { UserAvatar } from '@/components/user-avatar'
+import { Badge } from './ui/badge'
 
 interface UserAccountNavProps extends HTMLAttributes<HTMLDivElement> {
-  user: Pick<User, 'name' | 'image' | 'email'>
+  user: Pick<User, 'name' | 'image' | 'email'> & {
+    plan?: string | null
+  }
 }
 
 export const UserAccountNav: FC<UserAccountNavProps> = ({ user }) => {
@@ -30,7 +33,12 @@ export const UserAccountNav: FC<UserAccountNavProps> = ({ user }) => {
       <DropdownMenuContent align="end">
         <div className="flex items-center justify-start gap-2 p-2">
           <div className="flex flex-col space-y-1 leading-none">
-            {user.name && <p className="font-medium">{user.name}</p>}
+            {user.name && (
+              <div className="flex items-center gap-1">
+                <span className="font-medium">{user.name}</span>
+                {user.plan ? <Badge className="py-0">{user.plan}</Badge> : null}
+              </div>
+            )}
             {user.email && (
               <p className="w-[200px] truncate text-sm text-muted-foreground">
                 {user.email}

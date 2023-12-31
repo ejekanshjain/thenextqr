@@ -24,7 +24,11 @@ const QRCodePage = async ({
             : 'New QR Code'
         }
         text={
-          qrCode ? 'Created on: ' + formatDate(qrCode.createdAt) : undefined
+          qrCode
+            ? 'Created on: ' +
+              formatDate(qrCode.createdAt) +
+              ` (${qrCode._count.scanLogs} Scans)`
+            : undefined
         }
       />
       <div className="grid gap-10 p-1">

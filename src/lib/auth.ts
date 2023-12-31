@@ -1,4 +1,5 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
+import { User as PrismaUser } from '@prisma/client'
 import {
   getServerSession,
   type DefaultSession,
@@ -10,6 +11,7 @@ import GoogleProvider from 'next-auth/providers/google'
 
 import { env } from '@/env.mjs'
 import { prisma } from '@/lib/db'
+import { proPlan } from './subscription'
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -21,10 +23,11 @@ declare module 'next-auth' {
   interface Session extends DefaultSession {
     user: {
       id: string
+      plan?: string | null
     } & DefaultSession['user']
   }
 
-  interface User {}
+  interface User extends PrismaUser {}
 }
 
 /**
@@ -38,11 +41,17 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     session({ session, user }) {
+      let plan: string | null = null
+      if (user.currentPeriodEnd > new Date()) {
+        if (user.stripePriceId === proPlan.stripePriceId) plan = 'PRO'
+        else plan = 'TRIAL'
+      }
       return {
         ...session,
         user: {
           ...session.user,
-          id: user.id
+          id: user.id,
+          plan
         }
       }
     }
