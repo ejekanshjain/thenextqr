@@ -75,5 +75,10 @@
     "typescript": "^5.3.3",
     "ua-parser-js": "^1.0.37",
     "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "aws-cdk-lib": "2.110.1",
+    "constructs": "10.3.0",
+    "sst": "^2.39.2"
   }
 }

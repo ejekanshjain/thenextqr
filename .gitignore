@@ -5,3 +5,5 @@ out
 build
 .env
 .DS_Store
+.sst
+.open-next
