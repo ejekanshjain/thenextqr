@@ -62,7 +62,6 @@ export const getStripeBillingUrl = async () => {
     cancel_url: appUrl,
     payment_method_types: ['card'],
     mode: 'subscription',
-    billing_address_collection: 'auto',
     customer: stripeCustomerId,
     line_items: [
       {
