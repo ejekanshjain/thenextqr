@@ -27,7 +27,7 @@ const QRCodeAnalyticsPage = async ({
           qrCode._count.scanLogs
         } Scans)`}
       />
-      <div className="grid gap-10 p-1">
+      <div>
         <Render data={analyticsData} />
       </div>
     </Shell>

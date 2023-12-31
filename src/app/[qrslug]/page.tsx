@@ -28,6 +28,12 @@ const Page = async ({ params: { qrslug } }: { params: { qrslug: string } }) => {
 
     const ip = headersList.get('x-forwarded-for') || ''
 
+    // const randomNumberBetween = (min: number, max: number) => {
+    //   return Math.floor(Math.random() * (max - min + 1) + min)
+    // }
+    // const createdAt = new Date()
+    // createdAt.setUTCDate(createdAt.getUTCDate() - randomNumberBetween(1, 30))
+
     await prisma.qRCodeScanLog.create({
       data: {
         qrCodeId: qrCode.id,

@@ -2,12 +2,35 @@
 
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { useRouter } from 'next/navigation'
 import { FC } from 'react'
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts'
+import {
+  Area,
+  AreaChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
+} from 'recharts'
 import { GetQRCodeAnalyticsFnDataType } from './actions'
 
-export const Render: FC<{ data: GetQRCodeAnalyticsFnDataType }> = ({}) => {
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div>
+        <p>{payload[0].payload.date}</p>
+        <p>Count: {payload[0].value}</p>
+      </div>
+    )
+  }
+
+  return null
+}
+
+export const Render: FC<{ data: GetQRCodeAnalyticsFnDataType }> = ({
+  data
+}) => {
   const router = useRouter()
 
   return (
@@ -19,81 +42,30 @@ export const Render: FC<{ data: GetQRCodeAnalyticsFnDataType }> = ({}) => {
         </Button>
       </div>
       <div className="mt-10">
-        <ResponsiveContainer width="100%" height={350}>
-          <BarChart
-            data={[
-              {
-                name: 'Jan',
-                total: Math.floor(Math.random() * 5000) + 1000
-              },
-              {
-                name: 'Feb',
-                total: Math.floor(Math.random() * 5000) + 1000
-              },
-              {
-                name: 'Mar',
-                total: Math.floor(Math.random() * 5000) + 1000
-              },
-              {
-                name: 'Apr',
-                total: Math.floor(Math.random() * 5000) + 1000
-              },
-              {
-                name: 'May',
-                total: Math.floor(Math.random() * 5000) + 1000
-              },
-              {
-                name: 'Jun',
-                total: Math.floor(Math.random() * 5000) + 1000
-              },
-              {
-                name: 'Jul',
-                total: Math.floor(Math.random() * 5000) + 1000
-              },
-              {
-                name: 'Aug',
-                total: Math.floor(Math.random() * 5000) + 1000
-              },
-              {
-                name: 'Sep',
-                total: Math.floor(Math.random() * 5000) + 1000
-              },
-              {
-                name: 'Oct',
-                total: Math.floor(Math.random() * 5000) + 1000
-              },
-              {
-                name: 'Nov',
-                total: Math.floor(Math.random() * 5000) + 1000
-              },
-              {
-                name: 'Dec',
-                total: Math.floor(Math.random() * 5000) + 1000
-              }
-            ]}
-          >
-            <XAxis
-              dataKey="name"
-              stroke="#888888"
-              fontSize={12}
-              tickLine={false}
-              axisLine={false}
-            />
-            <YAxis
-              stroke="#888888"
-              fontSize={12}
-              tickLine={false}
-              axisLine={false}
-              tickFormatter={value => `$${value}`}
-            />
-            <Bar
-              dataKey="total"
-              fill="currentColor"
-              radius={[4, 4, 0, 0]}
-              className="fill-primary"
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        <Card>
+          <CardHeader>Current Month Stats</CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={350}>
+              <AreaChart data={data.currentMonthStats}>
+                <XAxis
+                  dataKey="name"
+                  stroke="#888888"
+                  fontSize={12}
+                  tickLine={false}
+                />
+                <YAxis stroke="#888888" tickLine={false} />
+                <Area
+                  type="monotone"
+                  dataKey="count"
+                  fill="#8884d8"
+                  stroke="#8884d8"
+                  strokeWidth={2}
+                />
+                <Tooltip content={CustomTooltip} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
