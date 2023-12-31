@@ -1,9 +1,15 @@
+import { Metadata } from 'next'
+
 import { Heading } from '@/components/heading'
 import { Shell } from '@/components/shell'
 import { getAuthSession } from '@/lib/auth'
 import { stripe } from '@/lib/stripe'
 import { getUserSubscriptionPlan } from '@/lib/subscription'
 import { Render } from './render'
+
+export const metadata: Metadata = {
+  title: 'Billing'
+}
 
 const BillingPage = async () => {
   const session = await getAuthSession()

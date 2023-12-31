@@ -1,0 +1,14 @@
+import { Metadata } from 'next'
+
+import { siteConfig } from '@/lib/siteConfig'
+
+export const metadata: Metadata = {
+  title: siteConfig.name + ' Terms of Service',
+  description: siteConfig.description
+}
+
+const Terms = () => {
+  return <div>Terms</div>
+}
+
+export default Terms

@@ -1,3 +1,4 @@
+import { Metadata } from 'next'
 import Link from 'next/link'
 
 import { Heading } from '@/components/heading'
@@ -6,6 +7,10 @@ import { Shell } from '@/components/shell'
 import { Button } from '@/components/ui/button'
 import { getQRCodes } from './actions'
 import { QRList } from './qr-list'
+
+export const metadata: Metadata = {
+  title: 'Dashboard'
+}
 
 const QRCodesPage = async () => {
   const data = await getQRCodes()

@@ -1,3 +1,5 @@
+import { Metadata } from 'next'
+import Link from 'next/link'
 import { ReactNode } from 'react'
 
 import { Icons } from '@/components/icons'
@@ -5,7 +7,12 @@ import { MainNav } from '@/components/main-nav'
 import { SiteFooter } from '@/components/site-footer'
 import { Button } from '@/components/ui/button'
 import { getAuthSession } from '@/lib/auth'
-import Link from 'next/link'
+import { siteConfig } from '@/lib/siteConfig'
+
+export const metadata: Metadata = {
+  title: siteConfig.name,
+  description: siteConfig.description
+}
 
 const Layout = async ({ children }: { children: ReactNode }) => {
   const session = await getAuthSession()
