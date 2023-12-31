@@ -167,7 +167,7 @@ export const QRListItem: FC<{
           {qr.dynamic ? (
             <Button
               variant="secondary"
-              onClick={() => router.push(`/qr-codes/${qr.id}`)}
+              onClick={() => router.push(`/qr-codes/${qr.id}/analytics`)}
             >
               <Icons.analytics className="mr-2 h-4 w-4" />
               Reports
