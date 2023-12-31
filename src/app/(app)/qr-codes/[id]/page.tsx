@@ -18,16 +18,12 @@ const QRCodePage = async ({
   return (
     <Shell>
       <Heading
-        heading={
-          qrCode
-            ? qrCode?.name || qrCode?.slug || qrCode?.website || qrCode.id
-            : 'New QR Code'
-        }
+        heading={qrCode ? qrCode.name : 'New QR Code'}
         text={
           qrCode
-            ? 'Created on: ' +
-              formatDate(qrCode.createdAt) +
-              ` (${qrCode._count.scanLogs} Scans)`
+            ? `Created on: ${formatDate(qrCode.createdAt)} (${
+                qrCode._count.scanLogs
+              } Scans)`
             : undefined
         }
       />
