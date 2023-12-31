@@ -10,7 +10,8 @@
     "start": "next start",
     "prisma:push": "prisma db push",
     "prisma:gen": "prisma generate",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "stripe:listen": "stripe listen --forward-to localhost:3000/api/webhooks/stripe"
   },
   "dependencies": {
     "@editorjs/checklist": "^1.6.0",
