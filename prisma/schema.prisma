@@ -51,10 +51,10 @@ model User {
     emailVerified DateTime? @db.Timestamptz()
     image         String?
 
-    stripeCustomerId       String?   @unique
-    stripeSubscriptionId   String?   @unique
-    stripePriceId          String?
-    stripeCurrentPeriodEnd DateTime? @db.Timestamptz()
+    stripeCustomerId     String?  @unique
+    stripeSubscriptionId String?  @unique
+    stripePriceId        String?
+    currentPeriodEnd     DateTime @default(dbgenerated("get_trial_period_end()")) @db.Timestamptz()
 
     createdAt DateTime @default(now()) @db.Timestamptz()
     updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()

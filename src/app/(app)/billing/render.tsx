@@ -64,12 +64,18 @@ export const Render: FC<Props> = ({ subscriptionPlan }) => {
           )}
           {subscriptionPlan.isPro ? 'Manage Subscription' : 'Upgrade to PRO'}
         </Button>
+        {subscriptionPlan.isFreeTrial ? (
+          <p className="rounded-full text-xs font-medium">
+            Your free trial ends on{' '}
+            {formatDate(new Date(subscriptionPlan.currentPeriodEnd))}.
+          </p>
+        ) : undefined}
         {subscriptionPlan.isPro ? (
           <p className="rounded-full text-xs font-medium">
             {subscriptionPlan.isCanceled
               ? 'Your plan will be canceled on '
               : 'Your plan renews on '}
-            {formatDate(new Date(subscriptionPlan.stripeCurrentPeriodEnd))}.
+            {formatDate(new Date(subscriptionPlan.currentPeriodEnd))}.
           </p>
         ) : undefined}
       </CardFooter>

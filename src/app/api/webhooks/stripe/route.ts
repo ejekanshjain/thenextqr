@@ -80,7 +80,7 @@ export async function POST(req: Request) {
           data: {
             stripeSubscriptionId: subscriptionId,
             stripePriceId: priceId,
-            stripeCurrentPeriodEnd: expires
+            currentPeriodEnd: expires
           }
         }),
         prisma.qRCode.updateMany({

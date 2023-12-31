@@ -59,7 +59,7 @@ export const createQRCode = async ({
 
   const plan = await getUserSubscriptionPlan(session.user.id)
 
-  if (plan.isPro) {
+  if (plan.isPro || plan.isFreeTrial) {
     if (dynamic) {
       const dynamicCount = await prisma.qRCode.count({
         where: {
@@ -69,7 +69,9 @@ export const createQRCode = async ({
       })
 
       if (dynamicCount >= 5)
-        return { error: 'You can only create 5 dynamic QR Codes with PRO plan' }
+        return {
+          error: `You can only create 5 dynamic QR Codes with ${plan.name} plan`
+        }
     } else {
       const staticCount = await prisma.qRCode.count({
         where: {
@@ -79,7 +81,7 @@ export const createQRCode = async ({
       })
       if (staticCount >= 50)
         return {
-          error: 'You can only create 50 static QR Codes with PRO plan'
+          error: `You can only create 50 static QR Codes with ${plan.name} plan`
         }
     }
   } else {
@@ -113,10 +115,7 @@ export const createQRCode = async ({
       dynamic,
       slug,
       website,
-      expires:
-        dynamic && plan.stripeCurrentPeriodEnd
-          ? new Date(plan.stripeCurrentPeriodEnd)
-          : null,
+      expires: dynamic ? new Date(plan.currentPeriodEnd) : null,
       createdById: session.user.id,
       updatedById: session.user.id
     }
@@ -171,7 +170,7 @@ export const updateQRCode = async ({
   }
 
   const plan = await getUserSubscriptionPlan(session.user.id)
-  if (plan.isPro) {
+  if (plan.isPro || plan.isFreeTrial) {
     if (dynamic && !qr.dynamic) {
       const dynamicCount = await prisma.qRCode.count({
         where: {
@@ -181,11 +180,15 @@ export const updateQRCode = async ({
       })
 
       if (dynamicCount >= 5)
-        return { error: 'You can only create 5 dynamic QR Codes with PRO plan' }
+        return {
+          error: `You can only create 5 dynamic QR Codes with ${plan.name} plan`
+        }
     }
   } else {
     if (dynamic)
-      return { error: 'Dynamic QR Codes are only available for PRO plan' }
+      return {
+        error: `Dynamic QR Codes are only available for ${plan.name} plan`
+      }
   }
 
   if (
@@ -209,10 +212,7 @@ export const updateQRCode = async ({
         dynamic,
         slug,
         website,
-        expires:
-          dynamic && plan.stripeCurrentPeriodEnd
-            ? new Date(plan.stripeCurrentPeriodEnd)
-            : null
+        expires: dynamic ? new Date(plan.currentPeriodEnd) : null
       }
     }),
     prisma.resource.updateMany({
