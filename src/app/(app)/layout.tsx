@@ -41,7 +41,7 @@ const AdminLayout = async ({ children }: { children: ReactNode }) => {
                 icon: 'qrCode'
               },
               {
-                title: 'Billing',
+                title: 'Subscription & Billing',
                 href: '/billing',
                 icon: 'card'
               },

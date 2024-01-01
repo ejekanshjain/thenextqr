@@ -1,11 +1,10 @@
 import { Metadata } from 'next'
-import Link from 'next/link'
 import { ReactNode } from 'react'
 
-import { Icons } from '@/components/icons'
 import { MainNav } from '@/components/main-nav'
 import { SiteFooter } from '@/components/site-footer'
-import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { UserAccountNav } from '@/components/user-account-nav'
 import { getAuthSession } from '@/lib/auth'
 import { siteConfig } from '@/lib/siteConfig'
 
@@ -20,23 +19,24 @@ const Layout = async ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex min-h-screen flex-col space-y-4">
       <header className="sticky top-0 z-40 border-b bg-background">
-        <div className="container flex h-16 items-center justify-between py-4">
+        <div className="app-container flex h-16 items-center justify-between py-4">
           <MainNav />
           <div className="flex items-center justify-center space-x-4">
-            {session?.user ? (
-              <Link href="/qr-codes">
-                <Button size="sm" variant="secondary">
-                  Dashboard
-                </Button>
-              </Link>
-            ) : (
-              <Link href="/login">
-                <Button size="sm" variant="secondary">
-                  <Icons.login className="mr-2 h-4 w-4" />
-                  Sign In
-                </Button>
-              </Link>
-            )}
+            <Badge className="py-1.5 px-3 font-normal" variant="secondary">
+              Beta
+            </Badge>
+            <UserAccountNav
+              user={
+                session
+                  ? {
+                      name: session.user.name,
+                      image: session.user.image,
+                      email: session.user.email,
+                      plan: session.user.plan
+                    }
+                  : null
+              }
+            />
           </div>
         </div>
       </header>

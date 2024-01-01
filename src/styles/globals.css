@@ -90,9 +90,9 @@
   }
 }
 
-@media (min-width: 1400px) {
+@media (min-width: 1536px) {
   .app-container {
-    max-width: 1400px;
+    max-width: 1536px;
     padding-right: 2rem /* 32px */;
     padding-left: 2rem /* 32px */;
   }

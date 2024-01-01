@@ -6,7 +6,7 @@ import { UserAuthForm } from './user-auth-form'
 
 const LoginPage = () => {
   return (
-    <div className="container flex h-[90vh] w-screen flex-col items-center justify-center">
+    <div className="app-container flex h-[90vh] w-screen flex-col items-center justify-center">
       <Link href="/" className="absolute left-4 top-4">
         <Button variant="ghost">
           <Icons.chevronLeft className="mr-2 h-4 w-4" />

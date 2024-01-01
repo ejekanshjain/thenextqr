@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 import { siteConfig } from '@/lib/siteConfig'
 
 export const metadata: Metadata = {
-  title: siteConfig.name + ' Privacy Policy',
+  title: 'Privacy Policy - ' + siteConfig.name,
   description: siteConfig.description
 }
 
