@@ -6,7 +6,7 @@
     "postinstall": "prisma generate",
     "lint": "next lint",
     "dev": "next dev",
-    "clean": "rm -rf .next",
+    "clean": "rm -rf .next && rm -rf .open-next && rm -rf .sst",
     "build": "next build",
     "start": "next start",
     "db:setup": "node ./db/index.mjs",
