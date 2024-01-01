@@ -70,13 +70,13 @@ export const authOptions: NextAuthOptions = {
       from: env.EMAIL_FROM
     }),
     GoogleProvider({
-      clientId: env.GOOGLE_ID,
-      clientSecret: env.GOOGLE_SECRET,
+      clientId: env.NEXTAUTH_GOOGLE_ID,
+      clientSecret: env.NEXTAUTH_GOOGLE_SECRET,
       allowDangerousEmailAccountLinking: true
     }),
     GitHubProvider({
-      clientId: env.GITHUB_ID,
-      clientSecret: env.GITHUB_SECRET,
+      clientId: env.NEXTAUTH_GITHUB_ID,
+      clientSecret: env.NEXTAUTH_GITHUB_SECRET,
       allowDangerousEmailAccountLinking: true
     })
   ]
