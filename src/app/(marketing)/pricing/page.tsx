@@ -48,7 +48,7 @@ const PricingPage = async () => {
                   <h4 className="text-3xl font-semibold">${plan.price}</h4>
                   {plan.per ? (
                     <span className="text-gray-600 ml-2 font-light text-sm">
-                      /${plan.per}
+                      / {plan.per}
                     </span>
                   ) : null}
                 </div>
