@@ -16,7 +16,7 @@ const AdminLayout = async ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex min-h-screen flex-col space-y-6">
       <header className="sticky top-0 z-40 border-b bg-background">
-        <div className="container flex h-16 items-center justify-between py-4">
+        <div className="app-container flex h-16 items-center justify-between py-4">
           <MainNav logoLink="/qr-codes" />
           <div className="flex items-center justify-center space-x-4">
             <AppNavCommand />
@@ -31,7 +31,7 @@ const AdminLayout = async ({ children }: { children: ReactNode }) => {
           </div>
         </div>
       </header>
-      <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
+      <div className="app-container grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
         <aside className="hidden w-[200px] flex-col md:flex">
           <SideNav
             items={[

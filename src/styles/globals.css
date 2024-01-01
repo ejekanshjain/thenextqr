@@ -74,3 +74,26 @@
     @apply bg-background text-foreground;
   }
 }
+
+.app-container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 0.5rem /* 8px */;
+  padding-left: 0.5rem /* 8px */;
+}
+
+@media (min-width: 768px) {
+  .app-container {
+    padding-right: 2rem /* 32px */;
+    padding-left: 2rem /* 32px */;
+  }
+}
+
+@media (min-width: 1400px) {
+  .app-container {
+    max-width: 1400px;
+    padding-right: 2rem /* 32px */;
+    padding-left: 2rem /* 32px */;
+  }
+}

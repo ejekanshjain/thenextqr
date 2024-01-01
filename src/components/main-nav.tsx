@@ -28,9 +28,7 @@ export const MainNav: FC<MainNavProps> = ({ logoLink = '/', items }) => {
     <div className="flex md:gap-10">
       <Link href={logoLink} className="hidden items-center space-x-2 md:flex">
         <Icons.logo />
-        <span className="hidden font-bold sm:inline-block">
-          {siteConfig.name}
-        </span>
+        <span className="font-bold">{siteConfig.name}</span>
       </Link>
       {items?.length ? (
         <nav className="hidden gap-6 md:flex">
