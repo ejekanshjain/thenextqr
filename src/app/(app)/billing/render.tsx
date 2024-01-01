@@ -42,16 +42,24 @@ export const Render: FC<Props> = ({ subscriptionPlan }) => {
           disabled={isLoading}
           onClick={async () => {
             setIsLoading(true)
-            const result = await getStripeBillingUrl()
-            if (result.error) {
-              console.error(result.error)
+            try {
+              const result = await getStripeBillingUrl()
+              if (result.error) {
+                console.error(result.error)
+                toast({
+                  title: 'Internal Server Error',
+                  variant: 'destructive',
+                  description: 'Please try again later.'
+                })
+              } else if (result.url) {
+                window.location.href = result.url
+              }
+            } catch (err) {
               toast({
                 title: 'Internal Server Error',
                 variant: 'destructive',
                 description: 'Please try again later.'
               })
-            } else if (result.url) {
-              window.location.href = result.url
             }
           }}
         >
