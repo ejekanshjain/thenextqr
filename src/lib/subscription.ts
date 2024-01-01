@@ -41,6 +41,44 @@ export const proPlanYearly: SubscriptionPlan = {
   stripePriceId: env.STRIPE_PRO_YEARLY_PLAN_ID
 }
 
+export const plans = [
+  {
+    name: 'Free',
+    price: 0,
+    per: null,
+    description: 'For individuals that just want to explore.',
+    promoted: false,
+    features: [
+      '5 Static QR Codes',
+      '7 Day Free Trial of Pro',
+      'No Credit Card Required'
+    ],
+    stripePriceId: ''
+  },
+  {
+    name: 'Pro',
+    price: 9.99,
+    per: 'month',
+    description: 'For reaching higher limits and more features.',
+    promoted: true,
+    features: [
+      'Everything in Free',
+      '50 Static QR Codes',
+      '5 Dynamic QR Codes'
+    ],
+    stripePriceId: proPlanMonthly.stripePriceId
+  },
+  {
+    name: 'Pro Yearly',
+    price: 99.99,
+    per: 'year',
+    description: 'Save 20% by paying yearly.',
+    promoted: false,
+    features: ['Everything in Pro'],
+    stripePriceId: proPlanYearly.stripePriceId
+  }
+]
+
 export const getUserSubscriptionPlan = async (
   userId: string
 ): Promise<UserSubscriptionPlan> => {

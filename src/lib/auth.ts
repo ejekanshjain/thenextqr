@@ -24,6 +24,7 @@ declare module 'next-auth' {
     user: {
       id: string
       plan?: string | null
+      stripePriceId?: string | null
     } & DefaultSession['user']
   }
 
@@ -51,7 +52,8 @@ export const authOptions: NextAuthOptions = {
         user: {
           ...session.user,
           id: user.id,
-          plan
+          plan,
+          stripePriceId: user.stripePriceId
         }
       }
     }

@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   description: siteConfig.description
 }
 
-const Terms = () => {
+const TermsPage = () => {
   return <div>Terms</div>
 }
 
-export default Terms
+export default TermsPage

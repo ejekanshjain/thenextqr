@@ -72,7 +72,7 @@ export const UserAccountNav: FC<UserAccountNavProps> = ({ user }) => {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/" className="cursor-pointer">
+              <Link href="/pricing" className="cursor-pointer">
                 <Icons.dollar className="mr-3 h-4 w-4" />
                 Pricing
               </Link>
@@ -113,7 +113,7 @@ export const UserAccountNav: FC<UserAccountNavProps> = ({ user }) => {
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href="/" className="cursor-pointer">
+              <Link href="/pricing" className="cursor-pointer">
                 <Icons.dollar className="mr-3 h-4 w-4" />
                 Pricing
               </Link>

@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   description: siteConfig.description
 }
 
-const Privacy = () => {
+const PrivacyPage = () => {
   return <div>Privacy</div>
 }
 
-export default Privacy
+export default PrivacyPage

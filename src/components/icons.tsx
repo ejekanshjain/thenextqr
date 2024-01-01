@@ -2,6 +2,7 @@ import { cn } from '@/lib/cn'
 import {
   ArrowRight,
   Biohazard,
+  Check,
   ChevronLeft,
   CircleDollarSign,
   Clock,
@@ -77,5 +78,6 @@ export const Icons = {
   analytics: LineChart,
   menu: Menu,
   dollar: CircleDollarSign,
-  faq: HelpCircle
+  faq: HelpCircle,
+  check: Check
 }
