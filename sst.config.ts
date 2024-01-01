@@ -48,6 +48,8 @@ export default {
         }
       }
 
+      console.log(environment)
+
       const site = new NextjsSite(stack, 'site', {
         environment
       })
