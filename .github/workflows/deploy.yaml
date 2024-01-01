@@ -47,5 +47,6 @@ jobs:
           STRIPE_API_KEY: ${{secrets.STRIPE_API_KEY}}
           STRIPE_WEBHOOK_SECRET: ${{secrets.STRIPE_WEBHOOK_SECRET}}
           STRIPE_PRO_MONTHLY_PLAN_ID: ${{secrets.STRIPE_PRO_MONTHLY_PLAN_ID}}
+          STRIPE_PRO_YEARLY_PLAN_ID: ${{secrets.STRIPE_PRO_YEARLY_PLAN_ID}}
           NEXT_PUBLIC_APP_URL: ${{secrets.NEXT_PUBLIC_APP_URL}}
         run: npm run deploy:prod

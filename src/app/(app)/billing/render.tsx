@@ -43,7 +43,7 @@ export const Render: FC<Props> = ({ subscriptionPlan }) => {
           onClick={async () => {
             setIsLoading(true)
             try {
-              const result = await getStripeBillingUrl()
+              const result = await getStripeBillingUrl('monthly')
               if (result.error) {
                 console.error(result.error)
                 toast({

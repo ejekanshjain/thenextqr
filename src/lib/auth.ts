@@ -11,7 +11,7 @@ import GoogleProvider from 'next-auth/providers/google'
 
 import { env } from '@/env.mjs'
 import { prisma } from '@/lib/db'
-import { proPlan } from './subscription'
+import { proPlanMonthly } from './subscription'
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -43,7 +43,7 @@ export const authOptions: NextAuthOptions = {
     session({ session, user }) {
       let plan: string | null = null
       if (user.currentPeriodEnd > new Date()) {
-        if (user.stripePriceId === proPlan.stripePriceId) plan = 'PRO'
+        if (user.stripePriceId === proPlanMonthly.stripePriceId) plan = 'PRO'
         else plan = 'TRIAL'
       }
       return {

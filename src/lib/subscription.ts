@@ -29,10 +29,16 @@ export const freeTrialPlan: SubscriptionPlan = {
   stripePriceId: ''
 }
 
-export const proPlan: SubscriptionPlan = {
+export const proPlanMonthly: SubscriptionPlan = {
   name: 'PRO',
   description: 'The PRO plan has 50 static QR codes and 5 dynamic QR codes.',
   stripePriceId: env.STRIPE_PRO_MONTHLY_PLAN_ID
+}
+
+export const proPlanYearly: SubscriptionPlan = {
+  name: 'PRO',
+  description: 'The PRO plan has 50 static QR codes and 5 dynamic QR codes.',
+  stripePriceId: env.STRIPE_PRO_YEARLY_PLAN_ID
 }
 
 export const getUserSubscriptionPlan = async (
@@ -50,12 +56,21 @@ export const getUserSubscriptionPlan = async (
   })
 
   const isPro = !!(
-    user.stripePriceId && user.currentPeriodEnd.getTime() > Date.now()
+    user.stripePriceId &&
+    (user.stripePriceId === proPlanMonthly.stripePriceId ||
+      user.stripePriceId === proPlanYearly.stripePriceId) &&
+    user.currentPeriodEnd.getTime() > Date.now()
   )
 
   const isFreeTrial = !isPro && user.currentPeriodEnd.getTime() > Date.now()
 
-  const plan = isPro ? proPlan : isFreeTrial ? freeTrialPlan : freePlan
+  const plan = isPro
+    ? user.stripePriceId === proPlanMonthly.stripePriceId
+      ? proPlanMonthly
+      : proPlanYearly
+    : isFreeTrial
+      ? freeTrialPlan
+      : freePlan
 
   return {
     ...plan,

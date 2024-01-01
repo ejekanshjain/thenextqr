@@ -4,11 +4,15 @@ import { env } from '@/env.mjs'
 import { getAuthSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { stripe } from '@/lib/stripe'
-import { getUserSubscriptionPlan, proPlan } from '@/lib/subscription'
+import {
+  getUserSubscriptionPlan,
+  proPlanMonthly,
+  proPlanYearly
+} from '@/lib/subscription'
 
 const appUrl = `${env.NEXT_PUBLIC_APP_URL}/billing`
 
-export const getStripeBillingUrl = async () => {
+export const getStripeBillingUrl = async (type?: 'monthly' | 'yearly') => {
   const session = await getAuthSession()
   if (!session?.user || !session.user.email) throw new Error('Unauthorized')
 
@@ -65,7 +69,10 @@ export const getStripeBillingUrl = async () => {
     customer: stripeCustomerId,
     line_items: [
       {
-        price: proPlan.stripePriceId,
+        price:
+          type === 'yearly'
+            ? proPlanYearly.stripePriceId
+            : proPlanMonthly.stripePriceId,
         quantity: 1
       }
     ]
