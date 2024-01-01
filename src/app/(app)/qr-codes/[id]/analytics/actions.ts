@@ -12,6 +12,7 @@ export const getQRCodeAnalytics = async (id: string) => {
   const endDate = new Date()
   const startDate = new Date(endDate)
   startDate.setUTCDate(1)
+  startDate.setUTCHours(0, 0, 0, 0)
 
   const currentMonthStats: any[] = await prisma.$queryRaw`
     SELECT
