@@ -45,7 +45,7 @@ export default {
 
       const environment = Object.keys(tempEnvironment).reduce(
         (obj, key) => {
-          const val = environment[key]
+          const val = tempEnvironment[key]
           if (val) {
             obj[key] = val
           }
