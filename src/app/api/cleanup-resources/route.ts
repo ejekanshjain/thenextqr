@@ -1,5 +1,6 @@
-import { cleanupResources } from '@/lib/cleanupResources'
 import { NextResponse } from 'next/server'
+
+import { cleanupResources } from '@/lib/cleanupResources'
 
 export async function POST() {
   await cleanupResources()

@@ -5,11 +5,13 @@ import { Heading } from '@/components/heading'
 import { Icons } from '@/components/icons'
 import { Shell } from '@/components/shell'
 import { Button } from '@/components/ui/button'
+import { siteConfig } from '@/lib/siteConfig'
 import { getQRCodes } from './actions'
 import { QRList } from './qr-list'
 
 export const metadata: Metadata = {
-  title: 'Dashboard'
+  title: 'QR Codes',
+  description: siteConfig.description
 }
 
 const QRCodesPage = async () => {

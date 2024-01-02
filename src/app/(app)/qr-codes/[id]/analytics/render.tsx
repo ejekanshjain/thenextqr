@@ -1,8 +1,5 @@
 'use client'
 
-import { Icons } from '@/components/icons'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { useRouter } from 'next/navigation'
 import { FC } from 'react'
 import {
@@ -13,6 +10,10 @@ import {
   XAxis,
   YAxis
 } from 'recharts'
+
+import { Icons } from '@/components/icons'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { GetQRCodeAnalyticsFnDataType } from './actions'
 
 const CustomTooltip = ({ active, payload }: any) => {

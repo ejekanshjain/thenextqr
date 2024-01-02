@@ -3,10 +3,12 @@ import { Metadata } from 'next'
 import { Heading } from '@/components/heading'
 import { Shell } from '@/components/shell'
 import { getAuthSession } from '@/lib/auth'
+import { siteConfig } from '@/lib/siteConfig'
 import { Render } from './render'
 
 export const metadata: Metadata = {
-  title: 'Settings'
+  title: 'Settings',
+  description: siteConfig.description
 }
 
 const SettingsPage = async () => {

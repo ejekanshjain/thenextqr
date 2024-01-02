@@ -1,8 +1,16 @@
+import { Metadata } from 'next'
+
 import { Heading } from '@/components/heading'
 import { Shell } from '@/components/shell'
 import { formatDate } from '@/lib/formatDate'
+import { siteConfig } from '@/lib/siteConfig'
 import { GetQRCodeFnDataType, getQRCode } from './actions'
 import { Render } from './render'
+
+export const metadata: Metadata = {
+  title: 'QR Code',
+  description: siteConfig.description
+}
 
 const QRCodePage = async ({
   params: { id }
