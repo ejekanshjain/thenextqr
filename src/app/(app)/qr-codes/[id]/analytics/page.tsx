@@ -24,7 +24,7 @@ const QRCodeAnalyticsPage = async ({
       <Heading
         heading={qrCode.name}
         text={`Created on: ${formatDate(qrCode.createdAt)} (${
-          qrCode._count.scanLogs
+          qrCode.totalScans
         } Scans)`}
       />
       <div>

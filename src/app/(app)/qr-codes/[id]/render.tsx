@@ -251,7 +251,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
               </AlertDialogContent>
             </AlertDialog>
           ) : null}
-          {qrCode?._count.scanLogs ? (
+          {qrCode?.totalScans ? (
             <Button
               type="button"
               variant="ghost"

@@ -72,7 +72,7 @@ export const plans = [
     name: 'Pro Yearly',
     price: 99.99,
     per: 'year',
-    description: 'Save 20% by paying yearly.',
+    description: 'Save 17% by paying yearly.',
     promoted: false,
     features: ['Everything in Pro'],
     stripePriceId: proPlanYearly.stripePriceId

@@ -22,7 +22,7 @@ const QRCodePage = async ({
         text={
           qrCode
             ? `Created on: ${formatDate(qrCode.createdAt)} (${
-                qrCode._count.scanLogs
+                qrCode.totalScans
               } Scans)`
             : undefined
         }

@@ -27,7 +27,9 @@ export const PricingButton: FC<{
   return (
     <Button
       disabled={!!(planStripePriceId && userStripePriceId)}
-      onClick={() => router.push(planStripePriceId ? '/billing' : '/login')}
+      onClick={() =>
+        router.push(session && planStripePriceId ? '/billing' : '/login')
+      }
     >
       {text}
     </Button>

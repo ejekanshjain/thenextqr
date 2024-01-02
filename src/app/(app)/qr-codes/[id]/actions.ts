@@ -15,24 +15,12 @@ export const getQRCode = async (id: string) => {
       id,
       createdById: session.user.id
     },
-    select: {
-      id: true,
-      dynamic: true,
-      name: true,
-      slug: true,
-      website: true,
+    include: {
       logo: {
         select: {
           id: true,
           url: true,
           cdnUrl: true
-        }
-      },
-      createdAt: true,
-      updatedAt: true,
-      _count: {
-        select: {
-          scanLogs: true
         }
       }
     }

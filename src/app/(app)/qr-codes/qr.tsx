@@ -130,7 +130,7 @@ export const QRListItem: FC<{
       </div>
       <div className="flex items-center justify-around gap-2">
         <div className="flex text-muted-foreground">
-          {`${qr._count?.scanLogs || 0} Scans`}
+          {`${qr.totalScans || 0} Scans`}
         </div>
         <div className="flex h-36 w-36 items-center justify-center">
           <canvas ref={canvasRef} className="hidden" />

@@ -22,11 +22,6 @@ export const getQRCodes = async () => {
             url: true,
             cdnUrl: true
           }
-        },
-        _count: {
-          select: {
-            scanLogs: true
-          }
         }
       }
     }),
