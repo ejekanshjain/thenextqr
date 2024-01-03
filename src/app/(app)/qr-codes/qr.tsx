@@ -87,7 +87,7 @@ export const QRListItem: FC<{
   }, [qr])
 
   return (
-    <div className="grid grid-cols-1 p-1 md:grid-cols-2 md:p-3">
+    <div className="grid grid-cols-1 gap-2 p-2 md:grid-cols-3 md:p-3">
       <div className="flex flex-col gap-2">
         <h4 className="flex items-center justify-start">
           <Icons.note className="mr-2 h-4 w-4" />
@@ -97,42 +97,32 @@ export const QRListItem: FC<{
           <Icons.clock className="mr-2 h-4 w-4" />
           {formatDate(qr.createdAt)}
         </p>
-        {qr.dynamic ? (
-          <div className="flex items-center">
-            <p className="flex items-center justify-start">
-              <Icons.link className="mr-2 h-4 w-4" />
-              <Link
-                href={env.NEXT_PUBLIC_APP_URL + '/' + qr.slug}
-                className="text-muted-foreground underline underline-offset-4 hover:text-primary"
-              >
-                {env.NEXT_PUBLIC_APP_URL + '/' + qr.slug}
-              </Link>
-            </p>
-            <Icons.arrowRight className="mx-2 h-4 w-4" />
-            <Link
-              href={qr.website}
-              className="text-muted-foreground underline underline-offset-4 hover:text-primary"
-            >
-              {qr.website}
-            </Link>
-          </div>
-        ) : (
-          <p className="flex items-center justify-start">
-            <Icons.link className="mr-2 h-4 w-4" />
-            <Link
-              className="text-muted-foreground underline underline-offset-4 hover:text-primary"
-              href={qr.website}
-            >
-              {qr.website}
-            </Link>
-          </p>
-        )}
+        <p className="flex items-center justify-start">
+          <Icons.link className="mr-2 h-4 w-4" />
+          <Link
+            className="text-muted-foreground underline underline-offset-4 hover:text-primary"
+            href={
+              qr.dynamic ? env.NEXT_PUBLIC_APP_URL + '/' + qr.slug : qr.website
+            }
+          >
+            {qr.dynamic ? env.NEXT_PUBLIC_APP_URL + '/' + qr.slug : qr.website}
+          </Link>
+        </p>
       </div>
-      <div className="flex items-center justify-around gap-2">
-        <div className="flex text-muted-foreground">
-          {`${qr.totalScans || 0} Scans`}
+      <div className="col-span-2 flex flex-col md:flex-row md:items-center md:justify-around gap-2">
+        <div className="md:hidden lg:block">
+          {qr.dynamic ? (
+            <Link
+              href={`/qr-codes/${qr.id}/analytics`}
+              className="text-muted-foreground underline underline-offset-4 hover:text-primary transition-all"
+            >
+              {qr.totalScans || 0} Scans
+            </Link>
+          ) : (
+            <p className="text-muted-foreground">{qr.totalScans || 0} Scans</p>
+          )}
         </div>
-        <div className="flex h-36 w-36 items-center justify-center">
+        <div className="flex h-full w-full max-h-60 max-w-60 md:h-36 md:w-36 items-center justify-center">
           <canvas ref={canvasRef} className="hidden" />
           {generatedQRCode ? (
             <img
@@ -144,8 +134,8 @@ export const QRListItem: FC<{
             <Icons.spinner className="h-6 w-6 animate-spin" />
           )}
         </div>
-        <Separator orientation="vertical" />
-        <div className="flex flex-col gap-2">
+        <Separator orientation="vertical" className="hidden md:inline-block" />
+        <div className="flex md:flex-col gap-2">
           <Button
             onClick={() => {
               const a = document.createElement('a')
