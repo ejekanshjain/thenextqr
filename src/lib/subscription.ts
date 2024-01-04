@@ -49,7 +49,7 @@ export const plans = [
     description: 'For individuals that just want to explore.',
     promoted: false,
     features: [
-      '5 Static QR Codes',
+      'Save 5 Static QR Codes',
       '7 Day Free Trial of Pro',
       'No Credit Card Required'
     ],
@@ -63,7 +63,8 @@ export const plans = [
     promoted: true,
     features: [
       'Everything in Free',
-      '50 Static QR Codes',
+      'Save 50 Static QR Codes',
+      'Analytics of Dynamic QR Codes',
       '5 Dynamic QR Codes'
     ],
     stripePriceId: proPlanMonthly.stripePriceId
