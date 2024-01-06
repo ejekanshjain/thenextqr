@@ -10,18 +10,7 @@ import {
   YAxis
 } from 'recharts'
 
-const CustomTooltip = ({ active, payload }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div>
-        <p>{payload[0].payload.date}</p>
-        <p>Count: {payload[0].value}</p>
-      </div>
-    )
-  }
-
-  return null
-}
+import { CustomTooltip } from './custom-tooltip'
 
 export const AreaGraph: FC<{ data: { name: string; count: number }[] }> = ({
   data
@@ -38,7 +27,7 @@ export const AreaGraph: FC<{ data: { name: string; count: number }[] }> = ({
           stroke="#8884d8"
           strokeWidth={2}
         />
-        <Tooltip content={CustomTooltip} />
+        <Tooltip content={CustomTooltip} cursor={{ fill: 'transparent' }} />
       </AreaChart>
     </ResponsiveContainer>
   )

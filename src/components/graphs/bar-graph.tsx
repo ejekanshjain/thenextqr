@@ -10,18 +10,7 @@ import {
   YAxis
 } from 'recharts'
 
-const CustomTooltip = ({ active, payload }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div>
-        <p>{payload[0].payload.date}</p>
-        <p>Count: {payload[0].value}</p>
-      </div>
-    )
-  }
-
-  return null
-}
+import { CustomTooltip } from './custom-tooltip'
 
 export const BarGraph: FC<{ data: { name: string; count: number }[] }> = ({
   data
@@ -38,7 +27,7 @@ export const BarGraph: FC<{ data: { name: string; count: number }[] }> = ({
           radius={[4, 4, 0, 0]}
           className="fill-primary"
         />
-        <Tooltip content={CustomTooltip} />
+        <Tooltip content={CustomTooltip} cursor={{ fill: 'transparent' }} />
       </BarChart>
     </ResponsiveContainer>
   )

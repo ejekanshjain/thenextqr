@@ -89,18 +89,21 @@ export const QRListItem: FC<{
   return (
     <div className="grid grid-cols-1 gap-2 p-2 md:grid-cols-3 md:p-3">
       <div className="flex flex-col gap-2">
-        <h4 className="flex items-center justify-start">
-          <Icons.note className="mr-2 h-4 w-4" />
-          {qr.name}
-        </h4>
-        <p className="flex items-center justify-start">
+        <div className="flex items-center justify-start gap-2">
+          <h4 className="flex items-center justify-start">
+            <Icons.note className="mr-2 h-4 w-4" />
+            {qr.name}
+          </h4>
+          <p className="text-xs text-muted-foreground">({qr.type})</p>
+        </div>
+        <p className="flex items-center justify-start text-sm">
           <Icons.clock className="mr-2 h-4 w-4" />
           {formatDate(qr.createdAt)}
         </p>
         <p className="flex items-center justify-start">
           <Icons.link className="mr-2 h-4 w-4" />
           <Link
-            className="text-muted-foreground underline underline-offset-4 hover:text-primary"
+            className="text-muted-foreground underline underline-offset-4 hover:text-primary text-xs sm:text-sm"
             href={
               qr.dynamic ? env.NEXT_PUBLIC_APP_URL + '/' + qr.slug : qr.website
             }
@@ -114,12 +117,14 @@ export const QRListItem: FC<{
           {qr.dynamic ? (
             <Link
               href={`/qr-codes/${qr.id}/analytics`}
-              className="text-muted-foreground underline underline-offset-4 hover:text-primary transition-all"
+              className="text-muted-foreground underline underline-offset-4 hover:text-primary transition-all text-sm"
             >
               {qr.totalScans || 0} Scans
             </Link>
           ) : (
-            <p className="text-muted-foreground">{qr.totalScans || 0} Scans</p>
+            <p className="text-muted-foreground text-sm">
+              {qr.totalScans || 0} Scans
+            </p>
           )}
         </div>
         <div className="flex h-full w-full max-h-60 max-w-60 md:h-36 md:w-36 items-center justify-center">

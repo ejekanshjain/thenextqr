@@ -93,14 +93,19 @@ model Resource {
     @@map("Resources")
 }
 
+enum QRCodeType {
+    website
+}
+
 model QRCode {
-    id         String    @id @default(cuid())
+    id         String     @id @default(cuid())
     dynamic    Boolean
     name       String
-    slug       String?   @unique
+    slug       String?    @unique
+    type       QRCodeType @default(website)
     website    String
-    expires    DateTime? @db.Timestamptz()
-    totalScans Int       @default(0)
+    expires    DateTime?  @db.Timestamptz()
+    totalScans Int        @default(0)
 
     logo     Resource?       @relation("qrCodeLogo")
     scanLogs QRCodeScanLog[]

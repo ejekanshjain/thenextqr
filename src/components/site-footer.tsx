@@ -17,13 +17,25 @@ export const SiteFooter: FC<HTMLAttributes<HTMLElement>> = ({ className }) => {
         <div className="flex items-center justify-center gap-2">
           <Link
             href="/terms"
-            className="hover:underline underline-offset-4 text-sm"
+            className="hidden sm:inline-block hover:underline underline-offset-4 text-xs text-muted-foreground"
+          >
+            Terms of Service
+          </Link>
+          <Link
+            href="/privacy"
+            className="hidden sm:inline-block hover:underline underline-offset-4 text-xs text-muted-foreground"
+          >
+            Privacy Policy
+          </Link>
+          <Link
+            href="/terms"
+            className="sm:hidden hover:underline underline-offset-4 text-xs text-muted-foreground"
           >
             Terms
           </Link>
           <Link
             href="/privacy"
-            className="hover:underline underline-offset-4 text-sm"
+            className="sm:hidden hover:underline underline-offset-4 text-xs text-muted-foreground"
           >
             Privacy
           </Link>
