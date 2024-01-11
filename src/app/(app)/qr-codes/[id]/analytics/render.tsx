@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { FC } from 'react'
 
 import { AreaGraph } from '@/components/graphs/area-graph'
+import { BarGraph } from '@/components/graphs/bar-graph'
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -27,6 +28,12 @@ export const Render: FC<{ data: GetQRCodeAnalyticsFnDataType }> = ({
           <CardHeader>Current Month Stats</CardHeader>
           <CardContent>
             <AreaGraph data={data.currentMonthStats} />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>Current Year Stats</CardHeader>
+          <CardContent>
+            <BarGraph data={data.currentYearStats} />
           </CardContent>
         </Card>
       </div>
