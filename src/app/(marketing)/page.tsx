@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { BarGraph } from '@/components/graphs/bar-graph'
 import { PricingCards } from '@/components/pricing-cards'
+import { QRPlayground } from '@/components/qr-playground'
 import { Button } from '@/components/ui/button'
 import { getAuthSession } from '@/lib/auth'
 
@@ -57,6 +58,9 @@ const Home = async () => {
               <Link href={session?.user ? '/qr-codes/new' : '/login'}>
                 <Button size="lg">Generate QR Code</Button>
               </Link>
+            </div>
+            <div className="space-y-2 flex-col pt-8 max-w-2xl">
+              <QRPlayground />
             </div>
           </div>
         </div>
