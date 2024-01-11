@@ -101,7 +101,7 @@ export const AppNavCommand: FC = () => {
                 onSelect={() => runCommand(() => router.push('/billing'))}
               >
                 <Icons.card className="mr-2 h-4 w-4" />
-                Billing
+                Subscription & Billing
               </CommandItem>
               <CommandItem
                 onSelect={() => runCommand(() => router.push('/settings'))}
