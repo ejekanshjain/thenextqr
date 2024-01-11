@@ -83,6 +83,13 @@
   padding-left: 1rem /* 16px */;
 }
 
+@media (min-width: 640px) {
+  .app-container {
+    padding-right: 1.5rem /* 24px */;
+    padding-left: 1.5rem /* 24px */;
+  }
+}
+
 @media (min-width: 768px) {
   .app-container {
     padding-right: 2rem /* 32px */;
