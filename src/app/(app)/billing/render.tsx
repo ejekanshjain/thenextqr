@@ -74,7 +74,7 @@ export const Render: FC<Props> = ({ subscriptionPlan }) => {
         </Button>
         {subscriptionPlan.isFreeTrial ? (
           <p className="rounded-full text-xs font-medium">
-            Your free trial ends on{' '}
+            Your pro trial ends on{' '}
             {formatDate(new Date(subscriptionPlan.currentPeriodEnd))}.
           </p>
         ) : undefined}

@@ -23,9 +23,9 @@ export const freePlan: SubscriptionPlan = {
 }
 
 export const freeTrialPlan: SubscriptionPlan = {
-  name: 'FREE TRIAL',
+  name: 'PRO TRIAL',
   description:
-    'The FREE TRIAL plan has 50 static QR codes and 5 dynamic QR codes. Upgrade to the PRO plan to continue using the benefits after the trial period ends.',
+    'The PRO TRIAL plan has 50 static QR codes and 5 dynamic QR codes. Upgrade to the PRO plan to continue using the benefits after the trial period ends.',
   stripePriceId: ''
 }
 
@@ -49,7 +49,8 @@ export const plans = [
     description: 'For individuals that just want to explore.',
     promoted: false,
     features: [
-      'Save 5 Static QR Codes',
+      '5 Static QR Codes',
+      'Custom Logo',
       '7 Day Free Trial of Pro',
       'No Credit Card Required'
     ],
@@ -63,9 +64,9 @@ export const plans = [
     promoted: true,
     features: [
       'Everything in Free',
-      'Save 50 Static QR Codes',
-      'Analytics of Dynamic QR Codes',
-      '5 Dynamic QR Codes'
+      '5 Dynamic QR Codes',
+      'Dynamic QR Codes Analytics',
+      '50 Static QR Codes'
     ],
     stripePriceId: proPlanMonthly.stripePriceId
   },
@@ -75,7 +76,7 @@ export const plans = [
     per: 'year',
     description: 'Save 17% by paying yearly.',
     promoted: false,
-    features: ['Everything in Pro'],
+    features: ['Everything in Pro', 'Additional Discount'],
     stripePriceId: proPlanYearly.stripePriceId
   }
 ]

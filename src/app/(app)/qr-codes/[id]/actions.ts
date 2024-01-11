@@ -7,6 +7,7 @@ import { getAuthSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { getUserSubscriptionPlan } from '@/lib/subscription'
 import { UnwrapPromise } from '@/types/UnwrapPromise'
+import { QRCodeType } from '@prisma/client'
 
 export const getQRCode = async (id: string) => {
   const session = await getAuthSession()
@@ -35,13 +36,15 @@ export const createQRCode = async ({
   name,
   slug,
   website,
-  logoId
+  logoId,
+  type
 }: {
   dynamic: boolean
   name: string
   slug?: string
   website: string
   logoId?: string | null
+  type: QRCodeType
 }) => {
   const session = await getAuthSession()
   if (!session?.user) throw new Error('Unauthorized')
@@ -108,6 +111,7 @@ export const createQRCode = async ({
       name,
       dynamic,
       slug,
+      type,
       website,
       expires: dynamic ? new Date(plan.currentPeriodEnd) : null,
       createdById: session.user.id,

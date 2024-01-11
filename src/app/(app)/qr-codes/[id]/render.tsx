@@ -38,6 +38,7 @@ import { Switch } from '@/components/ui/switch'
 import { toast } from '@/components/ui/use-toast'
 import { env } from '@/env.mjs'
 import { canvasRoundRect } from '@/lib/canvasRoundRect'
+import { QRCodeType } from '@prisma/client'
 import {
   GetQRCodeFnDataType,
   createQRCode,
@@ -50,7 +51,8 @@ const QRCodeSchema = z.object({
   name: z.string().min(1),
   slug: z.string().optional(),
   website: z.string().url(),
-  logoId: z.string().optional().nullable()
+  logoId: z.string().optional().nullable(),
+  type: z.nativeEnum(QRCodeType)
 })
 
 type FormData = z.infer<typeof QRCodeSchema>
@@ -63,7 +65,8 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
       name: qrCode?.name || '',
       slug: qrCode?.slug || '',
       website: qrCode?.website || '',
-      logoId: qrCode?.logo?.id
+      logoId: qrCode?.logo?.id,
+      type: qrCode?.type || 'website'
     }
   })
   const router = useRouter()
