@@ -36,22 +36,29 @@ export const QRPlayground: FC = () => {
   )
 
   return (
-    <div className="grid md:grid-cols-2 gap-3 w-full">
+    <div className="flex flex-col gap-3 w-full">
       <canvas ref={canvasRef} className="hidden" />
       <Input
-        type="text"
-        placeholder="Enter website url"
+        type="url"
+        placeholder="Enter Website Url"
         autoCapitalize="none"
         autoCorrect="off"
         onChange={e => debouncedSetQr(e.target.value)}
+        className="w-full"
       />
       <Card>
         <CardHeader>Generated QR Code</CardHeader>
         <CardContent>
           {generatedQRCode ? (
-            <img src={generatedQRCode} alt="QR Code" />
+            <img
+              src={generatedQRCode}
+              alt="QR Code"
+              className="w-80 h-80 md:h-96 md:w-96"
+            />
           ) : (
-            'Enter a URL to generate a QR code.'
+            <div className="w-80 md:w-96">
+              Enter a URL to generate a QR code.
+            </div>
           )}
         </CardContent>
         <CardFooter>

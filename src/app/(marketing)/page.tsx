@@ -65,7 +65,7 @@ const Home = async () => {
           </div>
         </div>
       </section>
-      <section className="w-full py-12 md:py-24 lg:py-32">
+      <section className="w-full py-12 md:py-16">
         <div className="container px-4 md:px-6 mx-auto">
           <div className="flex flex-col items-center space-y-4 text-center">
             <div className="space-y-2">
@@ -80,7 +80,7 @@ const Home = async () => {
             <div className="w-full">
               <BarGraph data={graphData} />
             </div>
-            <div className="flex flex-col items-center justify-center w-full pt-12">
+            <div className="flex flex-col items-center justify-center w-full pt-12 md:pt-18 lg:pt-24">
               <h2 className="text-5xl font-bold mb-4">Pricing Plans</h2>
               <p className="text-lg text-gray-600 text-center max-w-xl">
                 Choose a plan that suits your need. Upgrade, downgrade, or
