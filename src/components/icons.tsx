@@ -25,6 +25,7 @@ import {
   QrCode,
   Save,
   ScrollText,
+  Send,
   Settings,
   Star,
   Sun,
@@ -79,5 +80,6 @@ export const Icons = {
   menu: Menu,
   dollar: CircleDollarSign,
   faq: HelpCircle,
-  check: Check
+  check: Check,
+  send: Send
 }

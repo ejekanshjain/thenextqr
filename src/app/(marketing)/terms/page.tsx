@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import Link from 'next/link'
 
 import { siteConfig } from '@/lib/siteConfig'
 
@@ -87,6 +88,13 @@ const TermsPage = () => {
           Changes to Terms: The Next QR reserves the right to modify or revise
           these Terms of Service at any time. Continued use of the Service after
           such changes constitutes your acceptance of the new Terms.
+        </li>
+        <li>
+          Contact Us: If you have any questions or concerns about this Terms of
+          Service, please{' '}
+          <Link href="/contact" className="underline underline-offset-4">
+            contact us.
+          </Link>
         </li>
       </ol>
     </div>

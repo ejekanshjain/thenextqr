@@ -87,6 +87,7 @@ export const Render: FC<{ name: string }> = ({ name }) => {
                       type="text"
                       placeholder="Your Name"
                       autoComplete="name"
+                      autoCapitalize="on"
                       disabled={isSaving}
                       {...field}
                     />

@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import Link from 'next/link'
 
 import { siteConfig } from '@/lib/siteConfig'
 
@@ -100,6 +101,13 @@ const PrivacyPage = () => {
           Changes to Privacy Policy: We reserve the right to modify or update
           this Privacy Policy at any time. You will be notified of any
           significant changes.
+        </li>
+        <li>
+          Contact Us: If you have any questions or concerns about this Privacy
+          Policy, please{' '}
+          <Link href="/contact" className="underline underline-offset-4">
+            contact us.
+          </Link>
         </li>
       </ol>
     </div>
