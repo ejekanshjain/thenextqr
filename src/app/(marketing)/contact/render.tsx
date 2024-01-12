@@ -16,7 +16,9 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { toast } from '@/components/ui/use-toast'
 import { cn } from '@/lib/cn'
+import { saveContactUs } from './actions'
 
 const contactSchema = z.object({
   name: z.string().min(1),
@@ -37,8 +39,13 @@ export const Render: FC = ({ className, ...props }: ContactFormProps) => {
   const [isSaving, setIsSaving] = useState(false)
 
   async function onSubmit(data: FormData) {
-    console.log(data)
     setIsSaving(true)
+    await saveContactUs(data)
+    toast({
+      title: 'Success',
+      description: 'Your message has been sent. We will get back to you soon.'
+    })
+    setIsSaving(false)
   }
 
   return (

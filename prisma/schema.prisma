@@ -140,3 +140,18 @@ model QRCodeScanLog {
 
     @@map("QRCodeScanLogs")
 }
+
+model ContactUs {
+    id        String  @id @default(cuid())
+    name      String
+    email     String
+    subject   String
+    message   String
+    ipAdress  String?
+    userAgent String?
+
+    createdAt DateTime @default(now()) @db.Timestamptz()
+    updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
+
+    @@map("ContactUs")
+}
