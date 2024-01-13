@@ -119,7 +119,9 @@ export const QRListItem: FC<{
                 : qr.website || '#'
             }
           >
-            {qr.dynamic ? env.NEXT_PUBLIC_APP_URL + '/' + qr.slug : qr.website}
+            {qr.dynamic
+              ? env.NEXT_PUBLIC_APP_URL + '/' + qr.slug
+              : qr.website || 'N/A'}
           </Link>
         </p>
       </div>

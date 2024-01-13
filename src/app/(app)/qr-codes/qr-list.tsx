@@ -20,7 +20,11 @@ export const QRList: FC<{
     return data.qrCodes.filter(
       qr =>
         qr.name.toLowerCase().includes(s) ||
-        qr.website.toLowerCase().includes(s)
+        qr.website?.toLowerCase().includes(s) ||
+        qr.phoneNumber?.toLowerCase().includes(s) ||
+        qr.message?.toLowerCase().includes(s) ||
+        qr.email?.toLowerCase().includes(s) ||
+        qr.subject?.toLowerCase().includes(s)
     )
   }, [search, data.qrCodes])
 
