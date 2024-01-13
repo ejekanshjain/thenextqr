@@ -34,10 +34,19 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
+import { Textarea } from '@/components/ui/textarea'
 import { toast } from '@/components/ui/use-toast'
 import { env } from '@/env.mjs'
 import { canvasRoundRect } from '@/lib/canvasRoundRect'
+import { getQRUrl } from '@/lib/getQRUrl'
 import { QRCodeType } from '@prisma/client'
 import {
   GetQRCodeFnDataType,
@@ -50,9 +59,13 @@ const QRCodeSchema = z.object({
   dynamic: z.boolean(),
   name: z.string().min(1),
   slug: z.string().optional(),
-  website: z.string().url(),
   logoId: z.string().optional().nullable(),
-  type: z.nativeEnum(QRCodeType)
+  type: z.nativeEnum(QRCodeType),
+  website: z.string().url().optional(),
+  phoneNumber: z.string().optional(),
+  message: z.string().optional(),
+  email: z.string().optional(),
+  subject: z.string().optional()
 })
 
 type FormData = z.infer<typeof QRCodeSchema>
@@ -64,9 +77,13 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
       dynamic: qrCode?.dynamic || false,
       name: qrCode?.name || '',
       slug: qrCode?.slug || '',
-      website: qrCode?.website || '',
       logoId: qrCode?.logo?.id,
-      type: qrCode?.type || 'website'
+      type: qrCode?.type || 'website',
+      website: qrCode?.website || undefined,
+      phoneNumber: qrCode?.phoneNumber || undefined,
+      message: qrCode?.message || undefined,
+      email: qrCode?.email || undefined,
+      subject: qrCode?.subject || undefined
     }
   })
   const router = useRouter()
@@ -77,50 +94,14 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  async function onSubmit(data: FormData) {
-    setIsSaving(true)
-
-    if (!qrCode) {
-      const result = await createQRCode({
-        ...data
-      })
-
-      if (result.error) {
-        toast({
-          title: 'Error saving qr code',
-          description: result.error,
-          variant: 'destructive'
-        })
-      } else if (result.id) {
-        toast({
-          title: 'QR Code saved'
-        })
-        router.replace(`/qr-codes/${result.id}`)
-      }
-    } else {
-      const result = await updateQRCode({
-        id: qrCode.id,
-        ...data
-      })
-      if (result.error) {
-        toast({
-          title: 'Error saving qr code',
-          description: result.error,
-          variant: 'destructive'
-        })
-      } else {
-        toast({
-          title: 'QR Code saved'
-        })
-      }
-    }
-
-    setIsSaving(false)
-  }
-
   const dynamic = form.watch('dynamic')
   const slug = form.watch('slug')
+  const type = form.watch('type')
   const website = form.watch('website')
+  const phoneNumber = form.watch('phoneNumber')
+  const message = form.watch('message')
+  const email = form.watch('email')
+  const subject = form.watch('subject')
 
   const debouncedSetQr = useMemo(
     () =>
@@ -176,19 +157,87 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
             setGeneratedQRCode(dataUrl || '')
           }
         })
-      }, 1000),
+      }, 500),
     [qrCode?.logo?.cdnUrl, qrCode?.logo?.url]
   )
 
   const url = useMemo(() => {
     if (dynamic) return slug ? `${env.NEXT_PUBLIC_APP_URL}/${slug}` : undefined
-    else return website ? website : undefined
-  }, [dynamic, slug, website])
+    else {
+      return getQRUrl({
+        type,
+        website,
+        phoneNumber,
+        message,
+        email,
+        subject
+      })
+    }
+  }, [dynamic, slug, type, website, phoneNumber, message, email, subject])
 
   useEffect(() => {
     if (!url) return setGeneratedQRCode('')
     debouncedSetQr(url)
   }, [debouncedSetQr, url])
+
+  const onSubmit = async (data: FormData) => {
+    setIsSaving(true)
+
+    if (!qrCode) {
+      const result = await createQRCode({
+        dynamic: data.dynamic,
+        name: data.name,
+        slug: data.slug,
+        logoId: data.logoId,
+        type: data.type,
+        website: data.website || null,
+        phoneNumber: data.phoneNumber || null,
+        message: data.message || null,
+        email: data.email || null,
+        subject: data.subject || null
+      })
+
+      if (result.error) {
+        toast({
+          title: 'Error saving qr code',
+          description: result.error,
+          variant: 'destructive'
+        })
+      } else if (result.id) {
+        toast({
+          title: 'QR Code saved'
+        })
+        router.replace(`/qr-codes/${result.id}`)
+      }
+    } else {
+      const result = await updateQRCode({
+        id: qrCode.id,
+        dynamic: data.dynamic,
+        name: data.name,
+        slug: data.slug,
+        logoId: data.logoId,
+        website: data.website || null,
+        phoneNumber: data.phoneNumber || null,
+        message: data.message || null,
+        email: data.email || null,
+        subject: data.subject || null
+      })
+      if (result.error) {
+        toast({
+          title: 'Error saving qr code',
+          description: result.error,
+          variant: 'destructive'
+        })
+        router.refresh()
+      } else {
+        toast({
+          title: 'QR Code saved'
+        })
+      }
+    }
+
+    setIsSaving(false)
+  }
 
   return (
     <Form {...form}>
@@ -324,27 +373,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
               )}
             />
           ) : undefined}
-          <FormField
-            control={form.control}
-            name="website"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Website</FormLabel>
-                <FormControl>
-                  <Input
-                    type="url"
-                    placeholder="Enter website url"
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    disabled={isSaving}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className={`grid w-full gap-3 ${!qrCode ? 'hidden' : ''}`}>
+          <div className="grid w-full gap-3">
             <Label htmlFor="logoFileInput">Logo</Label>
             <Input
               id="logoFileInput"
@@ -383,6 +412,186 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
               }}
             />
           </div>
+          <FormField
+            control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Type</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {Object.values(QRCodeType).map(type => (
+                      <SelectItem key={type} value={type}>
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {type === 'website' ? (
+            <FormField
+              control={form.control}
+              name="website"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Website</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="url"
+                      placeholder="Enter website url"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      disabled={isSaving}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ) : null}
+          {type === 'phone' ? (
+            <FormField
+              control={form.control}
+              name="phoneNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone Number</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="tel"
+                      placeholder="Enter phone number"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      autoComplete="tel"
+                      disabled={isSaving}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ) : null}
+          {type === 'sms' ? (
+            <>
+              <FormField
+                control={form.control}
+                name="phoneNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="tel"
+                        placeholder="Enter phone number"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        autoComplete="tel"
+                        disabled={isSaving}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="message"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Message</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter message"
+                        autoCapitalize="on"
+                        autoCorrect="on"
+                        disabled={isSaving}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </>
+          ) : null}
+          {type === 'email' ? (
+            <>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="Enter email"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        autoComplete="email"
+                        disabled={isSaving}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="subject"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Subject</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="Enter subject"
+                        autoCapitalize="on"
+                        autoCorrect="on"
+                        disabled={isSaving}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="message"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Message</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Enter message"
+                        autoCapitalize="on"
+                        autoCorrect="on"
+                        disabled={isSaving}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </>
+          ) : null}
         </div>
         <div className="col-span-1 flex items-center justify-center">
           <canvas ref={canvasRef} className="hidden" />

@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator'
 import { env } from '@/env.mjs'
 import { canvasRoundRect } from '@/lib/canvasRoundRect'
 import { formatDate } from '@/lib/formatDate'
+import { getQRUrl } from '@/lib/getQRUrl'
 import { GetQRCodesFnDataType } from './actions'
 
 export const QRListItem: FC<{
@@ -27,7 +28,15 @@ export const QRListItem: FC<{
     if (qr.dynamic) {
       url = qr.slug ? `${env.NEXT_PUBLIC_APP_URL}/${qr.slug}` : ''
     } else {
-      url = qr.website ? qr.website : ''
+      url =
+        getQRUrl({
+          type: qr.type,
+          website: qr.website,
+          phoneNumber: qr.phoneNumber,
+          message: qr.message,
+          email: qr.email,
+          subject: qr.subject
+        }) || ''
     }
 
     if (!url) return
@@ -105,7 +114,9 @@ export const QRListItem: FC<{
           <Link
             className="text-muted-foreground underline underline-offset-4 hover:text-primary text-xs sm:text-sm"
             href={
-              qr.dynamic ? env.NEXT_PUBLIC_APP_URL + '/' + qr.slug : qr.website
+              qr.dynamic
+                ? env.NEXT_PUBLIC_APP_URL + '/' + qr.slug
+                : qr.website || '#'
             }
           >
             {qr.dynamic ? env.NEXT_PUBLIC_APP_URL + '/' + qr.slug : qr.website}

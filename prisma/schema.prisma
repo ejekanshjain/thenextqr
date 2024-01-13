@@ -95,6 +95,11 @@ model Resource {
 
 enum QRCodeType {
     website
+    email
+    sms
+    phone
+    // contact
+    // pdf
 }
 
 model QRCode {
@@ -103,9 +108,14 @@ model QRCode {
     name       String
     slug       String?    @unique
     type       QRCodeType @default(website)
-    website    String
     expires    DateTime?  @db.Timestamptz()
     totalScans Int        @default(0)
+
+    website     String?
+    phoneNumber String?
+    message     String?
+    email       String?
+    subject     String?
 
     logo     Resource?       @relation("qrCodeLogo")
     scanLogs QRCodeScanLog[]

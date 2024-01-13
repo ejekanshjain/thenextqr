@@ -2,12 +2,20 @@ import { headers } from 'next/headers'
 import { notFound, redirect } from 'next/navigation'
 import { UAParser } from 'ua-parser-js'
 
+import { env } from '@/env.mjs'
 import { prisma } from '@/lib/db'
+import { getQRUrl } from '@/lib/getQRUrl'
+import { QRCodeType } from '@prisma/client'
 
 const Page = async ({ params: { qrslug } }: { params: { qrslug: string } }) => {
   let qrCode: {
     id: string
-    website: string
+    type: QRCodeType
+    website?: string | null
+    phoneNumber?: string | null
+    message?: string | null
+    email?: string | null
+    subject?: string | null
   }
   try {
     qrCode = await prisma.qRCode.update({
@@ -25,7 +33,12 @@ const Page = async ({ params: { qrslug } }: { params: { qrslug: string } }) => {
       },
       select: {
         id: true,
-        website: true
+        type: true,
+        website: true,
+        phoneNumber: true,
+        message: true,
+        email: true,
+        subject: true
       }
     })
   } catch (err) {
@@ -61,7 +74,17 @@ const Page = async ({ params: { qrslug } }: { params: { qrslug: string } }) => {
     }
   })
 
-  return redirect(qrCode.website)
+  const url =
+    getQRUrl({
+      type: qrCode.type,
+      website: qrCode.website,
+      phoneNumber: qrCode.phoneNumber,
+      message: qrCode.message,
+      email: qrCode.email,
+      subject: qrCode.subject
+    }) || env.NEXT_PUBLIC_APP_URL
+
+  return redirect(url)
 }
 
 export default Page

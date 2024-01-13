@@ -1,7 +1,6 @@
 'use server'
 
 import { nanoid } from 'nanoid'
-import { revalidatePath } from 'next/cache'
 
 import { getAuthSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
@@ -35,16 +34,24 @@ export const createQRCode = async ({
   dynamic,
   name,
   slug,
-  website,
   logoId,
-  type
+  type,
+  website,
+  phoneNumber,
+  message,
+  email,
+  subject
 }: {
   dynamic: boolean
   name: string
   slug?: string
-  website: string
   logoId?: string | null
   type: QRCodeType
+  website?: string | null
+  phoneNumber?: string | null
+  message?: string | null
+  email?: string | null
+  subject?: string | null
 }) => {
   const session = await getAuthSession()
   if (!session?.user) throw new Error('Unauthorized')
@@ -112,8 +119,12 @@ export const createQRCode = async ({
       dynamic,
       slug,
       type,
-      website,
       expires: dynamic ? new Date(plan.currentPeriodEnd) : null,
+      website,
+      phoneNumber,
+      message,
+      email,
+      subject,
       createdById: session.user.id,
       updatedById: session.user.id
     }
@@ -129,8 +140,6 @@ export const createQRCode = async ({
       }
     })
 
-  if (slug) revalidatePath(`/${slug}`)
-  revalidatePath(`/qr-codes/${id}`)
   return { id }
 }
 
@@ -139,15 +148,23 @@ export const updateQRCode = async ({
   dynamic,
   name,
   slug,
+  logoId,
   website,
-  logoId
+  phoneNumber,
+  message,
+  email,
+  subject
 }: {
   id: string
   dynamic: boolean
   name: string
   slug?: string
-  website: string
   logoId?: string | null
+  website?: string | null
+  phoneNumber?: string | null
+  message?: string | null
+  email?: string | null
+  subject?: string | null
 }) => {
   const session = await getAuthSession()
   if (!session?.user) throw new Error('Unauthorized')
@@ -209,8 +226,12 @@ export const updateQRCode = async ({
         name,
         dynamic,
         slug,
+        expires: dynamic ? new Date(plan.currentPeriodEnd) : null,
         website,
-        expires: dynamic ? new Date(plan.currentPeriodEnd) : null
+        phoneNumber,
+        message,
+        email,
+        subject
       }
     }),
     prisma.resource.updateMany({
@@ -233,9 +254,6 @@ export const updateQRCode = async ({
       }
     })
 
-  if (qr.slug) revalidatePath(`/${qr.slug}`)
-  if (slug && qr.slug !== slug) revalidatePath(`/${slug}`)
-  revalidatePath(`/qr-codes/${id}`)
   return { id }
 }
 
@@ -243,14 +261,12 @@ export const deleteQRCode = async (id: string) => {
   const session = await getAuthSession()
   if (!session?.user) throw new Error('Unauthorized')
 
-  const deleted = await prisma.qRCode.delete({
+  await prisma.qRCode.delete({
     where: {
       id,
       createdById: session.user.id
     }
   })
 
-  if (deleted.slug) revalidatePath(`/${deleted.slug}`)
-  revalidatePath(`/qr-codes/${id}`)
   return
 }
