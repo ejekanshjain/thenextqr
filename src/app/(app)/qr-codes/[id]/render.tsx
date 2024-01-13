@@ -461,7 +461,7 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
               )}
             />
           ) : null}
-          {type === 'phone' ? (
+          {type === 'phone' || type === 'sms' ? (
             <FormField
               control={form.control}
               name="phoneNumber"
@@ -483,50 +483,6 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
                 </FormItem>
               )}
             />
-          ) : null}
-          {type === 'sms' ? (
-            <>
-              <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="tel"
-                        placeholder="Enter phone number"
-                        autoCapitalize="none"
-                        autoCorrect="off"
-                        autoComplete="tel"
-                        disabled={isSaving}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="message"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Message</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Enter message"
-                        autoCapitalize="on"
-                        autoCorrect="on"
-                        disabled={isSaving}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </>
           ) : null}
           {type === 'email' ? (
             <>
