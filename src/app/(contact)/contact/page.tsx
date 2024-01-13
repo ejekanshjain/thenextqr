@@ -1,17 +1,10 @@
-import { Metadata } from 'next'
 import Link from 'next/link'
 
 import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
-import { siteConfig } from '@/lib/siteConfig'
 import { Render } from './render'
 
-export const metadata: Metadata = {
-  title: 'Contact Us - ' + siteConfig.name,
-  description: siteConfig.description
-}
-
-const ContactPage = () => {
+const ContactPage = async () => {
   return (
     <div className="app-container flex h-[90vh] w-screen flex-col items-center justify-center">
       <Link href="/" className="absolute left-4 top-4">

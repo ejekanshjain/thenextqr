@@ -62,8 +62,9 @@ model User {
 
     accounts       Account[]
     sessions       Session[]
-    createdQRCodes QRCode[]  @relation("createdQRCodes")
-    updatedQRCodes QRCode[]  @relation("updatedQRCodes")
+    createdQRCodes QRCode[]    @relation("createdQRCodes")
+    updatedQRCodes QRCode[]    @relation("updatedQRCodes")
+    contactUs      ContactUs[] @relation("contactusUsers")
 
     @@map("Users")
 }
@@ -159,6 +160,9 @@ model ContactUs {
     message   String
     ipAdress  String?
     userAgent String?
+    userId    String?
+
+    user User? @relation("contactusUsers", fields: [userId], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now()) @db.Timestamptz()
     updatedAt DateTime @default(now()) @updatedAt @db.Timestamptz()
