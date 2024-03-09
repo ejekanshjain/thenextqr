@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import { BarGraph } from '@/components/graphs/bar-graph'
+import { Icons } from '@/components/icons'
 import { PricingCards } from '@/components/pricing-cards'
 import { QRPlayground } from '@/components/qr-playground'
 import { BackgroundBeams } from '@/components/ui/background-beams'
@@ -91,7 +92,9 @@ const Home = async () => {
             </div>
             <div className="w-full max-w-md pt-5">
               <Link href={session?.user ? '/qr-codes/new' : '/login'}>
-                <Button size="lg">Signup</Button>
+                <Button size="lg">
+                  Join Now <Icons.arrowRight className="ml-2 h-4 w-4" />
+                </Button>
               </Link>
             </div>
             <div className="max-w-2xl flex-col space-y-2 pt-8">
