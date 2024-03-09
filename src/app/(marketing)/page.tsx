@@ -7,6 +7,7 @@ import { BackgroundBeams } from '@/components/ui/background-beams'
 import { Button } from '@/components/ui/button'
 import { InfiniteMovingCards } from '@/components/ui/infinite-moving-cards'
 import { Spotlight } from '@/components/ui/spotlight'
+import { TypewriterEffectSmooth } from '@/components/ui/typewriter-effect'
 import { getAuthSession } from '@/lib/auth'
 
 const graphData = [
@@ -72,6 +73,28 @@ const testimonials = [
   }
 ]
 
+const words = [
+  {
+    text: 'Generate'
+  },
+  {
+    text: 'your'
+  },
+  {
+    text: 'QR'
+  },
+  {
+    text: 'now'
+  },
+  {
+    text: 'with'
+  },
+  {
+    text: 'TheNextQR.',
+    className: 'text-blue-500 dark:text-blue-500'
+  }
+]
+
 const Home = async () => {
   const session = await getAuthSession()
 
@@ -81,9 +104,9 @@ const Home = async () => {
         <div className="container relative z-10 mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
-                Generate Your QR Code
-              </h1>
+              <div>
+                <TypewriterEffectSmooth words={words} />
+              </div>
               <p className="mx-auto max-w-[700px] text-gray-500 dark:text-gray-400 md:text-xl">
                 Enter your desired content and generate a QR code instantly.
                 Customize the logo to your needs.
@@ -91,7 +114,7 @@ const Home = async () => {
             </div>
             <div className="w-full max-w-md pt-5">
               <Link href={session?.user ? '/qr-codes/new' : '/login'}>
-                <Button size="lg">Generate QR Code</Button>
+                <Button size="lg">Signup</Button>
               </Link>
             </div>
             <div className="max-w-2xl flex-col space-y-2 pt-8">
