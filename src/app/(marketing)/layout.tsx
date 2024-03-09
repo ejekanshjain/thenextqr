@@ -17,7 +17,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
   const session = await getAuthSession()
 
   return (
-    <div className="flex min-h-screen flex-col space-y-4">
+    <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-40 border-b bg-background">
         <div className="app-container flex h-16 items-center justify-between py-4">
           <MainNav />
@@ -41,7 +41,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
         </div>
       </header>
       <main className="flex-1">{children}</main>
-      <SiteFooter className="border-t" />
+      <SiteFooter className="mt-4 border-t" />
     </div>
   )
 }

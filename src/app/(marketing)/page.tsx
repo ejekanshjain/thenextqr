@@ -7,6 +7,7 @@ import { QRPlayground } from '@/components/qr-playground'
 import { BackgroundBeams } from '@/components/ui/background-beams'
 import { Button } from '@/components/ui/button'
 import { InfiniteMovingCards } from '@/components/ui/infinite-moving-cards'
+import { SparklesCore } from '@/components/ui/sparkles'
 import { Spotlight } from '@/components/ui/spotlight'
 import { getAuthSession } from '@/lib/auth'
 
@@ -43,33 +44,28 @@ const graphData = [
 
 const testimonials = [
   {
+    name: 'Priya Sharma',
+    title: 'Marketing Manager',
     quote:
-      'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair.',
-    name: 'Charles Dickens',
-    title: 'A Tale of Two Cities'
+      'The QR code generation feature in this app is incredibly useful for our marketing campaigns. Being able to track the number of scans and access detailed analytics has greatly improved our understanding of customer engagement.'
   },
   {
+    name: 'Rahul Patel',
+    title: 'Event Organizer',
     quote:
-      "To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take Arms against a Sea of troubles, And by opposing end them: to die, to sleep.",
-    name: 'William Shakespeare',
-    title: 'Hamlet'
+      'As an event organizer, I rely heavily on QR codes for ticketing and promotional purposes. This app not only simplifies the process of generating QR codes but also provides insightful analytics on scan data, allowing me to optimize event strategies.'
   },
   {
-    quote: 'All that we see or seem is but a dream within a dream.',
-    name: 'Edgar Allan Poe',
-    title: 'A Dream Within a Dream'
+    name: 'Amit Singh',
+    title: 'Small Business Owner',
+    quote:
+      "Using this app has been a game-changer for my small business. I can easily create dynamic QR codes for various products and track how many times they've been scanned. The detailed reports help me refine my marketing efforts and understand customer behavior better."
   },
   {
+    name: 'Neha Verma',
+    title: 'Digital Marketer',
     quote:
-      'It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.',
-    name: 'Jane Austen',
-    title: 'Pride and Prejudice'
-  },
-  {
-    quote:
-      'Call me Ishmael. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world.',
-    name: 'Herman Melville',
-    title: 'Moby-Dick'
+      "I've tried several QR code generators, but this app stands out for its advanced analytics features. It not only generates QR codes efficiently but also provides comprehensive insights into user interactions. It's a must-have tool for any digital marketer."
   }
 ]
 
@@ -77,7 +73,7 @@ const Home = async () => {
   const session = await getAuthSession()
 
   return (
-    <div className="relative -mt-4 flex flex-col">
+    <div className="relative flex flex-col">
       <section className="relative w-full overflow-hidden py-12 md:min-h-screen md:py-24 lg:py-32">
         <div className="container relative z-10 mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
@@ -110,7 +106,7 @@ const Home = async () => {
       <section className="relative w-full bg-background py-12 bg-grid-black/[0.2] dark:bg-grid-white/[0.1] md:min-h-screen md:py-16 lg:py-32">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
         <div className="container relative z-10 mx-auto px-4 md:px-6">
-          <div className="flex flex-col items-center space-y-4 text-center">
+          <div className="flex flex-col items-center space-y-4 text-center md:space-y-8 lg:space-y-16">
             <div className="space-y-2">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
                 Track Your QR Code Scans
@@ -142,11 +138,35 @@ const Home = async () => {
         <BackgroundBeams />
       </section>
       <section className="relative w-full overflow-hidden py-12 md:py-16 lg:py-32">
-        <InfiniteMovingCards
-          items={testimonials}
-          direction="right"
-          speed="slow"
-        />
+        <div className="flex w-full flex-col items-center justify-center px-4">
+          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+            What are people saying?
+          </h2>
+          <div className="relative h-32 w-full max-w-xl">
+            <div className="absolute inset-x-20 top-0 h-[2px] w-3/4 bg-gradient-to-r from-transparent via-indigo-500 to-transparent blur-sm" />
+            <div className="absolute inset-x-20 top-0 h-px w-3/4 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
+            <div className="absolute inset-x-60 top-0 h-[5px] w-1/4 bg-gradient-to-r from-transparent via-sky-500 to-transparent blur-sm" />
+            <div className="absolute inset-x-60 top-0 h-px w-1/4 bg-gradient-to-r from-transparent via-sky-500 to-transparent" />
+
+            <SparklesCore
+              background="transparent"
+              minSize={0.4}
+              maxSize={1}
+              particleDensity={1200}
+              className="h-full w-full"
+              particleColor="#FFFFFF"
+            />
+
+            <div className="absolute inset-0 h-full w-full bg-background [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"></div>
+          </div>
+          <div className="-mt-4">
+            <InfiniteMovingCards
+              items={testimonials}
+              direction="right"
+              speed="slow"
+            />
+          </div>
+        </div>
       </section>
     </div>
   )
