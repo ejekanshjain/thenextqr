@@ -5,6 +5,7 @@
   "scripts": {
     "postinstall": "prisma generate",
     "lint": "next lint",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.{js,cjs,mjs,ts,jsx,tsx,mdx}\"",
     "dev": "next dev",
     "clean": "rm -rf .next && rm -rf .open-next && rm -rf .sst",

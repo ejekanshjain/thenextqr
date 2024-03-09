@@ -3,6 +3,7 @@ node_modules
 next-env.d.ts
 out
 build
+tsconfig.tsbuildinfo
 .env
 .env.test
 .env.prod
