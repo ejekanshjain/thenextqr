@@ -67,31 +67,9 @@ const Home = async () => {
         </div>
         <BackgroundBeams />
       </section>
-      <section className="w-full py-12 md:py-24 lg:py-32">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
-                Generate Your QR Code
-              </h1>
-              <p className="mx-auto max-w-[700px] text-gray-500 dark:text-gray-400 md:text-xl">
-                Enter your desired content and generate a QR code instantly.
-                Customize the logo to your needs.
-              </p>
-            </div>
-            <div className="w-full max-w-md pt-5">
-              <Link href={session?.user ? '/qr-codes/new' : '/login'}>
-                <Button size="lg">Generate QR Code</Button>
-              </Link>
-            </div>
-            <div className="max-w-2xl flex-col space-y-2 pt-8">
-              <QRPlayground />
-            </div>
-          </div>
-        </div>
-      </section>
-      <section className="w-full py-12 md:py-16">
-        <div className="container mx-auto px-4 md:px-6">
+      <section className="dark:bg-grid-white/[0.2] bg-grid-black/[0.2] relative min-h-screen w-full bg-background py-12 md:py-16 lg:py-32">
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
+        <div className="container relative z-10 mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center space-y-4 text-center">
             <div className="space-y-2">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
@@ -105,16 +83,18 @@ const Home = async () => {
             <div className="w-full">
               <BarGraph data={graphData} />
             </div>
-            <div className="md:pt-18 flex w-full flex-col items-center justify-center pt-12 lg:pt-24">
-              <h2 className="mb-4 text-5xl font-bold">Pricing Plans</h2>
-              <p className="max-w-xl text-center text-lg text-gray-600">
-                Choose a plan that suits your need. Upgrade, downgrade, or
-                cancel anytime.
-              </p>
-              <div className="mt-12 w-full max-w-6xl">
-                <PricingCards />
-              </div>
-            </div>
+          </div>
+        </div>
+      </section>
+      <section className="w-full py-12 md:py-16 lg:py-32">
+        <div className="flex w-full flex-col items-center justify-center">
+          <h2 className="mb-4 text-5xl font-bold">Pricing Plans</h2>
+          <p className="max-w-xl text-center text-lg text-gray-600">
+            Choose a plan that suits your need. Upgrade, downgrade, or cancel
+            anytime.
+          </p>
+          <div className="mt-12 w-full max-w-6xl">
+            <PricingCards />
           </div>
         </div>
       </section>
