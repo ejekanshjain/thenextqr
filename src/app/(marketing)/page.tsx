@@ -76,7 +76,7 @@ const Home = async () => {
   const session = await getAuthSession()
 
   return (
-    <div className="relative flex flex-col">
+    <div className="relative -mt-4 flex flex-col">
       <section className="relative w-full overflow-hidden py-12 md:min-h-screen md:py-24 lg:py-32">
         <div className="container relative z-10 mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
