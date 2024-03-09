@@ -13,7 +13,7 @@ type MainNavProps = {
 export const MainNav: FC<MainNavProps> = ({ logoLink = '/' }) => {
   return (
     <div className="flex md:gap-10">
-      <Link href={logoLink} className="items-center space-x-2 flex">
+      <Link href={logoLink} className="flex items-center space-x-2">
         <Icons.logo />
         <span className="font-bold">{siteConfig.name}</span>
       </Link>

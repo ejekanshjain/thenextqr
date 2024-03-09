@@ -36,7 +36,7 @@ export const QRPlayground: FC = () => {
   )
 
   return (
-    <div className="flex flex-col gap-3 w-full">
+    <div className="flex w-full flex-col gap-3">
       <canvas ref={canvasRef} className="hidden" />
       <Input
         type="url"
@@ -53,7 +53,7 @@ export const QRPlayground: FC = () => {
             <img
               src={generatedQRCode}
               alt="QR Code"
-              className="w-80 h-80 md:h-96 md:w-96"
+              className="h-80 w-80 md:h-96 md:w-96"
             />
           ) : (
             <div className="w-80 md:w-96">

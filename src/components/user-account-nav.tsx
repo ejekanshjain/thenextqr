@@ -40,7 +40,7 @@ export const UserAccountNav: FC<UserAccountNavProps> = ({ user }) => {
           <>
             <Link
               href="/settings"
-              className="flex items-center justify-start gap-2 p-2 hover:bg-muted transition-all"
+              className="flex items-center justify-start gap-2 p-2 transition-all hover:bg-muted"
             >
               <div className="flex flex-col space-y-1 leading-none">
                 {user.name && (

@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 
 const PricingPage = async () => {
   return (
-    <div className="flex flex-col items-center justify-center w-full p-5 md:p-10">
-      <h1 className="text-5xl font-bold mb-4">Pricing Plans</h1>
-      <p className="text-lg text-gray-600 text-center max-w-xl">
+    <div className="flex w-full flex-col items-center justify-center p-5 md:p-10">
+      <h1 className="mb-4 text-5xl font-bold">Pricing Plans</h1>
+      <p className="max-w-xl text-center text-lg text-gray-600">
         Choose a plan that suits your need. Upgrade, downgrade, or cancel
         anytime.
       </p>

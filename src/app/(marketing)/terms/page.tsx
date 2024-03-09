@@ -17,13 +17,13 @@ const date = new Date('2024-01-01').toLocaleDateString('en-US', {
 const TermsPage = () => {
   return (
     <div className="px-2 sm:px-4 lg:px-8">
-      <h1 className="text-5xl font-bold my-2">Terms of Service</h1>
+      <h1 className="my-2 text-5xl font-bold">Terms of Service</h1>
       <div>
         <span className="text-lg text-muted-foreground">
           Last Updated: {date}
         </span>
       </div>
-      <ol className="my-4 list-decimal flex flex-col space-y-2 px-1">
+      <ol className="my-4 flex list-decimal flex-col space-y-2 px-1">
         <li>
           Acceptance of Terms: By accessing or using {siteConfig.name}&apos;s QR
           code generator (the Service), you agree to comply with and be bound by
@@ -36,7 +36,7 @@ const TermsPage = () => {
         </li>
         <li>
           User Accounts:
-          <ul className="list-disc list-inside">
+          <ul className="list-inside list-disc">
             <li>
               To access certain features of the Service, you may be required to
               register for an account. You agree to provide accurate, current,
@@ -51,7 +51,7 @@ const TermsPage = () => {
         </li>
         <li>
           Dynamic QR Code Usage:
-          <ul className="list-disc list-inside">
+          <ul className="list-inside list-disc">
             <li>
               Users can generate dynamic QR codes to track and monitor usage and
               analytics.
@@ -64,7 +64,7 @@ const TermsPage = () => {
         </li>
         <li>
           Paid Subscriptions:
-          <ul className="list-disc list-inside">
+          <ul className="list-inside list-disc">
             <li>
               The Next QR offers paid subscriptions with additional features and
               limits for dynamic QR codes.

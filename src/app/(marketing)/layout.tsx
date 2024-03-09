@@ -22,7 +22,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
         <div className="app-container flex h-16 items-center justify-between py-4">
           <MainNav />
           <div className="flex items-center justify-center space-x-4">
-            <Badge className="py-1.5 px-3 font-normal" variant="secondary">
+            <Badge className="px-3 py-1.5 font-normal" variant="secondary">
               Beta
             </Badge>
             <UserAccountNav

@@ -26,7 +26,7 @@ export const UserAvatar: FC<UserAvatarProps> = ({ user, ...props }) => {
 
   return (
     <Avatar {...props}>
-      <AvatarFallback className="bg-transparent border hover:bg-muted transition-all">
+      <AvatarFallback className="border bg-transparent transition-all hover:bg-muted">
         <Icons.menu className="h-4 w-4" />
       </AvatarFallback>
     </Avatar>

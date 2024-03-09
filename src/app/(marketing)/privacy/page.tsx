@@ -17,13 +17,13 @@ const date = new Date('2024-01-01').toLocaleDateString('en-US', {
 const PrivacyPage = () => {
   return (
     <div className="px-2 sm:px-4 lg:px-8">
-      <h1 className="text-5xl font-bold my-2">Privacy Policy</h1>
+      <h1 className="my-2 text-5xl font-bold">Privacy Policy</h1>
       <div>
         <span className="text-lg text-muted-foreground">
           Last Updated: {date}
         </span>
       </div>
-      <ol className="my-4 list-decimal flex flex-col space-y-2 px-1">
+      <ol className="my-4 flex list-decimal flex-col space-y-2 px-1">
         <li>
           Introduction: This Privacy Policy outlines how The Next QR (we, our,
           or us) collects, uses, and protects the personal information of users
@@ -31,7 +31,7 @@ const PrivacyPage = () => {
         </li>
         <li>
           Information We Collect
-          <ul className="list-disc list-inside">
+          <ul className="list-inside list-disc">
             <li>
               User Account Information: When you create an account, we collect
               information such as your name, email address, and password.
@@ -50,7 +50,7 @@ const PrivacyPage = () => {
         </li>
         <li>
           Use of Information:
-          <ul className="list-disc list-inside">
+          <ul className="list-inside list-disc">
             <li>
               We use the collected information to provide and improve our
               Service, including personalized user experiences and customer
@@ -64,7 +64,7 @@ const PrivacyPage = () => {
         </li>
         <li>
           Cookies:
-          <ul className="list-disc list-inside">
+          <ul className="list-inside list-disc">
             <li>
               We use cookies to enhance your user experience and for
               authentication purposes. Cookies are small pieces of data stored
@@ -86,7 +86,7 @@ const PrivacyPage = () => {
         </li>
         <li>
           User Choices and Rights:
-          <ul className="list-disc list-inside">
+          <ul className="list-inside list-disc">
             <li>
               You can manage your account information and communication
               preferences through your account settings.

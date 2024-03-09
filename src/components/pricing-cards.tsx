@@ -16,7 +16,7 @@ export const PricingCards = async () => {
   const session = await getAuthSession()
 
   return (
-    <div className="grid gap-6 lg:gap-12 lg:grid-cols-3 w-full">
+    <div className="grid w-full gap-6 lg:grid-cols-3 lg:gap-12">
       {plans.map(plan => (
         <Card
           key={plan.name}
@@ -31,7 +31,7 @@ export const PricingCards = async () => {
               <div className="flex items-end">
                 <h4 className="text-3xl font-semibold">${plan.price}</h4>
                 {plan.per ? (
-                  <span className="text-gray-600 ml-2 font-light text-sm">
+                  <span className="ml-2 text-sm font-light text-gray-600">
                     / {plan.per}
                   </span>
                 ) : null}

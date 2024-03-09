@@ -41,15 +41,15 @@ const Home = async () => {
   const session = await getAuthSession()
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col">
       <section className="w-full py-12 md:py-24 lg:py-32">
-        <div className="container px-4 md:px-6 mx-auto">
+        <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
               <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
                 Generate Your QR Code
               </h1>
-              <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+              <p className="mx-auto max-w-[700px] text-gray-500 dark:text-gray-400 md:text-xl">
                 Enter your desired content and generate a QR code instantly.
                 Customize the logo to your needs.
               </p>
@@ -59,20 +59,20 @@ const Home = async () => {
                 <Button size="lg">Generate QR Code</Button>
               </Link>
             </div>
-            <div className="space-y-2 flex-col pt-8 max-w-2xl">
+            <div className="max-w-2xl flex-col space-y-2 pt-8">
               <QRPlayground />
             </div>
           </div>
         </div>
       </section>
       <section className="w-full py-12 md:py-16">
-        <div className="container px-4 md:px-6 mx-auto">
+        <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center space-y-4 text-center">
             <div className="space-y-2">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
                 Track Your QR Code Scans
               </h2>
-              <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
+              <p className="mx-auto max-w-[700px] text-gray-500 dark:text-gray-400 md:text-xl">
                 Upgrade Now and get insights into how often your QR codes are
                 being scanned.
               </p>
@@ -80,9 +80,9 @@ const Home = async () => {
             <div className="w-full">
               <BarGraph data={graphData} />
             </div>
-            <div className="flex flex-col items-center justify-center w-full pt-12 md:pt-18 lg:pt-24">
-              <h2 className="text-5xl font-bold mb-4">Pricing Plans</h2>
-              <p className="text-lg text-gray-600 text-center max-w-xl">
+            <div className="md:pt-18 flex w-full flex-col items-center justify-center pt-12 lg:pt-24">
+              <h2 className="mb-4 text-5xl font-bold">Pricing Plans</h2>
+              <p className="max-w-xl text-center text-lg text-gray-600">
                 Choose a plan that suits your need. Upgrade, downgrade, or
                 cancel anytime.
               </p>

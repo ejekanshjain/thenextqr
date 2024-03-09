@@ -112,7 +112,7 @@ export const QRListItem: FC<{
         <p className="flex items-center justify-start">
           <Icons.link className="mr-2 h-4 w-4" />
           <Link
-            className="text-muted-foreground underline underline-offset-4 hover:text-primary text-xs sm:text-sm"
+            className="text-xs text-muted-foreground underline underline-offset-4 hover:text-primary sm:text-sm"
             href={
               qr.dynamic
                 ? env.NEXT_PUBLIC_APP_URL + '/' + qr.slug
@@ -125,22 +125,22 @@ export const QRListItem: FC<{
           </Link>
         </p>
       </div>
-      <div className="col-span-2 flex flex-col md:flex-row md:items-center md:justify-around gap-2">
+      <div className="col-span-2 flex flex-col gap-2 md:flex-row md:items-center md:justify-around">
         <div className="md:hidden lg:block">
           {qr.dynamic ? (
             <Link
               href={`/qr-codes/${qr.id}/analytics`}
-              className="text-muted-foreground underline underline-offset-4 hover:text-primary transition-all text-sm"
+              className="text-sm text-muted-foreground underline underline-offset-4 transition-all hover:text-primary"
             >
               {qr.totalScans || 0} Scans
             </Link>
           ) : (
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               {qr.totalScans || 0} Scans
             </p>
           )}
         </div>
-        <div className="flex h-full w-full max-h-60 max-w-60 md:h-36 md:w-36 items-center justify-center">
+        <div className="flex h-full max-h-60 w-full max-w-60 items-center justify-center md:h-36 md:w-36">
           <canvas ref={canvasRef} className="hidden" />
           {generatedQRCode ? (
             <img
@@ -153,7 +153,7 @@ export const QRListItem: FC<{
           )}
         </div>
         <Separator orientation="vertical" className="hidden md:inline-block" />
-        <div className="flex md:flex-col gap-2">
+        <div className="flex gap-2 md:flex-col">
           <Button
             onClick={() => {
               const a = document.createElement('a')
