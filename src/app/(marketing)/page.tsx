@@ -75,12 +75,12 @@ const Home = async () => {
   const session = await getAuthSession()
 
   return (
-    <div className="relative flex min-h-screen flex-col">
-      <section className="relative min-h-screen w-full py-12 md:py-24 lg:py-32">
+    <div className="relative flex flex-col">
+      <section className="relative w-full py-12 sm:min-h-screen md:py-24 lg:py-32">
         <div className="container relative z-10 mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
                 Generate Your QR Code
               </h1>
               <p className="mx-auto max-w-[700px] text-gray-500 dark:text-gray-400 md:text-xl">
@@ -100,7 +100,7 @@ const Home = async () => {
         </div>
         <BackgroundBeams />
       </section>
-      <section className="dark:bg-grid-white/[0.1] bg-grid-black/[0.2] relative min-h-screen w-full bg-background py-12 md:py-16 lg:py-32">
+      <section className="dark:bg-grid-white/[0.1] bg-grid-black/[0.2] relative w-full bg-background py-12 sm:min-h-screen md:py-16 lg:py-32">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
         <div className="container relative z-10 mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center space-y-4 text-center">
@@ -119,9 +119,11 @@ const Home = async () => {
           </div>
         </div>
       </section>
-      <section className="min-h-screen w-full py-12 md:py-16 lg:py-32">
-        <div className="flex w-full flex-col items-center justify-center">
-          <h2 className="mb-4 text-5xl font-bold">Pricing Plans</h2>
+      <section className="w-full py-12 sm:min-h-screen md:py-16 lg:py-32">
+        <div className="flex w-full flex-col items-center justify-center px-4">
+          <h2 className="mb-4 text-3xl font-bold sm:text-4xl md:text-5xl">
+            Pricing Plans
+          </h2>
           <p className="max-w-xl text-center text-lg text-gray-600">
             Choose a plan that suits your need. Upgrade, downgrade, or cancel
             anytime.
