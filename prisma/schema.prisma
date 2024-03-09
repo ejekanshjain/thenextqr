@@ -147,6 +147,7 @@ model QRCodeScanLog {
 
     createdAt DateTime @default(now()) @db.Timestamptz()
 
+    @@index([qrCodeId])
     @@map("QRCodeScanLogs")
 }
 
