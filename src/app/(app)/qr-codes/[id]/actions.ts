@@ -7,6 +7,7 @@ import { prisma } from '@/lib/db'
 import { getUserSubscriptionPlan } from '@/lib/subscription'
 import { UnwrapPromise } from '@/types/UnwrapPromise'
 import { QRCodeType } from '@prisma/client'
+import { revalidatePath } from 'next/cache'
 
 export const getQRCode = async (id: string) => {
   const session = await getAuthSession()
@@ -140,6 +141,9 @@ export const createQRCode = async ({
       }
     })
 
+  revalidatePath(`/qr-codes/${id}`)
+  revalidatePath('/qr-codes')
+
   return { id }
 }
 
@@ -178,9 +182,9 @@ export const updateQRCode = async ({
     }
   })
 
-  if (qr.dynamic && !dynamic) {
+  if (!dynamic) {
     slug = null as any
-  } else if (!qr.dynamic && dynamic && !slug) {
+  } else if (dynamic && !slug) {
     slug = nanoid(8).toLowerCase()
   }
 
@@ -254,6 +258,9 @@ export const updateQRCode = async ({
       }
     })
 
+  revalidatePath(`/qr-codes/${id}`)
+  revalidatePath('/qr-codes')
+
   return { id }
 }
 
@@ -267,6 +274,9 @@ export const deleteQRCode = async (id: string) => {
       createdById: session.user.id
     }
   })
+
+  revalidatePath(`/qr-codes/${id}`)
+  revalidatePath('/qr-codes')
 
   return
 }

@@ -13,7 +13,7 @@ export const getQRCodes = async () => {
         createdById: session.user.id
       },
       orderBy: {
-        createdAt: 'desc'
+        updatedAt: 'desc'
       },
       include: {
         logo: {
@@ -25,7 +25,11 @@ export const getQRCodes = async () => {
         }
       }
     }),
-    prisma.qRCode.count({})
+    prisma.qRCode.count({
+      where: {
+        createdById: session.user.id
+      }
+    })
   ])
 
   return { qrCodes, total }

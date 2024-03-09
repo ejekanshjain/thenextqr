@@ -1,7 +1,6 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
 import { FC, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -40,7 +39,6 @@ export const Render: FC<{ name: string }> = ({ name }) => {
       name
     }
   })
-  const router = useRouter()
   const [isSaving, setIsSaving] = useState(false)
 
   async function onSubmit(data: FormData) {
@@ -53,7 +51,6 @@ export const Render: FC<{ name: string }> = ({ name }) => {
       toast({
         title: 'Your name has been updated.'
       })
-      router.refresh()
     } catch (err) {
       toast({
         title: 'Internal Server Error',

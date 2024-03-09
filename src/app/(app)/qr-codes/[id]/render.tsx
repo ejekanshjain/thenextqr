@@ -103,6 +103,20 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
   const email = form.watch('email')
   const subject = form.watch('subject')
 
+  useEffect(() => {
+    if (!qrCode) return
+    form.setValue('dynamic', qrCode.dynamic)
+    form.setValue('name', qrCode.name)
+    form.setValue('slug', qrCode.slug || '')
+    form.setValue('logoId', qrCode.logo?.id)
+    form.setValue('type', qrCode.type)
+    form.setValue('website', qrCode.website || undefined)
+    form.setValue('phoneNumber', qrCode.phoneNumber || undefined)
+    form.setValue('message', qrCode.message || undefined)
+    form.setValue('email', qrCode.email || undefined)
+    form.setValue('subject', qrCode.subject || undefined)
+  }, [qrCode, form])
+
   const debouncedSetQr = useMemo(
     () =>
       debounce((url: string) => {
@@ -228,7 +242,6 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
           description: result.error,
           variant: 'destructive'
         })
-        router.refresh()
       } else {
         toast({
           title: 'QR Code saved'
