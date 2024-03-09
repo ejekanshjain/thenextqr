@@ -1,15 +1,19 @@
 // import { Analytics } from '@vercel/analytics/react'
 // import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter as FontSans } from "next/font/google"
 import { ReactNode } from 'react'
 
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
+import { cn } from '@/lib/cn'
 import { siteConfig } from '@/lib/siteConfig'
 import '@/styles/globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
 
 export const metadata: Metadata = {
   title: siteConfig.name,
@@ -19,7 +23,10 @@ export const metadata: Metadata = {
 const RootLayout = ({ children }: { children: ReactNode }) => {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable
+        )}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
           {/* <Analytics /> */}

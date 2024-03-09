@@ -4,6 +4,7 @@ import { NextjsSite } from 'sst/constructs'
 
 const envPathMap = new Map()
 envPathMap.set('test', '.env.test')
+// envPathMap.set('prod', '.env.prod')
 
 export default {
   config(_input) {
