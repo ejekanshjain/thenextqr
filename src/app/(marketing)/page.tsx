@@ -7,7 +7,6 @@ import { BackgroundBeams } from '@/components/ui/background-beams'
 import { Button } from '@/components/ui/button'
 import { InfiniteMovingCards } from '@/components/ui/infinite-moving-cards'
 import { Spotlight } from '@/components/ui/spotlight'
-import { TypewriterEffectSmooth } from '@/components/ui/typewriter-effect'
 import { getAuthSession } from '@/lib/auth'
 
 const graphData = [
@@ -73,40 +72,18 @@ const testimonials = [
   }
 ]
 
-const words = [
-  {
-    text: 'Generate'
-  },
-  {
-    text: 'your'
-  },
-  {
-    text: 'QR'
-  },
-  {
-    text: 'now'
-  },
-  {
-    text: 'with'
-  },
-  {
-    text: 'TheNextQR.',
-    className: 'text-blue-500 dark:text-blue-500'
-  }
-]
-
 const Home = async () => {
   const session = await getAuthSession()
 
   return (
     <div className="relative flex flex-col">
-      <section className="relative w-full py-12 sm:min-h-screen md:py-24 lg:py-32">
+      <section className="relative w-full py-12 md:min-h-screen md:py-24 lg:py-32">
         <div className="container relative z-10 mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
-              <div>
-                <TypewriterEffectSmooth words={words} />
-              </div>
+              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
+                Generate your QR now
+              </h1>
               <p className="mx-auto max-w-[700px] text-gray-500 dark:text-gray-400 md:text-xl">
                 Enter your desired content and generate a QR code instantly.
                 Customize the logo to your needs.
@@ -127,7 +104,7 @@ const Home = async () => {
           fill="gray"
         />
       </section>
-      <section className="dark:bg-grid-white/[0.1] bg-grid-black/[0.2] relative w-full bg-background py-12 sm:min-h-screen md:py-16 lg:py-32">
+      <section className="dark:bg-grid-white/[0.1] bg-grid-black/[0.2] relative w-full bg-background py-12 md:min-h-screen md:py-16 lg:py-32">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
         <div className="container relative z-10 mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center space-y-4 text-center">
@@ -146,7 +123,7 @@ const Home = async () => {
           </div>
         </div>
       </section>
-      <section className="relative w-full py-12 sm:min-h-screen md:py-16 lg:py-32">
+      <section className="relative w-full py-12 md:min-h-screen md:py-16 lg:py-32">
         <div className="relative z-10 flex w-full flex-col items-center justify-center px-4">
           <h2 className="mb-4 text-3xl font-bold sm:text-4xl md:text-5xl">
             Pricing Plans
