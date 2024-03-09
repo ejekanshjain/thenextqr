@@ -6,6 +6,7 @@ import { QRPlayground } from '@/components/qr-playground'
 import { BackgroundBeams } from '@/components/ui/background-beams'
 import { Button } from '@/components/ui/button'
 import { InfiniteMovingCards } from '@/components/ui/infinite-moving-cards'
+import { Spotlight } from '@/components/ui/spotlight'
 import { getAuthSession } from '@/lib/auth'
 
 const graphData = [
@@ -98,7 +99,10 @@ const Home = async () => {
             </div>
           </div>
         </div>
-        <BackgroundBeams />
+        <Spotlight
+          className="-top-40 left-0 md:-top-20 md:left-60"
+          fill="gray"
+        />
       </section>
       <section className="dark:bg-grid-white/[0.1] bg-grid-black/[0.2] relative w-full bg-background py-12 sm:min-h-screen md:py-16 lg:py-32">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
@@ -119,8 +123,8 @@ const Home = async () => {
           </div>
         </div>
       </section>
-      <section className="w-full py-12 sm:min-h-screen md:py-16 lg:py-32">
-        <div className="flex w-full flex-col items-center justify-center px-4">
+      <section className="relative w-full py-12 sm:min-h-screen md:py-16 lg:py-32">
+        <div className="relative z-10 flex w-full flex-col items-center justify-center px-4">
           <h2 className="mb-4 text-3xl font-bold sm:text-4xl md:text-5xl">
             Pricing Plans
           </h2>
@@ -132,6 +136,7 @@ const Home = async () => {
             <PricingCards />
           </div>
         </div>
+        <BackgroundBeams />
       </section>
       <section className="relative w-full py-12 md:py-16 lg:py-32">
         <InfiniteMovingCards
