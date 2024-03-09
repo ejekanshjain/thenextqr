@@ -5,6 +5,7 @@ import { PricingCards } from '@/components/pricing-cards'
 import { QRPlayground } from '@/components/qr-playground'
 import { BackgroundBeams } from '@/components/ui/background-beams'
 import { Button } from '@/components/ui/button'
+import { InfiniteMovingCards } from '@/components/ui/infinite-moving-cards'
 import { getAuthSession } from '@/lib/auth'
 
 const graphData = [
@@ -38,12 +39,44 @@ const graphData = [
   }
 ]
 
+const testimonials = [
+  {
+    quote:
+      'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair.',
+    name: 'Charles Dickens',
+    title: 'A Tale of Two Cities'
+  },
+  {
+    quote:
+      "To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take Arms against a Sea of troubles, And by opposing end them: to die, to sleep.",
+    name: 'William Shakespeare',
+    title: 'Hamlet'
+  },
+  {
+    quote: 'All that we see or seem is but a dream within a dream.',
+    name: 'Edgar Allan Poe',
+    title: 'A Dream Within a Dream'
+  },
+  {
+    quote:
+      'It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.',
+    name: 'Jane Austen',
+    title: 'Pride and Prejudice'
+  },
+  {
+    quote:
+      'Call me Ishmael. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world.',
+    name: 'Herman Melville',
+    title: 'Moby-Dick'
+  }
+]
+
 const Home = async () => {
   const session = await getAuthSession()
 
   return (
     <div className="relative flex min-h-screen flex-col">
-      <section className="relative w-full py-12 md:py-24 lg:py-32">
+      <section className="relative min-h-screen w-full py-12 md:py-24 lg:py-32">
         <div className="container relative z-10 mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
@@ -67,7 +100,7 @@ const Home = async () => {
         </div>
         <BackgroundBeams />
       </section>
-      <section className="dark:bg-grid-white/[0.2] bg-grid-black/[0.2] relative min-h-screen w-full bg-background py-12 md:py-16 lg:py-32">
+      <section className="dark:bg-grid-white/[0.1] bg-grid-black/[0.2] relative min-h-screen w-full bg-background py-12 md:py-16 lg:py-32">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
         <div className="container relative z-10 mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center space-y-4 text-center">
@@ -86,7 +119,7 @@ const Home = async () => {
           </div>
         </div>
       </section>
-      <section className="w-full py-12 md:py-16 lg:py-32">
+      <section className="min-h-screen w-full py-12 md:py-16 lg:py-32">
         <div className="flex w-full flex-col items-center justify-center">
           <h2 className="mb-4 text-5xl font-bold">Pricing Plans</h2>
           <p className="max-w-xl text-center text-lg text-gray-600">
@@ -97,6 +130,13 @@ const Home = async () => {
             <PricingCards />
           </div>
         </div>
+      </section>
+      <section className="relative w-full py-12 md:py-16 lg:py-32">
+        <InfiniteMovingCards
+          items={testimonials}
+          direction="right"
+          speed="slow"
+        />
       </section>
     </div>
   )
