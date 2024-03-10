@@ -6,6 +6,8 @@ import { ReactNode } from 'react'
 
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
+import { WWWRedirection } from '@/components/www-redirection'
+import { env } from '@/env.mjs'
 import { cn } from '@/lib/cn'
 import { siteConfig } from '@/lib/siteConfig'
 import '@/styles/globals.css'
@@ -33,6 +35,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
           {children}
           {/* <Analytics /> */}
           {/* <SpeedInsights /> */}
+          {env.NODE_ENV === 'production' ? <WWWRedirection /> : null}
           <Toaster />
         </ThemeProvider>
       </body>
