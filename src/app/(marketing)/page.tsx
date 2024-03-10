@@ -103,7 +103,7 @@ const Home = async () => {
           fill="gray"
         />
       </section>
-      <section className="relative w-full bg-background py-12 bg-grid-black/[0.2] dark:bg-grid-white/[0.1] md:min-h-screen md:py-16 lg:py-32">
+      <section className="relative w-full bg-background py-12 bg-grid-black/[0.1] dark:bg-grid-white/[0.1] md:min-h-screen md:py-16 lg:py-32">
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
         <div className="container relative z-10 mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center space-y-4 text-center md:space-y-8 lg:space-y-16">
@@ -143,23 +143,22 @@ const Home = async () => {
             What are people saying?
           </h2>
           <div className="relative h-32 w-full max-w-xl">
-            <div className="absolute inset-x-20 top-0 h-[2px] w-3/4 bg-gradient-to-r from-transparent via-indigo-500 to-transparent blur-sm" />
-            <div className="absolute inset-x-20 top-0 h-px w-3/4 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
-            <div className="absolute inset-x-60 top-0 h-[5px] w-1/4 bg-gradient-to-r from-transparent via-sky-500 to-transparent blur-sm" />
-            <div className="absolute inset-x-60 top-0 h-px w-1/4 bg-gradient-to-r from-transparent via-sky-500 to-transparent" />
+            <div className="absolute inset-x-[12.5%] top-0 h-[2px] w-3/4 bg-gradient-to-r from-transparent via-indigo-500 to-transparent blur-sm" />
+            <div className="absolute inset-x-[12.5%] top-0 h-px w-3/4 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
+            <div className="absolute inset-x-[37.5%] top-0 h-[5px] w-1/4 bg-gradient-to-r from-transparent via-sky-500 to-transparent blur-sm" />
+            <div className="absolute inset-x-[37.5%] top-0 h-px w-1/4 bg-gradient-to-r from-transparent via-sky-500 to-transparent" />
 
             <SparklesCore
               background="transparent"
-              minSize={0.4}
+              minSize={0.5}
               maxSize={1}
-              particleDensity={1200}
+              particleDensity={500}
               className="h-full w-full"
-              particleColor="#FFFFFF"
             />
 
             <div className="absolute inset-0 h-full w-full bg-background [mask-image:radial-gradient(350px_200px_at_top,transparent_20%,white)]"></div>
           </div>
-          <div className="-mt-4">
+          <div>
             <InfiniteMovingCards
               items={testimonials}
               direction="right"

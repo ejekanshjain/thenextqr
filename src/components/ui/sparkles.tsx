@@ -7,6 +7,7 @@ import { motion, useAnimation } from 'framer-motion'
 import { useEffect, useState } from 'react'
 
 import { cn } from '@/lib/cn'
+import { useTheme } from 'next-themes'
 
 type ParticlesProps = {
   id?: string
@@ -16,7 +17,6 @@ type ParticlesProps = {
   minSize?: number
   maxSize?: number
   speed?: number
-  particleColor?: string
   particleDensity?: number
 }
 export const SparklesCore = (props: ParticlesProps) => {
@@ -27,9 +27,10 @@ export const SparklesCore = (props: ParticlesProps) => {
     minSize,
     maxSize,
     speed,
-    particleColor,
     particleDensity
   } = props
+  const { theme } = useTheme()
+  const particleColor = theme === 'dark' ? '#FFFFFF' : '#000000'
   const [init, setInit] = useState(false)
   useEffect(() => {
     initParticlesEngine(async engine => {

@@ -90,10 +90,10 @@ export const InfiniteMovingCards = ({
       >
         {items.map(item => (
           <li
-            className="relative w-[350px] max-w-full flex-shrink-0 rounded-2xl border border-b-0 border-slate-700 px-8 py-6 md:w-[450px]"
+            className="relative w-[350px] max-w-full flex-shrink-0 rounded-2xl border border-b-0 border-neutral-700 px-8 py-6 md:w-[450px]"
             style={{
               background:
-                'linear-gradient(180deg, var(--slate-800), var(--slate-900)'
+                'linear-gradient(180deg, var(--neutral-800), var(--neutral-900)'
             }}
             key={item.name}
           >
