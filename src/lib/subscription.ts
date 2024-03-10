@@ -58,7 +58,7 @@ export const plans = [
   },
   {
     name: 'Pro',
-    price: 9.99,
+    price: 499,
     per: 'month',
     description: 'For reaching higher limits and more features.',
     promoted: true,
@@ -72,7 +72,7 @@ export const plans = [
   },
   {
     name: 'Pro Yearly',
-    price: 99.99,
+    price: 4999,
     per: 'year',
     description: 'Save 17% by paying yearly.',
     promoted: false,

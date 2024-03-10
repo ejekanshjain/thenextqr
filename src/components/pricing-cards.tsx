@@ -28,7 +28,7 @@ export const PricingCards = async () => {
                   {plan.description}
                 </CardDescription>
                 <div className="flex items-end">
-                  <h4 className="text-3xl font-semibold">${plan.price}</h4>
+                  <h4 className="text-3xl font-semibold">₹{plan.price}</h4>
                   {plan.per ? (
                     <span className="ml-2 text-sm font-light text-gray-600">
                       / {plan.per}
