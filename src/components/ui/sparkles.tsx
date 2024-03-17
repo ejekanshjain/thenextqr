@@ -29,8 +29,8 @@ export const SparklesCore = (props: ParticlesProps) => {
     speed,
     particleDensity
   } = props
-  const { theme } = useTheme()
-  const particleColor = theme === 'dark' ? '#FFFFFF' : '#000000'
+  const { resolvedTheme } = useTheme()
+  const particleColor = resolvedTheme === 'dark' ? '#FFFFFF' : '#000000'
   const [init, setInit] = useState(false)
   useEffect(() => {
     initParticlesEngine(async engine => {
