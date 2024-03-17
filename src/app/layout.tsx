@@ -1,10 +1,10 @@
 // import { Analytics } from '@vercel/analytics/react'
 // import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Metadata } from 'next'
+import { ThemeProvider } from 'next-themes'
 import { Inter as FontSans } from 'next/font/google'
 import { ReactNode } from 'react'
 
-import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
 import { WWWRedirection } from '@/components/www-redirection'
 import { env } from '@/env.mjs'
