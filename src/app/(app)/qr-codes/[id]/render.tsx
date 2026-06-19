@@ -47,6 +47,14 @@ import { toast } from '@/components/ui/use-toast'
 import { env } from '@/env.mjs'
 import { canvasRoundRect } from '@/lib/canvasRoundRect'
 import { getQRUrl } from '@/lib/getQRUrl'
+import {
+  DEFAULT_QR_COLOR_MODE,
+  DEFAULT_QR_FINDER_PATTERN_COLOR,
+  applyQRCodeColor,
+  getQRCodeCanvasOptions,
+  isQRCodeFinderPatternColorValid,
+  normalizeQRCodeFinderPatternColor
+} from '@/lib/qrFinderPatternColor'
 import { QRCodeType } from '@prisma/client'
 import {
   GetQRCodeFnDataType,
@@ -61,6 +69,10 @@ const QRCodeSchema = z.object({
   slug: z.string().optional(),
   logoId: z.string().optional().nullable(),
   type: z.nativeEnum(QRCodeType),
+  colorCode: z.string().refine(isQRCodeFinderPatternColorValid, {
+    message: 'Enter a valid hex color, like #000000.'
+  }),
+  colorMode: z.enum(['finderPattern', 'full']),
   website: z.string().url().optional(),
   phoneNumber: z.string().optional(),
   message: z.string().optional(),
@@ -79,6 +91,8 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
       slug: qrCode?.slug || '',
       logoId: qrCode?.logo?.id,
       type: qrCode?.type || 'website',
+      colorCode: qrCode?.colorCode || DEFAULT_QR_FINDER_PATTERN_COLOR,
+      colorMode: qrCode?.colorMode || DEFAULT_QR_COLOR_MODE,
       website: qrCode?.website || undefined,
       phoneNumber: qrCode?.phoneNumber || undefined,
       message: qrCode?.message || undefined,
@@ -93,10 +107,13 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
   const [generatedQRCode, setGeneratedQRCode] = useState('')
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const logoUrl = qrCode?.logo?.cdnUrl || qrCode?.logo?.url
 
   const dynamic = form.watch('dynamic')
   const slug = form.watch('slug')
   const type = form.watch('type')
+  const colorCode = form.watch('colorCode')
+  const colorMode = form.watch('colorMode')
   const website = form.watch('website')
   const phoneNumber = form.watch('phoneNumber')
   const message = form.watch('message')
@@ -110,6 +127,8 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
     form.setValue('slug', qrCode.slug || '')
     form.setValue('logoId', qrCode.logo?.id)
     form.setValue('type', qrCode.type)
+    form.setValue('colorCode', qrCode.colorCode)
+    form.setValue('colorMode', qrCode.colorMode)
     form.setValue('website', qrCode.website || undefined)
     form.setValue('phoneNumber', qrCode.phoneNumber || undefined)
     form.setValue('message', qrCode.message || undefined)
@@ -119,60 +138,79 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
 
   const debouncedSetQr = useMemo(
     () =>
-      debounce((url: string) => {
-        QRCodeGen.toCanvas(canvasRef.current, url, {
-          width: 1024,
-          margin: 2,
-          errorCorrectionLevel: 'H'
-        }).then(() => {
-          const canvas = canvasRef.current
-          if (!canvas) return
-          const imageUrl = qrCode?.logo?.cdnUrl || qrCode?.logo?.url
-
-          if (!imageUrl) {
-            setGeneratedQRCode(canvas.toDataURL('image/png'))
-            return
-          }
-
-          const image = new Image()
-          image.src = imageUrl
-          image.crossOrigin = 'anonymous'
-
-          const ctx = canvasRef.current.getContext('2d')!
-          const canvasWidth = canvas.width
-          const logoSize = 0.29
-          const borderSize = 0.024
-          const borderRadius = 1
-          const bgColor = '#ffffff'
-
-          const logoWidth = canvasWidth * logoSize
-          const logoXY = (canvasWidth * (1 - logoSize)) / 2
-          const logoBgWidth = canvasWidth * (logoSize + borderSize)
-          const logoBgXY = (canvasWidth * (1 - logoSize - borderSize)) / 2
-
-          canvasRoundRect(ctx)(
-            logoBgXY,
-            logoBgXY,
-            logoBgWidth,
-            logoBgWidth,
-            borderRadius
+      debounce(
+        (
+          url: string,
+          colorCode: string,
+          colorMode: FormData['colorMode'],
+          imageUrl: string | undefined
+        ) => {
+          const qrCodeCanvasOptions = getQRCodeCanvasOptions(
+            colorCode,
+            colorMode
           )
-          ctx.fillStyle = bgColor
-          ctx.fill()
+          const qrData = QRCodeGen.create(url, qrCodeCanvasOptions)
 
-          image.onload = () => {
-            ctx.drawImage(image, logoXY, logoXY, logoWidth, logoWidth)
-            const dataUrl = canvasRef.current?.toDataURL('image/png')
-            setGeneratedQRCode(dataUrl || '')
-          }
+          QRCodeGen.toCanvas(canvasRef.current, url, qrCodeCanvasOptions).then(
+            () => {
+              const canvas = canvasRef.current
+              if (!canvas) return
 
-          image.onerror = () => {
-            const dataUrl = canvasRef.current?.toDataURL('image/png')
-            setGeneratedQRCode(dataUrl || '')
-          }
-        })
-      }, 500),
-    [qrCode?.logo?.cdnUrl, qrCode?.logo?.url]
+              applyQRCodeColor({
+                canvas,
+                color: colorCode,
+                margin: qrCodeCanvasOptions.margin,
+                mode: colorMode,
+                moduleCount: qrData.modules.size
+              })
+
+              if (!imageUrl) {
+                setGeneratedQRCode(canvas.toDataURL('image/png'))
+                return
+              }
+
+              const image = new Image()
+              image.src = imageUrl
+              image.crossOrigin = 'anonymous'
+
+              const ctx = canvasRef.current.getContext('2d')!
+              const canvasWidth = canvas.width
+              const logoSize = 0.29
+              const borderSize = 0.024
+              const borderRadius = 1
+              const bgColor = '#ffffff'
+
+              const logoWidth = canvasWidth * logoSize
+              const logoXY = (canvasWidth * (1 - logoSize)) / 2
+              const logoBgWidth = canvasWidth * (logoSize + borderSize)
+              const logoBgXY = (canvasWidth * (1 - logoSize - borderSize)) / 2
+
+              canvasRoundRect(ctx)(
+                logoBgXY,
+                logoBgXY,
+                logoBgWidth,
+                logoBgWidth,
+                borderRadius
+              )
+              ctx.fillStyle = bgColor
+              ctx.fill()
+
+              image.onload = () => {
+                ctx.drawImage(image, logoXY, logoXY, logoWidth, logoWidth)
+                const dataUrl = canvasRef.current?.toDataURL('image/png')
+                setGeneratedQRCode(dataUrl || '')
+              }
+
+              image.onerror = () => {
+                const dataUrl = canvasRef.current?.toDataURL('image/png')
+                setGeneratedQRCode(dataUrl || '')
+              }
+            }
+          )
+        },
+        500
+      ),
+    []
   )
 
   const url = useMemo(() => {
@@ -191,8 +229,19 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
 
   useEffect(() => {
     if (!url) return setGeneratedQRCode('')
-    debouncedSetQr(url)
-  }, [debouncedSetQr, url])
+    debouncedSetQr(
+      url,
+      normalizeQRCodeFinderPatternColor(colorCode),
+      colorMode,
+      logoUrl
+    )
+  }, [colorCode, colorMode, debouncedSetQr, logoUrl, url])
+
+  useEffect(() => {
+    return () => {
+      debouncedSetQr.cancel()
+    }
+  }, [debouncedSetQr])
 
   const onSubmit = async (data: FormData) => {
     setIsSaving(true)
@@ -204,6 +253,8 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
         slug: data.slug,
         logoId: data.logoId,
         type: data.type,
+        colorCode: data.colorCode,
+        colorMode: data.colorMode,
         website: data.website || null,
         phoneNumber: data.phoneNumber || null,
         message: data.message || null,
@@ -230,6 +281,8 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
         name: data.name,
         slug: data.slug,
         logoId: data.logoId,
+        colorCode: data.colorCode,
+        colorMode: data.colorMode,
         website: data.website || null,
         phoneNumber: data.phoneNumber || null,
         message: data.message || null,
@@ -423,6 +476,55 @@ export const Render: FC<{ qrCode?: GetQRCodeFnDataType }> = ({ qrCode }) => {
                 }
                 setIsUploading(false)
               }}
+            />
+          </div>
+          <div className="grid gap-3 rounded-lg border p-4">
+            <FormField
+              control={form.control}
+              name="colorCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>QR color</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="#000000"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      disabled={isSaving}
+                      aria-invalid={
+                        !isQRCodeFinderPatternColorValid(field.value)
+                      }
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="colorMode"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between gap-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      Color complete QR
+                    </FormLabel>
+                    <FormDescription>
+                      Turn off to color only the three side squares.
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value === 'full'}
+                      onCheckedChange={checked =>
+                        field.onChange(checked ? 'full' : 'finderPattern')
+                      }
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
             />
           </div>
           <FormField

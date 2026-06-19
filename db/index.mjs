@@ -9,7 +9,7 @@ const main = async () => {
 
   const pgClient = new pg.Client({
     connectionString:
-      'postgresql://postgres:postgres@localhost:5432/thenextqr'
+      'postgresql://postgres:lol@localhost:5432/thenextqr'
   })
 
   await pgClient.connect()

@@ -13,6 +13,12 @@ import { env } from '@/env.mjs'
 import { canvasRoundRect } from '@/lib/canvasRoundRect'
 import { formatDate } from '@/lib/formatDate'
 import { getQRUrl } from '@/lib/getQRUrl'
+import {
+  DEFAULT_QR_COLOR_MODE,
+  DEFAULT_QR_FINDER_PATTERN_COLOR,
+  applyQRCodeColor,
+  getQRCodeCanvasOptions
+} from '@/lib/qrFinderPatternColor'
 import { GetQRCodesFnDataType } from './actions'
 
 export const QRListItem: FC<{
@@ -41,13 +47,22 @@ export const QRListItem: FC<{
 
     if (!url) return
 
-    QRCodeGen.toCanvas(canvasRef.current, url, {
-      width: 1024,
-      margin: 2,
-      errorCorrectionLevel: 'H'
-    }).then(() => {
+    const qrColorCode = qr.colorCode || DEFAULT_QR_FINDER_PATTERN_COLOR
+    const qrColorMode = qr.colorMode || DEFAULT_QR_COLOR_MODE
+    const qrCodeCanvasOptions = getQRCodeCanvasOptions(qrColorCode, qrColorMode)
+    const qrData = QRCodeGen.create(url, qrCodeCanvasOptions)
+
+    QRCodeGen.toCanvas(canvasRef.current, url, qrCodeCanvasOptions).then(() => {
       const canvas = canvasRef.current
       if (!canvas) return
+
+      applyQRCodeColor({
+        canvas,
+        color: qrColorCode,
+        margin: qrCodeCanvasOptions.margin,
+        mode: qrColorMode,
+        moduleCount: qrData.modules.size
+      })
 
       const imageUrl = qr.logo?.cdnUrl || qr.logo?.url
 

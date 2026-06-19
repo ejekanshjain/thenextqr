@@ -4,9 +4,10 @@ import { nanoid } from 'nanoid'
 
 import { getAuthSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { normalizeQRCodeFinderPatternColor } from '@/lib/qrFinderPatternColor'
 import { getUserSubscriptionPlan } from '@/lib/subscription'
 import { UnwrapPromise } from '@/types/UnwrapPromise'
-import { QRCodeType } from '@prisma/client'
+import { QRCodeColorMode, QRCodeType } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
 
 export const getQRCode = async (id: string) => {
@@ -37,6 +38,8 @@ export const createQRCode = async ({
   slug,
   logoId,
   type,
+  colorCode,
+  colorMode,
   website,
   phoneNumber,
   message,
@@ -48,6 +51,8 @@ export const createQRCode = async ({
   slug?: string
   logoId?: string | null
   type: QRCodeType
+  colorCode: string
+  colorMode: QRCodeColorMode
   website?: string | null
   phoneNumber?: string | null
   message?: string | null
@@ -120,6 +125,8 @@ export const createQRCode = async ({
       dynamic,
       slug,
       type,
+      colorCode: normalizeQRCodeFinderPatternColor(colorCode),
+      colorMode,
       expires: dynamic ? new Date(plan.currentPeriodEnd) : null,
       website,
       phoneNumber,
@@ -153,6 +160,8 @@ export const updateQRCode = async ({
   name,
   slug,
   logoId,
+  colorCode,
+  colorMode,
   website,
   phoneNumber,
   message,
@@ -164,6 +173,8 @@ export const updateQRCode = async ({
   name: string
   slug?: string
   logoId?: string | null
+  colorCode: string
+  colorMode: QRCodeColorMode
   website?: string | null
   phoneNumber?: string | null
   message?: string | null
@@ -230,6 +241,8 @@ export const updateQRCode = async ({
         name,
         dynamic,
         slug,
+        colorCode: normalizeQRCodeFinderPatternColor(colorCode),
+        colorMode,
         expires: dynamic ? new Date(plan.currentPeriodEnd) : null,
         website,
         phoneNumber,
