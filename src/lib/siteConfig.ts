@@ -1,4 +1,4 @@
 export const siteConfig = {
-  name: 'Project Name',
-  description: 'Project Description'
+  name: 'The Next QR',
+  description: 'A QR code generator built with Next.js and TypeScript.'
 }
