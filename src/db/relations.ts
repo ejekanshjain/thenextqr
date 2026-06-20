@@ -5,8 +5,8 @@ import {
   invitationsTable,
   membersTable,
   organizationsTable,
-  qrCodesTable,
   qrCodeScanLogsTable,
+  qrCodesTable,
   sessionsTable,
   usersTable
 } from './schema'

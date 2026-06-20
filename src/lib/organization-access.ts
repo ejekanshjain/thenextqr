@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { and, count, desc, eq } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 import { cache } from 'react'
 import { db } from '~/db'
 import { membersTable, organizationsTable } from '~/db/schema'
@@ -59,17 +59,6 @@ export const getOrganizationMembers = cache(async (organizationId: string) =>
     },
     orderBy: [desc(membersTable.createdAt)]
   })
-)
-
-export const getOrganizationMemberCount = cache(
-  async (organizationId: string) => {
-    const [row] = await db
-      .select({ count: count() })
-      .from(membersTable)
-      .where(eq(membersTable.organizationId, organizationId))
-
-    return row?.count ?? 0
-  }
 )
 
 export const assertUserMembership = async (organizationId: string) => {
