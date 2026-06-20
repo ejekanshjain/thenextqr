@@ -5,12 +5,18 @@ import { and, asc, count, desc, eq, ilike, or } from 'drizzle-orm'
 import { z } from 'zod'
 import { SortOrderEnum } from '~/components/data-table/enum'
 import { db } from '~/db'
-import { fileUploadsTable, qrCodesTable } from '~/db/schema'
+import { qrCodesTable } from '~/db/schema'
 import { getPaginationSchema, getSortSchema } from '~/lib/actions'
 import { assertUserMembership } from '~/lib/organization-access'
 import { DEFAULT_QR_COLOR_MODE, normalizeQRCodeColor } from '~/lib/qr-color'
 import { authActionClient } from '~/lib/safe-action'
-import { confirmUpload, resolveImageUrl } from '~/lib/storage'
+import {
+  confirmUpload,
+  deleteFile,
+  isR2Configured,
+  isR2Key,
+  resolveImageUrl
+} from '~/lib/storage'
 import {
   createQRCodeSchema,
   deleteQRCodeSchema,
@@ -52,9 +58,6 @@ export const getQRCodesAction = authActionClient
       const [rows, total] = await Promise.all([
         db.query.qrCodesTable.findMany({
           where,
-          with: {
-            logoUpload: true
-          },
           orderBy: [direction(sortColumn)],
           limit,
           offset: (page - 1) * limit
@@ -65,7 +68,7 @@ export const getQRCodesAction = authActionClient
       return [
         rows.map(row => ({
           ...row,
-          logoUrl: resolveImageUrl(row.logoUpload?.key)
+          logoUrl: resolveImageUrl(row.logoUrl)
         })),
         total[0]?.count ?? 0
       ] as const
@@ -81,17 +84,14 @@ export const getQRCodeAction = authActionClient
       where: and(
         eq(qrCodesTable.id, id),
         eq(qrCodesTable.organizationId, organizationId)
-      ),
-      with: {
-        logoUpload: true
-      }
+      )
     })
 
     if (!qrCode) throw new Error('QR code not found')
 
     return {
       ...qrCode,
-      logoUrl: resolveImageUrl(qrCode.logoUpload?.key)
+      logoResolvedUrl: resolveImageUrl(qrCode.logoUrl)
     }
   })
 
@@ -104,9 +104,9 @@ export const createQRCodeAction = authActionClient
       ? await resolveUniqueSlug(parsedInput.slug)
       : null
 
-    const logoUpload = await getOrganizationLogoUpload(
+    const logoUrl = getVerifiedLogoUrl(
       parsedInput.organizationId,
-      parsedInput.logoUploadId
+      parsedInput.logoUrl
     )
 
     const [created] = await db
@@ -115,7 +115,7 @@ export const createQRCodeAction = authActionClient
         organizationId: parsedInput.organizationId,
         createdById: user.id,
         updatedById: user.id,
-        logoUploadId: logoUpload?.id ?? null,
+        logoUrl,
         isDynamic: parsedInput.isDynamic,
         name: parsedInput.name,
         slug,
@@ -129,7 +129,7 @@ export const createQRCodeAction = authActionClient
 
     if (!created) throw new Error('Failed to create QR code')
 
-    if (logoUpload) await confirmUpload(logoUpload.key)
+    await handleLogoUploadChange(logoUrl, null)
 
     return { id: created.id }
   })
@@ -143,10 +143,7 @@ export const updateQRCodeAction = authActionClient
       where: and(
         eq(qrCodesTable.id, parsedInput.id),
         eq(qrCodesTable.organizationId, parsedInput.organizationId)
-      ),
-      with: {
-        logoUpload: true
-      }
+      )
     })
 
     if (!existing) throw new Error('QR code not found')
@@ -155,16 +152,16 @@ export const updateQRCodeAction = authActionClient
       ? await resolveUniqueSlug(parsedInput.slug, existing.id)
       : null
 
-    const logoUpload = await getOrganizationLogoUpload(
+    const logoUrl = getVerifiedLogoUrl(
       parsedInput.organizationId,
-      parsedInput.logoUploadId
+      parsedInput.logoUrl
     )
 
     await db
       .update(qrCodesTable)
       .set({
         updatedById: user.id,
-        logoUploadId: logoUpload?.id ?? null,
+        logoUrl,
         isDynamic: parsedInput.isDynamic,
         name: parsedInput.name,
         slug,
@@ -176,9 +173,7 @@ export const updateQRCodeAction = authActionClient
       })
       .where(eq(qrCodesTable.id, existing.id))
 
-    if (logoUpload?.key && logoUpload.id !== existing.logoUploadId) {
-      await confirmUpload(logoUpload.key, existing.logoUpload?.key)
-    }
+    await handleLogoUploadChange(logoUrl, existing.logoUrl)
 
     return { id: existing.id }
   })
@@ -188,6 +183,14 @@ export const deleteQRCodeAction = authActionClient
   .action(async ({ parsedInput: { organizationId, id } }) => {
     await assertUserMembership(organizationId)
 
+    const existing = await db.query.qrCodesTable.findFirst({
+      where: and(
+        eq(qrCodesTable.id, id),
+        eq(qrCodesTable.organizationId, organizationId)
+      ),
+      columns: { logoUrl: true }
+    })
+
     await db
       .delete(qrCodesTable)
       .where(
@@ -196,6 +199,10 @@ export const deleteQRCodeAction = authActionClient
           eq(qrCodesTable.organizationId, organizationId)
         )
       )
+
+    if (isR2Configured() && isR2Key(existing?.logoUrl)) {
+      await deleteFile(existing.logoUrl).catch(() => {})
+    }
 
     return true
   })
@@ -227,22 +234,36 @@ async function resolveUniqueSlug(slug?: string | null, currentId?: string) {
   throw new Error('Could not generate a unique slug')
 }
 
-async function getOrganizationLogoUpload(
-  organizationId: string,
-  logoUploadId?: string | null
+function getVerifiedLogoUrl(organizationId: string, logoUrl?: string | null) {
+  if (!logoUrl) return null
+
+  if (
+    isR2Key(logoUrl) &&
+    !logoUrl.startsWith(`uploads/organizations/${organizationId}/`)
+  ) {
+    throw new Error('Logo upload does not belong to this organization')
+  }
+
+  return logoUrl
+}
+
+async function handleLogoUploadChange(
+  newLogoUrl: string | null,
+  oldLogoUrl: string | null
 ) {
-  if (!logoUploadId) return null
+  if (!isR2Configured()) return
 
-  const upload = await db.query.fileUploadsTable.findFirst({
-    where: and(
-      eq(fileUploadsTable.id, logoUploadId),
-      eq(fileUploadsTable.organizationId, organizationId)
-    )
-  })
+  const newIsR2Key = isR2Key(newLogoUrl)
+  const oldIsR2Key = isR2Key(oldLogoUrl)
 
-  if (!upload) throw new Error('Logo upload not found')
+  if (newIsR2Key && newLogoUrl !== oldLogoUrl) {
+    await confirmUpload(newLogoUrl, oldIsR2Key ? oldLogoUrl : null)
+    return
+  }
 
-  return upload
+  if (!newLogoUrl && oldIsR2Key) {
+    await deleteFile(oldLogoUrl).catch(() => {})
+  }
 }
 
 function getDestinationValues(input: z.infer<typeof createQRCodeSchema>) {

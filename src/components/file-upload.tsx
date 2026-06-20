@@ -35,10 +35,11 @@ type Props = {
   /** Scopes the upload to a organization for cleanup tracking. */
   organizationId: string
   /**
-   * Called with the R2 object key (prod) or base64 data URL (dev mode) once
-   * the upload finishes. Called with `null` when the user clears the value.
+   * Called once the upload finishes. R2 mode returns the object key; base64
+   * mode returns the data URL. Called with `null` when the user clears it.
    */
   onClientUploadFinish: (key: string | null) => void
+  onPreviewChange?: (url: string | null) => void
   /**
    * Pre-resolved URL for the current value - pass the output of
    * `resolveImageUrl` from the parent server component so the preview renders
@@ -54,6 +55,7 @@ export function FileUpload({
   accept,
   organizationId,
   onClientUploadFinish,
+  onPreviewChange,
   currentUrl,
   className,
   sizes = '128px'
@@ -73,9 +75,12 @@ export function FileUpload({
     setIsUploading(true)
 
     if (file.type.startsWith('image/')) {
-      setPreview({ kind: 'image', url: URL.createObjectURL(file) })
+      const previewUrl = URL.createObjectURL(file)
+      setPreview({ kind: 'image', url: previewUrl })
+      onPreviewChange?.(previewUrl)
     } else {
       setPreview({ kind: 'file', name: file.name, mimeType: file.type })
+      onPreviewChange?.(null)
     }
 
     const result = await generateUploadUrlAction({
@@ -88,6 +93,7 @@ export function FileUpload({
     if (!result?.data) {
       toast.error('Failed to prepare upload. Please try again.')
       setPreview(getInitialPreview(currentUrl))
+      onPreviewChange?.(currentUrl ?? null)
       setIsUploading(false)
       return
     }
@@ -106,6 +112,7 @@ export function FileUpload({
       } catch {
         toast.error('Upload failed. Please try again.')
         setPreview(getInitialPreview(currentUrl))
+        onPreviewChange?.(currentUrl ?? null)
       }
     } else {
       const reader = new FileReader()
@@ -113,12 +120,14 @@ export function FileUpload({
         const base64 = e.target?.result as string
         if (file.type.startsWith('image/')) {
           setPreview({ kind: 'image', url: base64 })
+          onPreviewChange?.(base64)
         }
         onClientUploadFinish(base64)
       }
       reader.onerror = () => {
         toast.error('Failed to read file. Please try again.')
         setPreview(getInitialPreview(currentUrl))
+        onPreviewChange?.(currentUrl ?? null)
       }
       reader.readAsDataURL(file)
     }
@@ -129,6 +138,7 @@ export function FileUpload({
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation()
     setPreview(null)
+    onPreviewChange?.(null)
     onClientUploadFinish(null)
     if (inputRef.current) inputRef.current.value = ''
   }
