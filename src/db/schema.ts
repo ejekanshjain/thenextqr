@@ -174,10 +174,7 @@ export const qrCodesTable = pgTable(
     updatedById: varchar('updated_by_id').references(() => usersTable.id, {
       onDelete: 'set null'
     }),
-    logoUploadId: varchar('logo_upload_id').references(
-      () => fileUploadsTable.id,
-      { onDelete: 'set null' }
-    ),
+    logoUrl: text('logo_url'),
     isDynamic: boolean('is_dynamic').notNull().default(false),
     name: text('name').notNull(),
     slug: text('slug').unique(),

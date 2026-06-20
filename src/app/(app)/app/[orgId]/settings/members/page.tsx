@@ -18,7 +18,7 @@ export default async function Page({
   }
 
   return (
-    <div className="mx-auto w-full max-w-4xl space-y-6">
+    <div className="w-full space-y-6">
       <PageHeading
         title="Members"
         description="Invite teammates, manage roles and review pending invitations."

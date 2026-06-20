@@ -1,4 +1,4 @@
-import { Home, Settings, Users } from 'lucide-react'
+import { Home, QrCode, Settings, Users } from 'lucide-react'
 import { SidebarNavGroup } from '~/components/navigation-sidebar'
 
 export type UserOrganization = {
@@ -26,6 +26,11 @@ export const getAppNavigation = (
           title: 'Dashboard',
           url: `/app/${orgId}/dashboard`,
           icon: Home
+        },
+        {
+          title: 'QR Codes',
+          url: `/app/${orgId}/qr-codes`,
+          icon: QrCode
         }
       ]
     }

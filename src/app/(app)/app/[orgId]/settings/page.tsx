@@ -41,7 +41,7 @@ export default async function Page({
     }))
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-8">
+    <div className="w-full space-y-8">
       <PageHeading
         title="General"
         description="Manage your organization's profile and settings."

@@ -1,7 +1,6 @@
 import { relations } from 'drizzle-orm'
 import {
   accountsTable,
-  fileUploadsTable,
   invitationsTable,
   membersTable,
   organizationsTable,
@@ -65,13 +64,6 @@ export const invitationRelations = relations(invitationsTable, ({ one }) => ({
   })
 }))
 
-export const fileUploadRelations = relations(fileUploadsTable, ({ one }) => ({
-  qrCodeLogo: one(qrCodesTable, {
-    fields: [fileUploadsTable.id],
-    references: [qrCodesTable.logoUploadId]
-  })
-}))
-
 export const qrCodeRelations = relations(qrCodesTable, ({ one, many }) => ({
   organization: one(organizationsTable, {
     fields: [qrCodesTable.organizationId],
@@ -86,10 +78,6 @@ export const qrCodeRelations = relations(qrCodesTable, ({ one, many }) => ({
     fields: [qrCodesTable.updatedById],
     references: [usersTable.id],
     relationName: 'updatedQRCodes'
-  }),
-  logoUpload: one(fileUploadsTable, {
-    fields: [qrCodesTable.logoUploadId],
-    references: [fileUploadsTable.id]
   }),
   scanLogs: many(qrCodeScanLogsTable)
 }))
