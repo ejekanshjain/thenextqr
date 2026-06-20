@@ -3,6 +3,7 @@ import {
   boolean,
   index,
   integer,
+  pgEnum,
   pgTable,
   text,
   uniqueIndex,
@@ -146,4 +147,76 @@ export const fileUploadsTable = pgTable(
     index().on(table.uploadedBy),
     index().on(table.isTemp, table.createdAt)
   ]
+)
+
+export const qrCodeTypeEnum = pgEnum('qr_code_type', [
+  'website',
+  'email',
+  'sms',
+  'phone'
+])
+
+export const qrCodeColorModeEnum = pgEnum('qr_code_color_mode', [
+  'finderPattern',
+  'full'
+])
+
+export const qrCodesTable = pgTable(
+  'qr_codes',
+  {
+    id: commonFieldDefs.id('qr_code'),
+    organizationId: varchar('organization_id')
+      .notNull()
+      .references(() => organizationsTable.id, { onDelete: 'cascade' }),
+    createdById: varchar('created_by_id').references(() => usersTable.id, {
+      onDelete: 'set null'
+    }),
+    updatedById: varchar('updated_by_id').references(() => usersTable.id, {
+      onDelete: 'set null'
+    }),
+    logoUploadId: varchar('logo_upload_id').references(
+      () => fileUploadsTable.id,
+      { onDelete: 'set null' }
+    ),
+    isDynamic: boolean('is_dynamic').notNull().default(false),
+    name: text('name').notNull(),
+    slug: text('slug').unique(),
+    type: qrCodeTypeEnum('type').notNull().default('website'),
+    colorCode: varchar('color_code', { length: 7 })
+      .notNull()
+      .default('#000000'),
+    colorMode: qrCodeColorModeEnum('color_mode')
+      .notNull()
+      .default('finderPattern'),
+    expiresAt: commonFieldDefs.date('expires_at'),
+    totalScans: integer('total_scans').notNull().default(0),
+    website: text('website'),
+    phoneNumber: text('phone_number'),
+    message: text('message'),
+    email: text('email'),
+    subject: text('subject'),
+    ...commonFieldDefs.dates
+  },
+  table => [index().on(table.organizationId)]
+)
+
+export const qrCodeScanLogsTable = pgTable(
+  'qr_code_scan_logs',
+  {
+    id: commonFieldDefs.id('qr_code_scan_log'),
+    qrCodeId: varchar('qr_code_id')
+      .notNull()
+      .references(() => qrCodesTable.id, { onDelete: 'cascade' }),
+    ipAddress: text('ip_address'),
+    userAgent: text('user_agent'),
+    browserName: text('browser_name'),
+    browserVersion: text('browser_version'),
+    osName: text('os_name'),
+    osVersion: text('os_version'),
+    deviceVendor: text('device_vendor'),
+    deviceModel: text('device_model'),
+    deviceType: text('device_type'),
+    createdAt: commonFieldDefs.date('created_at').notNull().defaultNow()
+  },
+  table => [index().on(table.qrCodeId)]
 )
