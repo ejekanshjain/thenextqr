@@ -10,13 +10,19 @@ import {
 import { createAuthClient } from 'better-auth/react'
 import type { auth } from './auth'
 
-export const { signIn, signOut, getLastUsedLoginMethod, admin } =
-  createAuthClient({
-    plugins: [
-      inferAdditionalFields<typeof auth>(),
-      magicLinkClient(),
-      adminClient(),
-      organizationClient(),
-      lastLoginMethodClient()
-    ]
-  })
+export const {
+  signIn,
+  signOut,
+  useSession,
+  getLastUsedLoginMethod,
+  admin,
+  organization
+} = createAuthClient({
+  plugins: [
+    inferAdditionalFields<typeof auth>(),
+    magicLinkClient(),
+    adminClient(),
+    organizationClient(),
+    lastLoginMethodClient()
+  ]
+})
