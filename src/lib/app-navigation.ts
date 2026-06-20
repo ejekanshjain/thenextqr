@@ -1,4 +1,4 @@
-import { CreditCard, Home, Settings, Users } from 'lucide-react'
+import { Home, Settings, Users } from 'lucide-react'
 import { SidebarNavGroup } from '~/components/navigation-sidebar'
 
 export type UserOrganization = {
@@ -45,11 +45,6 @@ export const getAppNavigation = (
           title: 'Members',
           url: `/app/${orgId}/settings/members`,
           icon: Users
-        },
-        {
-          title: 'Billing',
-          url: `/app/${orgId}/settings/billing`,
-          icon: CreditCard
         }
       ]
     })

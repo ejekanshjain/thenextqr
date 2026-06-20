@@ -31,11 +31,6 @@ import {
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger
-} from '~/components/ui/tooltip'
 import { organization } from '~/lib/auth-client'
 import { formatDate } from '~/lib/format-date'
 import { useSafeActionQuery } from '~/lib/safe-action-client'
@@ -114,13 +109,7 @@ const invitationFilters: DataTableFilter[] = [
   }
 ]
 
-export function MembersTabs({
-  memberCount,
-  maxMembers
-}: {
-  memberCount: number
-  maxMembers: number
-}) {
+export function MembersTabs() {
   const {
     id: orgId,
     role: currentRole,
@@ -129,8 +118,6 @@ export function MembersTabs({
   const router = useRouter()
   const queryClient = useQueryClient()
   const [busyId, setBusyId] = useState<string | null>(null)
-
-  const atMemberLimit = memberCount >= maxMembers
 
   const invalidateMembers = () =>
     queryClient.invalidateQueries({ queryKey: [MEMBERS_QUERY_KEY] })
@@ -472,29 +459,12 @@ export function MembersTabs({
           <TabsTrigger value="invitations">Invitations</TabsTrigger>
         </TabsList>
 
-        {atMemberLimit ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span tabIndex={0}>
-                <Button size="sm" disabled>
-                  <UserPlus className="mr-2 size-4" />
-                  Invite member
-                </Button>
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>
-              Member limit reached ({memberCount}/{maxMembers}). Upgrade your
-              plan to invite more members.
-            </TooltipContent>
-          </Tooltip>
-        ) : (
-          <InviteMemberDialog onInvited={invalidateInvitations}>
-            <Button size="sm">
-              <UserPlus className="mr-2 size-4" />
-              Invite member
-            </Button>
-          </InviteMemberDialog>
-        )}
+        <InviteMemberDialog onInvited={invalidateInvitations}>
+          <Button size="sm">
+            <UserPlus className="mr-2 size-4" />
+            Invite member
+          </Button>
+        </InviteMemberDialog>
       </div>
 
       <TabsContent value="members">

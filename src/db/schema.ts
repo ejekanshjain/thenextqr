@@ -3,20 +3,12 @@ import {
   boolean,
   index,
   integer,
-  jsonb,
   pgTable,
   text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core'
 import { commonFieldDefs } from './common'
-import {
-  organizationSubscriptionIntervalEnum,
-  organizationSubscriptionPlanEnum,
-  organizationSubscriptionStatusEnum
-} from './enums'
-
-export * from './enums'
 
 export const usersTable = pgTable('users', {
   id: commonFieldDefs.id('user'),
@@ -129,40 +121,6 @@ export const invitationsTable = pgTable(
       .where(sql`${table.status} = 'pending'`)
   ]
 )
-
-export const organizationSubscriptionsTable = pgTable(
-  'organization_subscriptions',
-  {
-    id: commonFieldDefs.id('organization_subscription'),
-    organizationId: text('organization_id')
-      .notNull()
-      .unique()
-      .references(() => organizationsTable.id),
-    plan: organizationSubscriptionPlanEnum('plan').notNull().default('free'),
-    status: organizationSubscriptionStatusEnum('status')
-      .notNull()
-      .default('free'),
-    interval: organizationSubscriptionIntervalEnum('interval'),
-    billingEmail: text('billing_email'),
-    stripeCustomerId: text('stripe_customer_id').unique(),
-    stripeSubscriptionId: text('stripe_subscription_id').unique(),
-    hasUsedTrial: boolean('has_used_trial').notNull().default(false),
-    trialEndsAt: commonFieldDefs.date('trial_ends_at'),
-    currentPeriodEnd: commonFieldDefs.date('current_period_end'),
-    cancelAtPeriodEnd: boolean('cancel_at_period_end').notNull().default(false),
-    ...commonFieldDefs.dates
-  }
-)
-
-export const stripeWebhooksEventsTable = pgTable('stripe_webhooks_events', {
-  id: text('id').primaryKey(),
-  type: text('type').notNull(),
-  receivedAt: commonFieldDefs.date('received_at').notNull().defaultNow(),
-  processed: boolean('processed').notNull().default(false),
-  processedAt: commonFieldDefs.date('processed_at'),
-  error: text('error'),
-  payload: jsonb('payload') // store only on error
-})
 
 export const fileUploadsTable = pgTable(
   'file_uploads',

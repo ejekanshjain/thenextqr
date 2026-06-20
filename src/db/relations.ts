@@ -4,7 +4,6 @@ import {
   invitationsTable,
   membersTable,
   organizationsTable,
-  organizationSubscriptionsTable,
   sessionsTable,
   usersTable
 } from './schema'
@@ -32,11 +31,7 @@ export const accountRelations = relations(accountsTable, ({ one }) => ({
 
 export const organizationRelations = relations(
   organizationsTable,
-  ({ many, one }) => ({
-    subscription: one(organizationSubscriptionsTable, {
-      fields: [organizationsTable.id],
-      references: [organizationSubscriptionsTable.organizationId]
-    }),
+  ({ many }) => ({
     members: many(membersTable),
     invitations: many(invitationsTable)
   })
@@ -63,13 +58,3 @@ export const invitationRelations = relations(invitationsTable, ({ one }) => ({
     references: [usersTable.id]
   })
 }))
-
-export const organizationSubscriptionRelations = relations(
-  organizationSubscriptionsTable,
-  ({ one }) => ({
-    organization: one(organizationsTable, {
-      fields: [organizationSubscriptionsTable.organizationId],
-      references: [organizationsTable.id]
-    })
-  })
-)

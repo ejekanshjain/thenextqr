@@ -9,7 +9,6 @@ import {
   magicLink,
   organization
 } from 'better-auth/plugins'
-import { eq } from 'drizzle-orm'
 import { headers } from 'next/headers'
 import { cache } from 'react'
 import { start } from 'workflow/api'
@@ -19,7 +18,6 @@ import {
   invitationsTable,
   membersTable,
   organizationsTable,
-  organizationSubscriptionsTable,
   sessionsTable,
   usersTable,
   verificationsTable
@@ -31,9 +29,7 @@ import {
   sendMagicLinkEmail,
   sendWelcomeEmail
 } from './email-service'
-import { getOrganizationPlanCached } from './organization-plan-limits'
 import { siteConfig } from './siteConfig'
-import { stripeClient } from './stripe'
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -127,50 +123,6 @@ export const auth = betterAuth({
         } catch (error) {
           console.error('Failed to send invitation email:', error)
         }
-      },
-      organizationHooks: {
-        afterCreateOrganization: async ({ organization }) => {
-          await db.insert(organizationSubscriptionsTable).values({
-            organizationId: organization.id
-          })
-        },
-        beforeDeleteOrganization: async ({ organization }) => {
-          const sub = await db.query.organizationSubscriptionsTable.findFirst({
-            where: eq(
-              organizationSubscriptionsTable.organizationId,
-              organization.id
-            )
-          })
-
-          if (sub?.stripeSubscriptionId) {
-            try {
-              await stripeClient.subscriptions.cancel(sub.stripeSubscriptionId)
-            } catch (error) {
-              console.error(
-                `Failed to cancel Stripe subscription ${sub.stripeSubscriptionId} for org ${organization.id} on org delete:`,
-                error
-              )
-              throw new APIError('BAD_REQUEST', {
-                message:
-                  'Could not cancel the active subscription. Please try again later.'
-              })
-            }
-          }
-
-          await db
-            .delete(organizationSubscriptionsTable)
-            .where(
-              eq(organizationSubscriptionsTable.organizationId, organization.id)
-            )
-        }
-      },
-      invitationLimit: async ({ organization }) => {
-        const { plan } = await getOrganizationPlanCached(organization.id)
-        return plan.maxMembers
-      },
-      membershipLimit: async (_, organization) => {
-        const { plan } = await getOrganizationPlanCached(organization.id)
-        return plan.maxMembers
       }
     }),
     lastLoginMethod()
