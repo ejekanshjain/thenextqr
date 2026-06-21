@@ -1,7 +1,9 @@
 'use client'
 
-import { Edit, ExternalLink, Plus, QrCode } from 'lucide-react'
+import { ArrowUpRight, Download, Loader2, Plus, QrCode } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState, type KeyboardEvent, type MouseEvent } from 'react'
 import { PageHeading } from '~/components/page-heading'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
@@ -13,8 +15,9 @@ import {
   CardTitle
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
+import { cn } from '~/lib/cn'
 import { getDynamicQRCodeUrl, getQRUrl, type QRCodeType } from '~/lib/qr-url'
-import { QRCodePreview } from './qr-code-preview'
+import { downloadQRCodePng, QRCodePreview } from './qr-code-preview'
 
 type QRCodeListItem = {
   id: string
@@ -34,6 +37,13 @@ type QRCodeListItem = {
   updatedAt: Date
 }
 
+const dateFormatter = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'UTC'
+})
+
 export function QRCodeList({
   organizationId,
   appBaseUrl,
@@ -47,6 +57,48 @@ export function QRCodeList({
   total: number
   search?: string
 }) {
+  const router = useRouter()
+  const [downloadingId, setDownloadingId] = useState<string | null>(null)
+
+  const openQRCode = (href: string) => {
+    router.push(href)
+  }
+
+  const handleCardKeyDown = (
+    event: KeyboardEvent<HTMLDivElement>,
+    href: string
+  ) => {
+    if (event.target !== event.currentTarget) return
+    if (event.key !== 'Enter' && event.key !== ' ') return
+
+    event.preventDefault()
+    openQRCode(href)
+  }
+
+  const handleDownload = async (
+    event: MouseEvent<HTMLButtonElement>,
+    qr: QRCodeListItem,
+    destination?: string
+  ) => {
+    event.stopPropagation()
+    if (!destination || downloadingId) return
+
+    setDownloadingId(qr.id)
+
+    try {
+      await downloadQRCodePng({
+        value: destination,
+        name: qr.name,
+        colorCode: qr.colorCode,
+        colorMode: qr.colorMode,
+        logoUrl: qr.logoUrl,
+        size: 'lg'
+      })
+    } finally {
+      setDownloadingId(null)
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <PageHeading
@@ -96,8 +148,22 @@ export function QRCodeList({
                 : undefined
               : getQRUrl(qr)
 
+            const href = `/app/${organizationId}/qr-codes/${qr.id}`
+            const isDownloading = downloadingId === qr.id
+
             return (
-              <Card key={qr.id}>
+              <Card
+                key={qr.id}
+                role="link"
+                tabIndex={0}
+                onClick={() => openQRCode(href)}
+                onKeyDown={event => handleCardKeyDown(event, href)}
+                className={cn(
+                  'group cursor-pointer transition-colors outline-none',
+                  'hover:border-primary/40 hover:bg-muted/35',
+                  'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]'
+                )}
+              >
                 <CardContent className="grid gap-4 p-4 md:grid-cols-[112px_minmax(0,1fr)_auto] md:items-center">
                   <QRCodePreview
                     value={destination}
@@ -122,23 +188,32 @@ export function QRCodeList({
                     </p>
                     <div className="text-muted-foreground mt-2 flex flex-wrap gap-4 text-xs">
                       <span>{qr.totalScans} scans</span>
-                      <span>Updated {qr.updatedAt.toLocaleDateString()}</span>
+                      <span>Updated {dateFormatter.format(qr.updatedAt)}</span>
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-2 md:justify-end">
-                    {destination ? (
-                      <Button asChild variant="outline" size="sm">
-                        <Link href={destination} target="_blank">
-                          <ExternalLink data-icon="inline-start" />
-                          Test
-                        </Link>
-                      </Button>
-                    ) : null}
-                    <Button asChild size="sm">
-                      <Link href={`/app/${organizationId}/qr-codes/${qr.id}`}>
-                        <Edit data-icon="inline-start" />
-                        Edit
-                      </Link>
+                  <div className="flex items-center gap-2 md:justify-end">
+                    <span className="text-muted-foreground hidden items-center gap-1 text-sm opacity-0 transition-opacity group-hover:opacity-100 md:flex">
+                      Open QR code
+                      <ArrowUpRight className="size-4" />
+                    </span>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      disabled={!destination || Boolean(downloadingId)}
+                      title={
+                        destination
+                          ? 'Download QR code'
+                          : 'Add destination before download'
+                      }
+                      onClick={event => handleDownload(event, qr, destination)}
+                    >
+                      {isDownloading ? (
+                        <Loader2 className="animate-spin" />
+                      ) : (
+                        <Download />
+                      )}
+                      <span className="sr-only">Download QR code</span>
                     </Button>
                   </div>
                 </CardContent>

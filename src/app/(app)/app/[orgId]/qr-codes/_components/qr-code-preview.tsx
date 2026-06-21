@@ -142,6 +142,37 @@ async function renderQRCodeDataUrl({
   return canvas.toDataURL('image/png')
 }
 
+export async function downloadQRCodePng({
+  value,
+  name = 'qr-code',
+  colorCode = '#000000',
+  colorMode = 'finderPattern',
+  logoUrl,
+  size = 'lg'
+}: {
+  value: string
+  name?: string
+  colorCode?: string
+  colorMode?: 'finderPattern' | 'full'
+  logoUrl?: string | null
+  size?: 'sm' | 'lg'
+}) {
+  const dataUrl = await renderQRCodeDataUrl({
+    value,
+    colorCode,
+    colorMode,
+    logoUrl,
+    size
+  })
+
+  if (!dataUrl) return
+
+  const a = document.createElement('a')
+  a.href = dataUrl
+  a.download = `${name || 'qr-code'}.png`
+  a.click()
+}
+
 export function QRCodePreview({
   value,
   name = 'qr-code',
@@ -179,12 +210,16 @@ export function QRCodePreview({
   }, [colorCode, colorMode, logoUrl, size, value])
 
   const download = () => {
-    if (!dataUrl) return
+    if (!dataUrl || !value) return
 
-    const a = document.createElement('a')
-    a.href = dataUrl
-    a.download = `${name || 'qr-code'}.png`
-    a.click()
+    void downloadQRCodePng({
+      value,
+      name,
+      colorCode,
+      colorMode,
+      logoUrl,
+      size
+    })
   }
 
   return (
