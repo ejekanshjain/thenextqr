@@ -30,7 +30,12 @@ const baseQRCodeSchema = z.object({
     message: 'Enter a valid hex color, like #000000.'
   }),
   colorMode: qrCodeColorModeSchema.default('finderPattern'),
-  website: optionalNullableField(z.string().url('Enter a valid URL')),
+  website: optionalNullableField(
+    z.url('Enter a valid URL').refine(url => {
+      const protocol = new URL(url).protocol
+      return protocol === 'http:' || protocol === 'https:'
+    }, 'Url must start with http:// or https://')
+  ),
   phoneNumber: optionalNullableField(z.string().trim().min(1).max(40)),
   message: optionalNullableField(z.string().trim().max(2000)),
   email: optionalNullableField(emailValidation),
