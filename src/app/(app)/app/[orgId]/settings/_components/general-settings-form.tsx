@@ -20,6 +20,7 @@ import { Input } from '~/components/ui/input'
 import { organization } from '~/lib/auth-client'
 import { useSafeActionMutation } from '~/lib/safe-action-client'
 import { toastErrorMessage, toastSuccessMessage } from '~/lib/toast-message'
+import { ALLOWED_IMAGE_ACCEPT } from '~/lib/upload-policy'
 import { stringValidation } from '~/lib/validations'
 
 const schema = z.object({
@@ -75,8 +76,7 @@ export function GeneralSettingsForm({
       organizationId: orgId,
       data: {
         name: values.name,
-        slug: values.slug,
-        logo: logo ?? undefined
+        slug: values.slug
       }
     })
 
@@ -89,8 +89,7 @@ export function GeneralSettingsForm({
     if (logoChanged && logo) {
       await updateOrgLogo({
         organizationId: orgId,
-        key: logo,
-        oldKey: currentLogoKey
+        key: logo
       })
     }
 
@@ -132,7 +131,7 @@ export function GeneralSettingsForm({
           <div className="w-32">
             <FileUpload
               organizationId={orgId}
-              accept="image/*"
+              accept={ALLOWED_IMAGE_ACCEPT}
               onClientUploadFinish={setLogo}
               currentUrl={currentLogoUrl}
               sizes="128px"

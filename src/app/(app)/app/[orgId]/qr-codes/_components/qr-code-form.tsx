@@ -54,6 +54,7 @@ import { Textarea } from '~/components/ui/textarea'
 import { getDynamicQRCodeUrl, getQRUrl } from '~/lib/qr-url'
 import { useSafeActionMutation } from '~/lib/safe-action-client'
 import { toastErrorMessage, toastSuccessMessage } from '~/lib/toast-message'
+import { ALLOWED_IMAGE_ACCEPT } from '~/lib/upload-policy'
 import { QRCodePreview } from './qr-code-preview'
 
 type QRCodeFormInput = z.input<typeof createQRCodeSchema>
@@ -535,7 +536,7 @@ export function QRCodeForm({
                       <div className="w-32">
                         <FileUpload
                           organizationId={organizationId}
-                          accept="image/*"
+                          accept={ALLOWED_IMAGE_ACCEPT}
                           currentUrl={logoPreviewUrl}
                           onPreviewChange={setLogoPreviewUrl}
                           onClientUploadFinish={value =>

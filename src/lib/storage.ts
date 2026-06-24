@@ -1,5 +1,6 @@
 import {
   DeleteObjectCommand,
+  GetObjectCommand,
   PutObjectCommand,
   S3Client
 } from '@aws-sdk/client-s3'
@@ -13,6 +14,11 @@ import {
   PRESIGNED_URL_TTL_SECONDS,
   TEMP_CLEANUP_THRESHOLD_MS
 } from './constants'
+import {
+  type AllowedImageMimeType,
+  getImageExtensionForMimeType,
+  isAllowedImageMimeType
+} from './upload-policy'
 
 /*
 R2 Policy need to be set
@@ -78,7 +84,7 @@ export async function deleteFile(key: string): Promise<void> {
 
 export async function generateUploadUrl(params: {
   filename: string
-  mimeType: string
+  mimeType: AllowedImageMimeType
   size: number
   uploadedBy: string
   organizationId?: string | null
@@ -86,7 +92,7 @@ export async function generateUploadUrl(params: {
   uploadUrl: string
   key: string
 }> {
-  const ext = params.filename.split('.').pop()?.toLowerCase() ?? 'bin'
+  const ext = getImageExtensionForMimeType(params.mimeType)
   const folder = params.organizationId
     ? `uploads/organizations/${params.organizationId}`
     : `uploads/misc`
@@ -120,19 +126,152 @@ export async function generateUploadUrl(params: {
   return { uploadUrl, key }
 }
 
+function detectImageMimeType(bytes: Uint8Array): AllowedImageMimeType | null {
+  if (
+    bytes[0] === 0x89 &&
+    bytes[1] === 0x50 &&
+    bytes[2] === 0x4e &&
+    bytes[3] === 0x47 &&
+    bytes[4] === 0x0d &&
+    bytes[5] === 0x0a &&
+    bytes[6] === 0x1a &&
+    bytes[7] === 0x0a
+  ) {
+    return 'image/png'
+  }
+
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
+    return 'image/jpeg'
+  }
+
+  const header = new TextDecoder().decode(bytes.slice(0, 12))
+  if (header.startsWith('GIF87a') || header.startsWith('GIF89a')) {
+    return 'image/gif'
+  }
+
+  if (header.startsWith('RIFF') && header.slice(8, 12) === 'WEBP') {
+    return 'image/webp'
+  }
+
+  return null
+}
+
+async function readObjectPrefix(key: string) {
+  const response = await getR2Client().send(
+    new GetObjectCommand({
+      Bucket: env.R2_BUCKET_NAME!,
+      Key: key,
+      Range: 'bytes=0-11'
+    })
+  )
+
+  const body = response.Body
+  if (!body) throw new Error('Uploaded image could not be read')
+
+  if ('transformToByteArray' in body) {
+    return await body.transformToByteArray()
+  }
+
+  const chunks: Uint8Array[] = []
+  for await (const chunk of body as AsyncIterable<Uint8Array | string>) {
+    chunks.push(
+      typeof chunk === 'string' ? new TextEncoder().encode(chunk) : chunk
+    )
+  }
+
+  const totalLength = chunks.reduce((sum, chunk) => sum + chunk.length, 0)
+  const bytes = new Uint8Array(totalLength)
+  let offset = 0
+
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset)
+    offset += chunk.length
+  }
+
+  return bytes
+}
+
+async function assertUploadedImageObject(
+  key: string,
+  expectedMimeType: string
+) {
+  if (!isAllowedImageMimeType(expectedMimeType)) {
+    throw new Error('Upload must be a PNG, JPEG, WebP, or GIF image')
+  }
+
+  const detectedMimeType = detectImageMimeType(await readObjectPrefix(key))
+  if (detectedMimeType !== expectedMimeType) {
+    throw new Error(
+      'Uploaded file content does not match an allowed image type'
+    )
+  }
+}
+
+export function getOrganizationUploadPrefix(organizationId: string) {
+  return `uploads/organizations/${organizationId}/`
+}
+
+export function isOrganizationUploadKey(key: string, organizationId: string) {
+  return key.startsWith(getOrganizationUploadPrefix(organizationId))
+}
+
+export function assertOrganizationUploadKey(
+  key: string,
+  organizationId: string
+) {
+  if (!isOrganizationUploadKey(key, organizationId)) {
+    throw new Error('Upload does not belong to this organization')
+  }
+}
+
 export async function confirmUpload(
   newKey: string,
-  oldKey?: string | null
+  oldKey?: string | null,
+  options?: {
+    organizationId?: string
+    uploadedBy?: string
+  }
 ): Promise<void> {
+  const where = and(
+    eq(fileUploadsTable.key, newKey),
+    options?.organizationId
+      ? eq(fileUploadsTable.organizationId, options.organizationId)
+      : undefined,
+    options?.uploadedBy
+      ? eq(fileUploadsTable.uploadedBy, options.uploadedBy)
+      : undefined
+  )
+
+  const upload = await db.query.fileUploadsTable.findFirst({
+    where,
+    columns: {
+      id: true,
+      key: true,
+      mimeType: true
+    }
+  })
+
+  if (!upload) {
+    throw new Error('Upload does not belong to this organization')
+  }
+
+  await assertUploadedImageObject(upload.key, upload.mimeType)
+
   await db
     .update(fileUploadsTable)
     .set({ isTemp: false })
-    .where(eq(fileUploadsTable.key, newKey))
+    .where(eq(fileUploadsTable.id, upload.id))
 
-  if (oldKey && isR2Configured()) {
-    await deleteFile(oldKey).catch(() => {
-      // Non-fatal: old file cleanup failure should not block the save
-    })
+  if (oldKey && isR2Configured() && isR2Key(oldKey)) {
+    const canDeleteOldKey =
+      !options?.organizationId ||
+      isOrganizationUploadKey(oldKey, options.organizationId)
+
+    if (canDeleteOldKey) {
+      await deleteFile(oldKey).catch(() => {
+        // Non-fatal: old file cleanup failure should not block the save
+      })
+    }
   }
 }
 

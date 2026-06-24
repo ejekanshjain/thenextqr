@@ -1,6 +1,6 @@
 'use client'
 
-import { File, FileText, Loader2, Music, Upload, Video, X } from 'lucide-react'
+import { Loader2, Upload, X } from 'lucide-react'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
@@ -8,29 +8,20 @@ import { generateUploadUrlAction } from '~/actions/uploads'
 import { Button } from '~/components/ui/button'
 import { cn } from '~/lib/cn'
 import { MAX_FILE_SIZE_BYTES, MAX_FILE_SIZE_MB } from '~/lib/constants'
+import {
+  getImageUploadError,
+  isAllowedImageMimeType
+} from '~/lib/upload-policy'
 
-type PreviewState =
-  | { kind: 'image'; url: string }
-  | { kind: 'file'; name: string; mimeType: string }
-  | null
+type PreviewState = { kind: 'image'; url: string } | null
 
 function getInitialPreview(currentUrl?: string | null): PreviewState {
   if (!currentUrl) return null
   return { kind: 'image', url: currentUrl }
 }
 
-function FileTypeIcon({ mimeType }: { mimeType: string }) {
-  if (mimeType.startsWith('video/'))
-    return <Video className="text-muted-foreground h-8 w-8" />
-  if (mimeType.startsWith('audio/'))
-    return <Music className="text-muted-foreground h-8 w-8" />
-  if (mimeType === 'application/pdf' || mimeType.includes('text'))
-    return <FileText className="text-muted-foreground h-8 w-8" />
-  return <File className="text-muted-foreground h-8 w-8" />
-}
-
 type Props = {
-  /** MIME type filter passed to the file input, e.g. `"image/*"` or `"image/*,application/pdf"`. */
+  /** MIME type filter passed to the file input. Uploads are server-restricted to safe image types. */
   accept: string
   /** Scopes the upload to a organization for cleanup tracking. */
   organizationId: string
@@ -67,6 +58,11 @@ export function FileUpload({
   const [isUploading, setIsUploading] = useState(false)
 
   const handleFile = async (file: File) => {
+    if (!isAllowedImageMimeType(file.type)) {
+      toast.error(getImageUploadError())
+      return
+    }
+
     if (file.size > MAX_FILE_SIZE_BYTES) {
       toast.error(`File must be under ${MAX_FILE_SIZE_MB}MB`)
       return
@@ -74,14 +70,9 @@ export function FileUpload({
 
     setIsUploading(true)
 
-    if (file.type.startsWith('image/')) {
-      const previewUrl = URL.createObjectURL(file)
-      setPreview({ kind: 'image', url: previewUrl })
-      onPreviewChange?.(previewUrl)
-    } else {
-      setPreview({ kind: 'file', name: file.name, mimeType: file.type })
-      onPreviewChange?.(null)
-    }
+    const previewUrl = URL.createObjectURL(file)
+    setPreview({ kind: 'image', url: previewUrl })
+    onPreviewChange?.(previewUrl)
 
     const result = await generateUploadUrlAction({
       filename: file.name,
@@ -118,10 +109,8 @@ export function FileUpload({
       const reader = new FileReader()
       reader.onload = e => {
         const base64 = e.target?.result as string
-        if (file.type.startsWith('image/')) {
-          setPreview({ kind: 'image', url: base64 })
-          onPreviewChange?.(base64)
-        }
+        setPreview({ kind: 'image', url: base64 })
+        onPreviewChange?.(base64)
         onClientUploadFinish(base64)
       }
       reader.onerror = () => {
@@ -177,15 +166,6 @@ export function FileUpload({
               preview.url.startsWith('data:') || preview.url.startsWith('blob:')
             }
           />
-        )}
-
-        {preview?.kind === 'file' && (
-          <div className="flex flex-col items-center gap-2 px-4">
-            <FileTypeIcon mimeType={preview.mimeType} />
-            <span className="text-muted-foreground max-w-full truncate text-xs">
-              {preview.name}
-            </span>
-          </div>
         )}
 
         {!preview && (

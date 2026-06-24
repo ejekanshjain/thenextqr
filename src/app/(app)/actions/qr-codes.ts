@@ -11,12 +11,14 @@ import { assertUserMembership } from '~/lib/organization-access'
 import { DEFAULT_QR_COLOR_MODE, normalizeQRCodeColor } from '~/lib/qr-color'
 import { authActionClient } from '~/lib/safe-action'
 import {
+  assertOrganizationUploadKey,
   confirmUpload,
   deleteFile,
   isR2Configured,
   isR2Key,
   resolveImageUrl
 } from '~/lib/storage'
+import { isAllowedImageDataUrl } from '~/lib/upload-policy'
 import {
   createQRCodeSchema,
   deleteQRCodeSchema,
@@ -129,7 +131,12 @@ export const createQRCodeAction = authActionClient
 
     if (!created) throw new Error('Failed to create QR code')
 
-    await handleLogoUploadChange(logoUrl, null)
+    await handleLogoUploadChange(
+      logoUrl,
+      null,
+      parsedInput.organizationId,
+      user.id
+    )
 
     return { id: created.id }
   })
@@ -173,7 +180,12 @@ export const updateQRCodeAction = authActionClient
       })
       .where(eq(qrCodesTable.id, existing.id))
 
-    await handleLogoUploadChange(logoUrl, existing.logoUrl)
+    await handleLogoUploadChange(
+      logoUrl,
+      existing.logoUrl,
+      parsedInput.organizationId,
+      user.id
+    )
 
     return { id: existing.id }
   })
@@ -237,19 +249,27 @@ async function resolveUniqueSlug(slug?: string | null, currentId?: string) {
 function getVerifiedLogoUrl(organizationId: string, logoUrl?: string | null) {
   if (!logoUrl) return null
 
-  if (
-    isR2Key(logoUrl) &&
-    !logoUrl.startsWith(`uploads/organizations/${organizationId}/`)
-  ) {
-    throw new Error('Logo upload does not belong to this organization')
+  if (logoUrl.startsWith('data:')) {
+    if (!isAllowedImageDataUrl(logoUrl)) {
+      throw new Error('Logo must be a PNG, JPEG, WebP, or GIF image')
+    }
+
+    return logoUrl
   }
 
-  return logoUrl
+  if (isR2Key(logoUrl)) {
+    assertOrganizationUploadKey(logoUrl, organizationId)
+    return logoUrl
+  }
+
+  throw new Error('Invalid logo upload')
 }
 
 async function handleLogoUploadChange(
   newLogoUrl: string | null,
-  oldLogoUrl: string | null
+  oldLogoUrl: string | null,
+  organizationId: string,
+  uploadedBy: string
 ) {
   if (!isR2Configured()) return
 
@@ -257,7 +277,10 @@ async function handleLogoUploadChange(
   const oldIsR2Key = isR2Key(oldLogoUrl)
 
   if (newIsR2Key && newLogoUrl !== oldLogoUrl) {
-    await confirmUpload(newLogoUrl, oldIsR2Key ? oldLogoUrl : null)
+    await confirmUpload(newLogoUrl, oldIsR2Key ? oldLogoUrl : null, {
+      organizationId,
+      uploadedBy
+    })
     return
   }
 

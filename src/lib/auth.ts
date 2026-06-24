@@ -109,6 +109,22 @@ export const auth = betterAuth({
       organizationLimit: 10,
       invitationExpiresIn: 7 * 24 * 60 * 60, // 7 days
       cancelPendingInvitationsOnReInvite: true,
+      organizationHooks: {
+        beforeCreateOrganization: async ({ organization }) => {
+          if (Object.prototype.hasOwnProperty.call(organization, 'logo')) {
+            throw new APIError('BAD_REQUEST', {
+              message: 'Set organization logos through the upload action.'
+            })
+          }
+        },
+        beforeUpdateOrganization: async ({ organization }) => {
+          if (Object.prototype.hasOwnProperty.call(organization, 'logo')) {
+            throw new APIError('BAD_REQUEST', {
+              message: 'Update organization logos through the upload action.'
+            })
+          }
+        }
+      },
       sendInvitationEmail: async ({ id, email, organization, inviter }) => {
         try {
           await start(sendInvitationEmail, [

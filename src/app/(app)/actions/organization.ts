@@ -9,28 +9,47 @@ import {
   getUserMembershipCached
 } from '~/lib/organization-access'
 import { authActionClient } from '~/lib/safe-action'
-import { confirmUpload, isR2Configured, isR2Key } from '~/lib/storage'
+import {
+  assertOrganizationUploadKey,
+  confirmUpload,
+  isR2Configured,
+  isR2Key
+} from '~/lib/storage'
+import { isAllowedImageDataUrl } from '~/lib/upload-policy'
 import { stringValidation } from '~/lib/validations'
 
 export const updateOrganizationLogoAction = authActionClient
   .inputSchema(
     z.object({
       organizationId: stringValidation,
-      key: z.string().min(1),
-      oldKey: z.string().min(1).nullish()
+      key: z.string().min(1)
     })
   )
-  .action(async ({ parsedInput }) => {
-    if (!isR2Configured() || !isR2Key(parsedInput.key)) {
-      return { success: true }
+  .action(async ({ parsedInput, ctx: { user } }) => {
+    await assertUserCanManageOrganization(parsedInput.organizationId)
+
+    if (parsedInput.key.startsWith('data:')) {
+      if (!isAllowedImageDataUrl(parsedInput.key)) {
+        throw new Error('Logo must be a PNG, JPEG, WebP, or GIF image')
+      }
+
+      await db
+        .update(organizationsTable)
+        .set({ logo: parsedInput.key })
+        .where(eq(organizationsTable.id, parsedInput.organizationId))
+
+      return true
     }
 
-    await assertUserCanManageOrganization(parsedInput.organizationId)
+    if (!isR2Configured() || !isR2Key(parsedInput.key)) {
+      throw new Error('Invalid logo upload')
+    }
+
+    assertOrganizationUploadKey(parsedInput.key, parsedInput.organizationId)
 
     const org = await db.query.organizationsTable.findFirst({
       where: eq(organizationsTable.id, parsedInput.organizationId),
       columns: {
-        id: true,
         logo: true
       }
     })
@@ -39,13 +58,16 @@ export const updateOrganizationLogoAction = authActionClient
       throw new Error('Organization not found')
     }
 
-    if (org.logo !== parsedInput.key) {
-      throw new Error(
-        'Organization logo key does not match the current logo key'
-      )
-    }
+    await confirmUpload(parsedInput.key, org.logo, {
+      organizationId: parsedInput.organizationId,
+      uploadedBy: user.id
+    })
 
-    await confirmUpload(parsedInput.key, parsedInput.oldKey)
+    await db
+      .update(organizationsTable)
+      .set({ logo: parsedInput.key })
+      .where(eq(organizationsTable.id, parsedInput.organizationId))
+
     return true
   })
 
