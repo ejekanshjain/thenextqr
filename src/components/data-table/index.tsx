@@ -1,5 +1,5 @@
 /**
- * @fileoverview Generic, feature-rich DataTable component built on TanStack Table.
+ * @fileoverview Generic DataTable built on TanStack Table.
  *
  * Supports:
  * - Server-side (manual) or client-side pagination & sorting
@@ -14,13 +14,10 @@
 'use client'
 
 import {
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable
+  type ColumnVisibilityState,
+  type RowData,
+  type SortingState,
+  useTable
 } from '@tanstack/react-table'
 import {
   ArrowDown,
@@ -93,6 +90,7 @@ import { cn } from '~/lib/cn'
 import { useSafeActionQuery } from '~/lib/safe-action-client'
 import { Skeleton } from '../ui/skeleton'
 import { SortOrderEnum } from './enum'
+import { dataTableFeatures } from './features'
 import { DataTableFilter, DataTableProps } from './types'
 
 /**
@@ -161,7 +159,7 @@ const StaticFilterSubContent = memo(function StaticFilterSubContent({
                 {isTruncated ? (
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <span>{option.label.slice(0, 18) + '...'}</span>
+                      <span>{option.label.slice(0, 18) + '…'}</span>
                     </TooltipTrigger>
                     <TooltipContent side="right">
                       <p className="max-w-75 break-all">{option.label}</p>
@@ -284,7 +282,7 @@ const AsyncFilterSubContent = memo(function AsyncFilterSubContent({
                 {isTruncated ? (
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <span>{label.slice(0, 18) + '...'}</span>
+                      <span>{label.slice(0, 18) + '…'}</span>
                     </TooltipTrigger>
                     <TooltipContent side="right">
                       <p className="max-w-75 break-all">{label}</p>
@@ -306,14 +304,13 @@ const AsyncFilterSubContent = memo(function AsyncFilterSubContent({
  * Generic DataTable component with toolbar, filters, sorting and pagination.
  *
  * @template TData  Row data shape
- * @template TValue Cell value shape
  */
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends RowData>({
   columns,
   data = [],
   isLoading = false,
   enableSearch = false,
-  searchPlaceholder = 'Search...',
+  searchPlaceholder = 'Search…',
   initialSearch = '',
   totalCount,
   onParamsChange,
@@ -324,9 +321,10 @@ export function DataTable<TData, TValue>({
   initialSorting = [],
   filters = [],
   activeFilters = {}
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>(initialSorting)
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] =
+    useState<ColumnVisibilityState>({})
   const [searchValue, setSearchValue] = useState(initialSearch)
   const [pagination, setPagination] = useState({
     pageIndex: controlledPageIndex,
@@ -335,12 +333,41 @@ export function DataTable<TData, TValue>({
   /** Cache for async filter labels so pills display correctly after data refetch. */
   const [labelCache, setLabelCache] = useState<Record<string, string>>({})
   const searchInputId = useId()
-  const lastTotalCountRef = useRef<number | undefined>(totalCount)
-  /** Ref to always read the latest activeFilters inside async callbacks (avoids stale closures). */
+  /**
+   * Last positive totalCount. Used while loading so a transient 0 does not
+   * collapse the pagination footer (e.g. "Page 1 of 1" mid-refetch).
+   * Adjusted during render when the prop changes (React-approved pattern).
+   */
+  const [lastPositiveTotalCount, setLastPositiveTotalCount] = useState<
+    number | undefined
+  >(totalCount !== undefined && totalCount > 0 ? totalCount : undefined)
+  if (
+    totalCount !== undefined &&
+    totalCount > 0 &&
+    totalCount !== lastPositiveTotalCount
+  ) {
+    setLastPositiveTotalCount(totalCount)
+  }
+  const stableTotalCount =
+    isLoading && totalCount === 0 && lastPositiveTotalCount !== undefined
+      ? lastPositiveTotalCount
+      : totalCount
+
+  /** Latest values for debounced/async callbacks without putting them in effect deps. */
   const activeFiltersRef = useRef(activeFilters)
-  activeFiltersRef.current = activeFilters
+  const onParamsChangeRef = useRef(onParamsChange)
   /** Set by the prop-sync effect so the debounced effect can skip redundant fires. */
   const isExternalPaginationSync = useRef(false)
+  /** Skip the initial render to avoid firing onParamsChange on mount. */
+  const isFirstRender = useRef(true)
+
+  useEffect(() => {
+    activeFiltersRef.current = activeFilters
+  }, [activeFilters])
+
+  useEffect(() => {
+    onParamsChangeRef.current = onParamsChange
+  }, [onParamsChange])
 
   // Keep internal pagination in sync with controlled props from parent.
   // Without this, external resets (e.g. filter change → page 1) are ignored.
@@ -350,7 +377,7 @@ export function DataTable<TData, TValue>({
         prev.pageIndex !== controlledPageIndex ||
         prev.pageSize !== controlledPageSize
       ) {
-        // Flag so the debounced effect skips its next fire – the filter/clear
+        // Flag so the debounced effect skips its next fire: the filter/clear
         // handler that triggered this prop change already called onParamsChange.
         isExternalPaginationSync.current = true
         return {
@@ -362,30 +389,13 @@ export function DataTable<TData, TValue>({
     })
   }, [controlledPageIndex, controlledPageSize])
 
-  // Preserve totalCount during loading to avoid pagination flicker (e.g. "Page 1 of 1" when switching pages).
-  // Updating a ref synchronously during render is a safe, idempotent pattern documented by React
-  // because refs are not reactive and this does not trigger a re-render.
-  if (totalCount !== undefined && totalCount > 0) {
-    lastTotalCountRef.current = totalCount
-  }
-  const stableTotalCount = useMemo(
-    () =>
-      isLoading && totalCount === 0 && lastTotalCountRef.current !== undefined
-        ? lastTotalCountRef.current
-        : totalCount,
-    // lastTotalCountRef is a ref - intentionally omitted from deps
-    [isLoading, totalCount]
-  )
-
-  // Initialise TanStack Table with manual pagination/sorting when enabled
-  const table = useReactTable({
+  // TanStack Table v9: features (and row models) live on `dataTableFeatures`.
+  // Core row model is always included; sorted/paginated models only run when
+  // manual* is false.
+  const table = useTable({
+    features: dataTableFeatures,
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    ...(!manualPagination && {
-      getPaginationRowModel: getPaginationRowModel()
-    }),
-    ...(!manualSorting && { getSortedRowModel: getSortedRowModel() }),
     manualPagination,
     manualSorting,
     ...(manualPagination && {
@@ -402,16 +412,11 @@ export function DataTable<TData, TValue>({
     }
   })
 
-  /** Skip the initial render to avoid firing onParamsChange on mount. */
-  const isFirstRender = useRef(true)
-
-  // Stable reference for onParamsChange to avoid unnecessary effect re-runs
-  const onParamsChangeRef = useRef(onParamsChange)
-  onParamsChangeRef.current = onParamsChange
-
   /**
    * Build the params object sent to onParamsChange.
-   * Uses `activeFiltersRef` so async callbacks always read the latest value.
+   * Uses `activeFiltersRef` so debounced callbacks always read the latest filters
+   * without putting `activeFilters` in the debounce effect deps (filter handlers
+   * already call onParamsChange themselves).
    * Pass `overrides` to set page or filters explicitly (e.g. on filter change).
    */
   const buildParams = useCallback(
@@ -446,7 +451,7 @@ export function DataTable<TData, TValue>({
   )
 
   // Debounce param changes (300ms) to batch rapid user interactions.
-  // Only watches pagination, sorting, and searchValue – NOT activeFilters,
+  // Only watches pagination, sorting, and searchValue, NOT activeFilters,
   // because filter handlers already call onParamsChange directly.
   useEffect(() => {
     if (isFirstRender.current) {
@@ -681,7 +686,7 @@ export function DataTable<TData, TValue>({
                               variant="secondary"
                               className="px-1 font-normal"
                             >
-                              {displayLabel.slice(0, 18) + '...'}
+                              {displayLabel.slice(0, 18) + '…'}
                             </Badge>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -792,10 +797,7 @@ export function DataTable<TData, TValue>({
                               : undefined
                           }
                         >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          <table.FlexRender header={header} />
                           {isSortable && (
                             <div className="flex w-4 items-center justify-center">
                               {sortStatus === 'asc' ? (
@@ -827,16 +829,10 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map(row => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() ? 'selected' : undefined}
-                >
+                <TableRow key={row.id}>
                   {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      <table.FlexRender cell={cell} />
                     </TableCell>
                   ))}
                 </TableRow>
@@ -958,3 +954,8 @@ export function DataTable<TData, TValue>({
     </div>
   )
 }
+
+export { SortOrderEnum } from './enum'
+export { dataTableFeatures } from './features'
+export type { DataTableColumnDef } from './features'
+export type { DataTableFilter, DataTableProps } from './types'

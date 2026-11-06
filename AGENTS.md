@@ -15,7 +15,7 @@ bun run dev                # Start Next.js dev server
 bun run build              # Production build with bun --bun next build
 bun run start              # Start production server after a build
 bun run lint               # ESLint
-bun run type-check         # Strict TypeScript check with tsgo
+bun run type-check         # Strict TypeScript check
 bun run format             # Prettier and import organization for src files
 bun run analyze            # Build with bundle analysis enabled
 

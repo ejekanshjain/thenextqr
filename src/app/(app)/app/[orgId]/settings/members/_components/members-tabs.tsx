@@ -1,7 +1,6 @@
 'use client'
 
 import { useQueryClient } from '@tanstack/react-query'
-import { ColumnDef } from '@tanstack/react-table'
 import {
   MoreHorizontal,
   RefreshCcw,
@@ -17,7 +16,7 @@ import {
   useQueryStates
 } from 'nuqs'
 import { useState } from 'react'
-import { DataTable } from '~/components/data-table'
+import { DataTable, type DataTableColumnDef } from '~/components/data-table'
 import { SortOrderEnum } from '~/components/data-table/enum'
 import { DataTableFilter } from '~/components/data-table/types'
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
@@ -141,14 +140,9 @@ export function MembersTabs() {
     page: memberQuery.mPage,
     limit: memberQuery.mLimit,
     sortBy: (memberQuery.mSortBy ?? undefined) as
-      | 'name'
-      | 'email'
-      | 'role'
-      | 'createdAt'
-      | undefined,
+      'name' | 'email' | 'role' | 'createdAt' | undefined,
     sortOrder: (memberQuery.mSortOrder ?? undefined) as
-      | SortOrderEnum
-      | undefined,
+      SortOrderEnum | undefined,
     search: memberQuery.mSearch ?? undefined,
     filters: memberQuery.mFilters ?? undefined
   }
@@ -193,7 +187,7 @@ export function MembersTabs() {
     router.refresh()
   }
 
-  const memberColumns: ColumnDef<Member, unknown>[] = [
+  const memberColumns: DataTableColumnDef<Member>[] = [
     {
       accessorKey: 'name',
       header: 'Member',
@@ -312,14 +306,9 @@ export function MembersTabs() {
     page: inviteQuery.iPage,
     limit: inviteQuery.iLimit,
     sortBy: (inviteQuery.iSortBy ?? undefined) as
-      | 'email'
-      | 'status'
-      | 'createdAt'
-      | 'expiresAt'
-      | undefined,
+      'email' | 'status' | 'createdAt' | 'expiresAt' | undefined,
     sortOrder: (inviteQuery.iSortOrder ?? undefined) as
-      | SortOrderEnum
-      | undefined,
+      SortOrderEnum | undefined,
     search: inviteQuery.iSearch ?? undefined,
     filters: inviteQuery.iFilters ?? undefined
   }
@@ -362,7 +351,7 @@ export function MembersTabs() {
     invalidateInvitations()
   }
 
-  const invitationColumns: ColumnDef<Invitation, unknown>[] = [
+  const invitationColumns: DataTableColumnDef<Invitation>[] = [
     {
       accessorKey: 'email',
       header: 'Email',

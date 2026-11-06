@@ -1,5 +1,6 @@
-import { ColumnDef, SortingState } from '@tanstack/react-table'
+import type { RowData, SortingState } from '@tanstack/react-table'
 import { SortOrderEnum } from './enum'
+import type { DataTableColumnDef } from './features'
 
 /** A single selectable option inside a filter dropdown. */
 interface DataTableFilterOption {
@@ -34,9 +35,9 @@ export interface DataTableFilter {
  * When `manualPagination` / `manualSorting` are enabled the parent is
  * responsible for fetching data and passing results back via `data` & `totalCount`.
  */
-export interface DataTableProps<TData, TValue> {
-  /** Column definitions (TanStack Table). */
-  columns: ColumnDef<TData, TValue>[]
+export interface DataTableProps<TData extends RowData> {
+  /** Column definitions (TanStack Table v9, typed to DataTable features). */
+  columns: DataTableColumnDef<TData, any>[]
   /** Row data to display. */
   data?: TData[]
   /** Show skeleton loading rows while data is being fetched. */

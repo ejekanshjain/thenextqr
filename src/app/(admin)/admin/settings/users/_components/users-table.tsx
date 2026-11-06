@@ -1,7 +1,6 @@
 'use client'
 
 import { useQueryClient } from '@tanstack/react-query'
-import { ColumnDef } from '@tanstack/react-table'
 import {
   Ban,
   Edit,
@@ -20,7 +19,7 @@ import {
   useQueryStates
 } from 'nuqs'
 import { useState } from 'react'
-import { DataTable } from '~/components/data-table'
+import { DataTable, type DataTableColumnDef } from '~/components/data-table'
 import { SortOrderEnum } from '~/components/data-table/enum'
 import { DataTableFilter } from '~/components/data-table/types'
 import { PageHeading } from '~/components/page-heading'
@@ -282,10 +281,7 @@ export function UsersTable({ isSuperAdmin, currentUserId }: UsersTableProps) {
     page: queryState.page,
     limit: queryState.limit,
     sortBy: (queryState.sortBy ?? undefined) as
-      | 'name'
-      | 'email'
-      | 'createdAt'
-      | undefined,
+      'name' | 'email' | 'createdAt' | undefined,
     sortOrder: (queryState.sortOrder ?? undefined) as SortOrderEnum | undefined,
     search: queryState.search ?? undefined,
     filters: queryState.filters ?? undefined
@@ -297,7 +293,7 @@ export function UsersTable({ isSuperAdmin, currentUserId }: UsersTableProps) {
     params
   )
 
-  const columns: ColumnDef<User, unknown>[] = [
+  const columns: DataTableColumnDef<User>[] = [
     {
       accessorKey: 'name',
       header: 'User',
